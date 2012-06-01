@@ -1,0 +1,34 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+<!-- 	<servlet>
+		<servlet-name>OAuth</servlet-name>
+		<servlet-class>org.jboss.RESTEasy.auth.oauth.OAuthServlet</servlet-class>
+	</servlet>
+
+	This will be the base for the token exchange endpoint URL
+	<servlet-mapping>
+		<servlet-name>OAuth</servlet-name>
+		<url-pattern>/oauth/*</url-pattern>
+	</servlet-mapping>
+
+	The OAuth Filter handles authentication for protected resources
+	<filter>
+		<filter-name>OAuth Filter</filter-name>
+		<filter-class>org.jboss.RESTEasy.auth.oauth.OAuthFilter</filter-class>
+	</filter>
+
+	This defines the URLs which should require OAuth authentication for 
+		your protected resources
+	<filter-mapping>
+		<filter-name>OAuth Filter</filter-name>
+		<url-pattern>/rest/*</url-pattern>
+	</filter-mapping>
+	
+	<context-param>
+		<param-name>oauth.provider.provider-class</param-name>
+		<param-value>com.redhat.prototype.auth.Provider</param-value>
+	</context-param> -->
+
+</web-app>
