@@ -1,90 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9ac7040d-bf73-47c1-8e21-12e56fab892a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/ant.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__commons_codec_commons_codec_1_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__javax_enterprise_cdi_api_1_0_SP4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__javax_inject_javax_inject_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__javax_servlet_servlet_api_2_5.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__junit_junit_4_8_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__org_jboss_spec_javax_interceptor_jboss_interceptors_api_1_1_spec_1_0_1_Final.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/.idea/libraries/Maven__org_jboss_spec_javax_ws_rs_jboss_jaxrs_api_1_1_spec_1_0_0_Final.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/java/com/redhat/prototype/provider/JaxRsActivator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/java/com/redhat/prototype/provider/OpenIdParameterList.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/java/com/redhat/prototype/provider/OpenIdProvider.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/java/com/redhat/prototype/provider/OpenIdProviderManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/java/com/redhat/prototype/util/Resources.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/webapp/WEB-INF/beans.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/webapp/login.jsp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/webapp/loginerror.jsp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../OpenIdProvider/src/main/webapp/securepage.jsp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__aopalliance_aopalliance_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_appengine_appengine_api_1_0_sdk_1_5_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_appengine_appengine_tools_sdk_1_5_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_appengine_orm_datanucleus_appengine_1_0_8.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_code_google_collections_google_collect_snapshot_20080321.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_code_guice_guice_2_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_code_openid_filter_1_0_SNAPSHOT.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_guava_guava_r06.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_step2_step2_common_1_SNAPSHOT.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_google_step2_step2_consumer_1_SNAPSHOT.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__com_ibm_icu_icu4j_3_4_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__commons_io_commons_io_1_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__commons_lang_commons_lang_2_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__javax_jdo_jdo2_api_2_3_eb.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__javax_transaction_transaction_api_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__jug_jug_1_1_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__nekohtml_nekohtml_1_9_6_2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__net_jcip_jcip_annotations_1_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__net_oauth_core_oauth_20090617.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__net_oauth_core_oauth_consumer_20090617.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__net_oauth_core_oauth_httpclient4_20090913.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_apache_geronimo_specs_geronimo_jpa_3_0_spec_1_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_apache_geronimo_specs_geronimo_jta_1_1_spec_1_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_datanucleus_datanucleus_core_1_1_5.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_datanucleus_datanucleus_jpa_1_1_5.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_jdom_jdom_1_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_json_json_20090211.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_openid4java_openid4java_nodeps_0_9_6.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_openxri_openxri_client_1_2_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_openxri_openxri_syntax_1_2_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_picketlink_picketlink_consolidated_social_2_0_0_Beta1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__org_slf4j_slf4j_jcl_1_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__xalan_xalan_2_7_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__xerces_xercesImpl_2_8_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__xml_apis_xml_apis_1_0_b2.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/libraries/Maven__xml_security_xmlsec_1_3_0.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/oauth/IdTokenValidator.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/oauth/OAuthIdRequest.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/rest/PersonService.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/rest/auth/LoginService.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/auth/Provider.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/rest/LoginRestService.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/rest/PersonRestService.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/WEB-INF/classes/com/redhat/prototype/auth/Provider.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/WEB-INF/classes/com/redhat/prototype/rest/LoginRestService.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/WEB-INF/classes/com/redhat/prototype/rest/PersonRestService.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/target/classes/com/redhat/prototype/auth/Provider.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/target/classes/com/redhat/prototype/rest/LoginRestService.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/../RestSecurity/target/classes/com/redhat/prototype/rest/PersonRestService.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity.war" afterPath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity.war" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/WEB-INF/classes/com/redhat/prototype/data/PersonListProducer.class" afterPath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/WEB-INF/classes/com/redhat/prototype/data/PersonListProducer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/target/classes/com/redhat/prototype/data/PersonListProducer.class" afterPath="$PROJECT_DIR$/../RestSecurity/target/classes/com/redhat/prototype/data/PersonListProducer.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/.idea/workspace.xml" afterPath="$PROJECT_DIR$/../RestSecurity/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/.settings/org.eclipse.wst.common.component" afterPath="$PROJECT_DIR$/../RestSecurity/.settings/org.eclipse.wst.common.component" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/RestSecurity.iml" afterPath="$PROJECT_DIR$/../RestSecurity/RestSecurity.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/pom.xml" afterPath="$PROJECT_DIR$/../RestSecurity/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/data/PersonListProducer.java" afterPath="$PROJECT_DIR$/../RestSecurity/src/main/java/com/redhat/prototype/data/PersonListProducer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/src/main/webapp/WEB-INF/web.xml" afterPath="$PROJECT_DIR$/../RestSecurity/src/main/webapp/WEB-INF/web.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/src/main/webapp/index.jsp" afterPath="$PROJECT_DIR$/../RestSecurity/src/main/webapp/index.jsp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/WEB-INF/web.xml" afterPath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/WEB-INF/web.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/index.jsp" afterPath="$PROJECT_DIR$/../RestSecurity/target/RestSecurity/index.jsp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../RestSecurity/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/../RestSecurity/target/maven-archiver/pom.properties" />
-    </list>
+    <list default="true" id="9ac7040d-bf73-47c1-8e21-12e56fab892a" name="Default" comment="" />
     <ignored path="GwtSecurity.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -162,7 +79,7 @@
       <file leaf-file-name="AuthorisationRequest.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/oauth/AuthorisationRequest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="40" column="111" selection-start="1632" selection-end="1632" vertical-scroll-proportion="0.5582762">
+            <state line="40" column="111" selection-start="1632" selection-end="1632" vertical-scroll-proportion="0.014691479">
               <folding />
             </state>
           </provider>
@@ -172,9 +89,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/oauth/Authoriser.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="113" column="0" selection-start="4351" selection-end="4351" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#4863#4890#1" expanded="true" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -201,11 +116,7 @@
         <entry file="jar://$PROJECT_DIR$/lib/gwt-oauth2-0.2-alpha.jar!/com/google/api/gwt/oauth2/client/AuthImpl.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="43" column="156" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="e#0#4112#0" expanded="false" />
-                <element signature="imports" expanded="false" />
-                <element signature="e#3297#3324#0" expanded="false" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -316,16 +227,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -599,6 +500,16 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -616,9 +527,9 @@
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -660,24 +571,6 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -703,6 +596,24 @@
       <envs />
       <properties />
       <listeners />
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
@@ -805,12 +716,11 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="-1" width="1922" height="1203" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44317096" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16245487" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32851985" sideWeight="0.5" order="9" side_tool="true" content_ui="tabs" />
@@ -820,10 +730,11 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21420941" sideWeight="0.55682904" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21420941" sideWeight="0.55682904" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21967526" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44317096" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -908,41 +819,14 @@
         <state line="5" column="19" selection-start="153" selection-end="153" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/gwt-oauth2-0.2-alpha.jar!/com/google/api/gwt/oauth2/client/AuthImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="156" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#0#4112#0" expanded="false" />
-            <element signature="imports" expanded="false" />
-            <element signature="e#3297#3324#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-user/2.4.0/gwt-user-2.4.0-sources.jar!/com/google/gwt/user/client/Window.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="714" column="26" selection-start="20004" selection-end="20004" vertical-scroll-proportion="0.014691479">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="23" selection-start="362" selection-end="362" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="714" column="26" selection-start="20004" selection-end="20004" vertical-scroll-proportion="0.014691479" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/resources/oAuthWindow.html">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="58" selection-start="440" selection-end="440" vertical-scroll-proportion="0.18054162">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/App.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="92" selection-start="2040" selection-end="2040" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -954,9 +838,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
+    <entry file="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/web.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="84" selection-start="3403" selection-end="3403" vertical-scroll-proportion="0.0">
+        <state line="12" column="23" selection-start="362" selection-end="362" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -968,9 +852,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/oauth/OAuthCookieStoreImpl.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/oauth/Authoriser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="13" selection-start="1070" selection-end="1070" vertical-scroll-proportion="0.0">
+        <state line="113" column="0" selection-start="4351" selection-end="4351" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -980,18 +864,37 @@
         <state line="77" column="8" selection-start="2715" selection-end="2715" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/oauth/Authoriser.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/oauth/OAuthCookieStoreImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="113" column="0" selection-start="4351" selection-end="4351" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="e#4863#4890#1" expanded="true" />
-          </folding>
+        <state line="30" column="13" selection-start="1070" selection-end="1070" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/gwt-oauth2-0.2-alpha.jar!/com/google/api/gwt/oauth2/client/AuthImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="156" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="45" column="92" selection-start="2040" selection-end="2040" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="84" selection-start="3403" selection-end="3403" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/redhat/gwtsecurity/client/oauth/AuthorisationRequest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="111" selection-start="1632" selection-end="1632" vertical-scroll-proportion="0.5582762">
+        <state line="40" column="111" selection-start="1632" selection-end="1632" vertical-scroll-proportion="0.014691479">
           <folding />
         </state>
       </provider>
