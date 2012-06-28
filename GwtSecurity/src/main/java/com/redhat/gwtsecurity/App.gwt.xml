@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<!-- Inherit the core Web Toolkit stuff.                  -->
+	<inherits name="com.google.gwt.user.User"/>
+    <!-- Inherit OAuth lib -->
+    <inherits name="com.google.api.gwt.oauth2.OAuth2" />
+    <inherits name="com.google.gwt.http.HTTP"/>
+
+    <!-- Enables cross-site linking -->
+    <!--<add-linker name="xs"/>-->
+    <!-- TODO Check if we need this -->
+    <!--<add-linker name="sso" />-->
+
+    <public path="resources" />
+
+	<!-- Specify the app entry point class.                   -->
+	<entry-point class="com.redhat.gwtsecurity.client.App"/>
+</module>

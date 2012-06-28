@@ -2,7 +2,7 @@
 <body>
 	<h2>This is the REST Security prototype app</h2>
 	<p>
-		The REST endpoints provided are:
+		The RESTful endpoints provided are:
 		<ul>
 			<li><a href="rest/people/">GET all people</a></li>
 			<li><a href="rest/people/0">GET a specific person by id</a></li>

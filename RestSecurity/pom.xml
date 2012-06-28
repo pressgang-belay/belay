@@ -20,13 +20,30 @@
 			below to use version 1.0.0.M11-redhat-1 which is a release certified to work 
 			with JBoss EAP 6. It requires you have access to the JBoss EAP 6 maven repository. -->
 		<!-- <jboss.bom.version>1.0.0.M11-redhat-1</jboss.bom.version>> -->
+        <amber.version>0.2-SNAPSHOT</amber.version>
 	</properties>
 
 	<repositories>
 		<repository>
-			<id>JBoss repository</id>
+			<id>jboss-repo</id>
+            <name>JBoss repository</name>
 			<url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
 		</repository>
+        <repository>
+            <id>apache-snapshots-repo</id>
+            <name>Apache snapshots</name>
+            <url>http://repository.apache.org/snapshots/</url>
+        </repository>
+        <repository>
+            <id>mvn-public</id>
+            <name>MVNRepository</name>
+            <url>http://mvnrepository.com</url>
+        </repository>
+        <repository>
+            <id>openid-filter</id>
+            <name>Repository for openid-filter</name>
+            <url>http://openid-filter.googlecode.com/svn/repo</url>
+        </repository>
 	</repositories>
 	<dependencyManagement>
 		<dependencies>
@@ -138,18 +155,98 @@
 			<scope>test</scope>
 		</dependency>
 
+        <!--<dependency>-->
+            <!--<groupId>org.jboss.resteasy</groupId>-->
+            <!--<artifactId>resteasy-jaxrs</artifactId>-->
+            <!--<version>2.3.4.Final</version>-->
+        <!--</dependency>-->
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxb-provider</artifactId>
 			<version>1.1.GA</version>
 		</dependency>
 
-<!-- 		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-oauth</artifactId>
-			<version>2.3.4.Final</version>
-		</dependency> -->
-	</dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+
+        <!-- OAuth2 -->
+        <dependency>
+            <groupId>org.apache.amber</groupId>
+            <artifactId>oauth2-authzserver</artifactId>
+            <version>${amber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.amber</groupId>
+            <artifactId>oauth2-resourceserver</artifactId>
+            <version>${amber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.amber</groupId>
+            <artifactId>oauth2-dynamicreg-server</artifactId>
+            <version>${amber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.amber</groupId>
+            <artifactId>oauth2-rs-filter</artifactId>
+            <version>${amber.version}</version>
+        </dependency>
+
+        <!-- For testing only; remove in prod code -->
+        <dependency>
+            <groupId>org.apache.amber</groupId>
+            <artifactId>oauth2-client</artifactId>
+            <version>${amber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openid4java</groupId>
+            <artifactId>openid4java-nodeps</artifactId>
+            <version>0.9.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.guice</groupId>
+            <artifactId>guice</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.picketlink</groupId>
+            <artifactId>picketlink-consolidated-social</artifactId>
+            <version>2.0.0.Beta1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code</groupId>
+            <artifactId>openid-filter</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
 
 	<build>
 		<!-- Maven will append the version to the finalName (which is the name 

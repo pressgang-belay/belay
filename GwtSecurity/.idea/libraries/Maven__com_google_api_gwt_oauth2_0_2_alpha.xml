@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Maven: com.google.api:gwt.oauth2:0.2-alpha">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/gwt-oauth2-0.2-alpha.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
