@@ -34,10 +34,10 @@ public class AuthorisationRequest {
      * @param authUrl     URL of the OAuth 2.0 provider server
      * @param clientId    Your application's unique client ID
      */
-    public AuthorisationRequest(String authUrl, String clientId, String provider) {
+    public AuthorisationRequest(String authUrl, String clientId, String openIdProvider) {
         this.authUrl = authUrl;
         this.clientId = clientId;
-        this.provider = provider;
+        this.provider = openIdProvider;
     }
 
     /**

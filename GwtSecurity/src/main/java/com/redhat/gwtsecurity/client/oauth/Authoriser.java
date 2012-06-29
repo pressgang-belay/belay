@@ -314,7 +314,7 @@ public abstract class Authoriser {
     }
 
     private static AuthorisationRequest fromJso(AuthRequestJso jso) {
-        return new AuthorisationRequest(jso.getAuthUrl(), jso.getClientId(), jso.getProvider())
+        return new AuthorisationRequest(jso.getAuthUrl(), jso.getClientId(), jso.getOpenIdProvider())
                 .withScopes(jso.getScopes())
                 .withScopeDelimiter(jso.getScopeDelimiter());
     }
@@ -332,8 +332,8 @@ public abstract class Authoriser {
             return this.clientId;
         }-*/;
 
-        public final native String getProvider() /*-{
-            return this.provider;
+        public final native String getOpenIdProvider() /*-{
+            return this.openIdProvider;
         }-*/;
 
         private final native JsArrayString getScopesNative() /*-{

@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.redhat.gwtsecurity.client.oauth.AuthorisationRequest;
 import com.redhat.gwtsecurity.client.oauth.Authoriser;
 import com.redhat.gwtsecurity.client.oauth.OAuthHandler;
+import com.redhat.gwtsecurity.client.oauth.OAuthRequest;
 
 public class App implements EntryPoint {
 
@@ -29,6 +30,7 @@ public class App implements EntryPoint {
         addRedHatLogin();
         addGoogleLogin();
         addClearTokens();
+        addGetPeople();
         Authoriser.export();  //TODO where best to put this ?
     }
 
@@ -59,32 +61,6 @@ public class App implements EntryPoint {
 //        RootPanel.get().add(panel);
 //    }
 
-    private void sendPeopleRequest(String token) {
-
-        RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, PEOPLE_URL);
-        builder.setHeader("Authorization", "OAuth " + "oauth_signature_method " + "Bearer " + token);
-
-        try {
-            builder.sendRequest(null, new RequestCallback() {
-
-                @Override
-                public void onResponseReceived(Request request, Response response) {
-                    Window.alert("Response code: " + response.getStatusCode()
-                            + " Response status: " + response.getStatusText()
-                            + " Response headers: " + response.getHeadersAsString());
-                }
-
-                @Override
-                public void onError(Request request, Throwable exception) {
-                    Window.alert("Error!");
-                }
-            });
-        } catch(
-                RequestException re) {
-            Window.alert(re.getMessage());
-        }
-    }
-
     private void addRedHatLogin() {
         // Since the auth flow requires opening a popup window, it must be started
         // as a direct result of a user action, such as clicking a button or link.
@@ -97,8 +73,7 @@ public class App implements EntryPoint {
                 AUTH_HANDLER.login(req, new Callback<String, Throwable>() {
                     @Override
                     public void onSuccess(String result) {
-                        Window.alert("Result: " + result + "\n"
-                                + "Token expires in " + AUTH_HANDLER.expiresIn(req) + " ms\n");
+                        Window.alert("Result: " + result);
                         // sendPeopleRequest(token);
                     }
 
@@ -113,9 +88,6 @@ public class App implements EntryPoint {
     }
 
     private void addGoogleLogin() {
-        // Since the auth flow requires opening a popup window, it must be started
-        // as a direct result of a user action, such as clicking a button or link.
-        // Otherwise, a browser's popup blocker may block the popup.
         Button button = new Button("Login with Google");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -124,14 +96,33 @@ public class App implements EntryPoint {
                 AUTH_HANDLER.login(req, new Callback<String, Throwable>() {
                     @Override
                     public void onSuccess(String result) {
-                        Window.alert("Result: " + result + "\n"
-                                + "Token expires in " + AUTH_HANDLER.expiresIn(req) + " ms\n");
-                        // sendPeopleRequest(token);
+                        Window.alert("Result: " + result);
                     }
 
                     @Override
                     public void onFailure(Throwable caught) {
                         Window.alert("Error:\n" + caught.getMessage());
+                    }
+                });
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
+    private void addGetPeople() {
+        Button button = new Button("GET all people");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                AUTH_HANDLER.makeRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), new RequestCallback() {
+                    @Override
+                    public void onResponseReceived(Request request, Response response) {
+                        Window.alert("Result: " + response.getText());
+                    }
+
+                    @Override
+                    public void onError(Request request, Throwable exception) {
+                        Window.alert("Error:\n" + exception.getMessage());
                     }
                 });
             }
