@@ -19,6 +19,7 @@ public class App implements EntryPoint {
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
     private static final String PEOPLE_URL = "https://localhost:8443/RestSecurity/rest/people";
     private static final String SKYNET_LOGIN_URL = "https://localhost:8443/RestSecurity/rest/auth/login";
+    private static final String SKYNET_TOKEN_URL = "https://localhost:8443/RestSecurity/rest/auth/token";
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String GOOGLE_PROVIDER_URL = "gmail.com";
     // This app's personal client ID assigned by the Skynet OAuth page
@@ -29,37 +30,11 @@ public class App implements EntryPoint {
     public void onModuleLoad() {
         addRedHatLogin();
         addGoogleLogin();
-        addClearTokens();
         addGetPeople();
-        Authoriser.export();  //TODO where best to put this ?
+        addClearTokens();
+        addRefresh();
+        Authoriser.export();
     }
-
-//    private void addLogin() {
-//
-//        Label usernameLabel = new Label("Username:");
-//        final TextBox textBox = new TextBox();
-//        textBox.setName("username");
-//        textBox.setMaxLength(25);
-//        Label passwordLabel = new Label("Password:");
-//        final PasswordTextBox passwordTextBox = new PasswordTextBox();
-//        passwordTextBox.setName("password");
-//        passwordTextBox.setMaxLength(25);
-//        Button loginButton = new Button("Login", new ClickHandler() {
-//            @Override
-//            public void onClick(ClickEvent event) {
-//                doLogin(textBox.getText(), passwordTextBox.getText());
-//            }
-//        });
-//
-//        VerticalPanel panel = new VerticalPanel();
-//        panel.add(usernameLabel);
-//        panel.add(textBox);
-//        panel.add(passwordLabel);
-//        panel.add(passwordTextBox);
-//        panel.add(loginButton);
-//
-//        RootPanel.get().add(panel);
-//    }
 
     private void addRedHatLogin() {
         // Since the auth flow requires opening a popup window, it must be started
@@ -69,12 +44,12 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_CLIENT_ID, RED_HAT_PROVIDER_URL);
+                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, RED_HAT_PROVIDER_URL);
                 AUTH_HANDLER.login(req, new Callback<String, Throwable>() {
                     @Override
                     public void onSuccess(String result) {
                         Window.alert("Result: " + result);
-                        // sendPeopleRequest(token);
                     }
 
                     @Override
@@ -92,7 +67,8 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_CLIENT_ID, GOOGLE_PROVIDER_URL);
+                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, GOOGLE_PROVIDER_URL);
                 AUTH_HANDLER.login(req, new Callback<String, Throwable>() {
                     @Override
                     public void onSuccess(String result) {
@@ -114,7 +90,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AUTH_HANDLER.makeRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), new RequestCallback() {
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), new RequestCallback() {
                     @Override
                     public void onResponseReceived(Request request, Response response) {
                         Window.alert("Result: " + response.getText());
@@ -123,6 +99,29 @@ public class App implements EntryPoint {
                     @Override
                     public void onError(Request request, Throwable exception) {
                         Window.alert("Error:\n" + exception.getMessage());
+                    }
+                });
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
+    private void addRefresh() {
+        Button button = new Button("Force token refresh");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, RED_HAT_PROVIDER_URL);
+                AUTH_HANDLER.doRefresh(req, new Callback<String, Throwable>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        Window.alert("Result: " + result);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Window.alert("Error:\n" + caught.getMessage());
                     }
                 });
             }

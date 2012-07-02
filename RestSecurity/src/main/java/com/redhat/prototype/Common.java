@@ -12,6 +12,7 @@ public class Common {
     public static final String ACCESS_TOKEN_VALID = "access_token_valid";
     public static final String ACCESS_TOKEN_EXPIRED = "access_token_expired";
     public static final String ACCESS_TOKEN_INSUFFICIENT = "access_token_insufficient";
+    public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
 
     public static final String OAUTH_VERSION_1
             = "oauth_token=\"some_oauth1_token\",realm=\"Something\",oauth_signature_method=\"HMAC-SHA1\"";

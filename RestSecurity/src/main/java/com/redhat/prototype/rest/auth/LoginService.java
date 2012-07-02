@@ -48,7 +48,6 @@ public class LoginService {
 
             log.info("Storing OAuth params in user session");
 
-            //TODO is using sessions the best way?
             // Store OAuth request params in the user's session
             request.getSession().setAttribute(OAuth.OAUTH_CLIENT_ID, oauthRequest.getClientId());
             request.getSession().setAttribute(OAuth.OAUTH_REDIRECT_URI, oauthRequest.getRedirectURI());
@@ -122,6 +121,7 @@ public class LoginService {
             builder.setRefreshToken(refreshToken);
             builder.setAccessToken(accessToken);
             builder.setExpiresIn(ONE_HOUR);
+            log.info("Access token expires in: " + ONE_HOUR);
 
             //final OAuthResponse response = builder.location(redirectURI).buildHeaderMessage();
             final OAuthResponse response = builder.location(redirectUri).buildQueryMessage();
@@ -137,15 +137,3 @@ public class LoginService {
         }
     }
 }
-
-//        String fullName = request.getUserPrincipal().getName();
-//        String email = null;
-//        UserRegistration user = (UserRegistration)request.getSession().getAttribute("user");
-//        if (user != null) {
-//            fullName = user.getFirstName() + " " + user.getLastName();
-//            email = user.getEmail();
-//        }
-//
-//        String message = "Logged in as name " + fullName + " with email " + email;
-//
-//        log.info(message);

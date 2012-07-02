@@ -1,9 +1,10 @@
 package com.redhat.gwtsecurity.client.oauth;
 
-import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
+
+import static com.redhat.gwtsecurity.client.oauth.Constants.*;
 
 public class OAuthRequest {
 
@@ -54,6 +55,13 @@ public class OAuthRequest {
     }
 
     private void setOAuthHeader(String token) {
-        builder.setHeader("Authorization", "OAuth " + "oauth_signature_method " + "Bearer " + token);
+        builder.setHeader(AUTHORISATION_HEADER, buildOAuthRequestString(token));
+    }
+
+    private String buildOAuthRequestString(String token) {
+        return new StringBuilder(AUTH_SCHEME).append(SPACE)
+                .append(BEARER).append(SPACE)
+                .append(token)
+                .toString();
     }
 }

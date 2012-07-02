@@ -32,11 +32,12 @@ public class TokenService {
     @Inject
     private Logger log;
 
-//    @POST
-//    @Consumes("application/x-www-form-urlencoded")
-//    @Produces("application/json")
-    @GET
+    @POST
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
     public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
+
+        log.info("Processing token refresh request");
 
         OAuthTokenRequest oauthRequest = null;
 
@@ -54,35 +55,7 @@ public class TokenService {
                                 .buildJSONMessage();
                 return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
             }
-
-            // Do checking for different grant types
-            // TODO Not allowing password grants or auth code grants - should perhaps put this code back in and throw error
-//            if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
-//                    .equals(GrantType.AUTHORIZATION_CODE.toString())) {
-//                if (!Common.AUTHORIZATION_CODE.equals(oauthRequest.getParam(OAuth.OAUTH_CODE))) {
-//                    //TODO implement check of valid auth code
-//                    // Should check auth code matches client id + user id from auth code request too
-//                    log.severe("Invalid auth code");
-//                    OAuthResponse response = OAuthASResponse
-//                            .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-//                            .setError(OAuthError.TokenResponse.INVALID_GRANT)
-//                            .setErrorDescription("invalid authorization code")
-//                            .buildJSONMessage();
-//                    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-//                }
-//            }
-
-//            else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
-//                    .equals(GrantType.PASSWORD.toString())) {
-//                if (!Common.PASSWORD.equals(oauthRequest.getPassword())
-//                        || !Common.USERNAME.equals(oauthRequest.getUsername())) {
-//                    OAuthResponse response = OAuthASResponse
-//                            .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
-//                            .setError(OAuthError.TokenResponse.INVALID_GRANT)
-//                            .setErrorDescription("invalid username or password")
-//                            .buildJSONMessage();
-//                    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-//                }
+            // Process refresh token request
             else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
                     .equals(GrantType.REFRESH_TOKEN.toString())) {
                 if (refreshTokenInvalid(oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN))) {
@@ -90,7 +63,7 @@ public class TokenService {
                     OAuthResponse response = OAuthASResponse
                             .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                             .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                            .setErrorDescription("Refresh token not allowed")
+                            .setErrorDescription("Invalid refresh token")
                             .buildJSONMessage();
                     return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
                 } else {
@@ -101,21 +74,24 @@ public class TokenService {
                     String refreshToken = oauthIssuerImpl.refreshToken();
                     log.info("Issuing refresh token: " + refreshToken);
                     OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK)
-                            .setAccessToken(oauthIssuerImpl.accessToken())
+                            .setAccessToken(accessToken)
                             .setExpiresIn(ONE_HOUR)
-                            .setRefreshToken(oauthIssuerImpl.refreshToken())
-                            .buildQueryMessage();
-                    return Response.status(response.getResponseStatus()).build();
+                            .setRefreshToken(refreshToken)
+                            .buildJSONMessage();
+                    log.info("Entity body: " + response.getBody());
+                    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
                 }
             }
 
+            // Anything else is invalid
             OAuthResponse response = OAuthASResponse
                     .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                     .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                    .setErrorDescription("Cannot process request")
+                    .setErrorDescription("Cannot process request with this grant_type")
                     .buildJSONMessage();
             return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
         } catch (OAuthProblemException e) {
+            log.info("Caught exception: " + e.getMessage());
             OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e)
                     .buildJSONMessage();
             return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
@@ -126,19 +102,4 @@ public class TokenService {
     private boolean refreshTokenInvalid(String refreshToken) {
         return false;
     }
-
-//    @GET
-//    @Consumes("application/x-www-form-urlencoded")
-//    @Produces("application/json")
-//    public Response authorizeGet(@Context HttpServletRequest request) throws OAuthSystemException {
-//        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-//
-//        OAuthResponse response = OAuthASResponse
-//                .tokenResponse(HttpServletResponse.SC_OK)
-//                .setAccessToken(oauthIssuerImpl.accessToken())
-//                .setExpiresIn("3600")
-//                .buildJSONMessage();
-//
-//        return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
-//    }
 }

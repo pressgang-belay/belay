@@ -13,7 +13,6 @@ import com.google.gwt.user.client.Window;
 public class OAuthHandler {
 
     private AuthorisationRequest lastAuthRequest;
-    private OAuthRequest lastOAuthRequest;
     private final static Authoriser AUTH = Authoriser.get();
 
     public static final OAuthHandler get() {
@@ -34,17 +33,13 @@ public class OAuthHandler {
         AUTH.authorise(request, callback);
     }
 
-//    public double expiresIn(AuthorisationRequest request) {
-//        return AUTH.expiresIn(request);
-//    }
-
     /**
      * Request a resource from an OAuth 2.0 provider, refreshing authentication if necessary.
      *
-     * @param request Request for resource.
-     * @param callback Callback for when access has been granted.
+     * @param request OAuthRequest for resource.
+     * @param callback RequestCallback defining actions when request succeeds or fails.
      */
-    public void makeRequest(final OAuthRequest request, final RequestCallback callback) {
+    public void sendRequest(final OAuthRequest request, final RequestCallback callback) {
         if (lastAuthRequest == null) {
             callback.onError(null, new RuntimeException("You must log in before making requests"));
         }
@@ -63,6 +58,11 @@ public class OAuthHandler {
         });
     }
 
+    //TODO remove; this is for testing only
+    public void doRefresh(final AuthorisationRequest authorisationRequest, final Callback<String, Throwable> callback) {
+        AUTH.doRefresh(authorisationRequest, AUTH.getToken(authorisationRequest), callback);
+    }
+
     private void doOAuthRequest(OAuthRequest request, final RequestCallback callback, String token) {
         try {
             request.sendRequest(token, callback);
@@ -72,7 +72,7 @@ public class OAuthHandler {
     }
 
     /**
-     * Clears all tokens stored by this class.
+     * Clears all stored tokens.
      */
     public void clearAllTokens() {
         AUTH.clearAllTokens();

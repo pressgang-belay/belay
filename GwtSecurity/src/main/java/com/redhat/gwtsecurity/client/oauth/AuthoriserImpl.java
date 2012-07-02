@@ -35,7 +35,7 @@ class AuthoriserImpl extends Authoriser {
 
     AuthoriserImpl() {
         super(getTokenStore(), new RealClock(), new RealUrlCodex(), Scheduler.get(),
-                GWT.getModuleBaseURL() + "/oAuthWindow.html");
+                GWT.getModuleBaseURL() + "oAuthWindow.html");
         register();
     }
 

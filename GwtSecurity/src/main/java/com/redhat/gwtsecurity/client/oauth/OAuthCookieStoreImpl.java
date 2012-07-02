@@ -32,11 +32,12 @@ public class OAuthCookieStoreImpl extends OAuthTokenStoreImpl {
 
     private static final String COOKIE_PREFIX = "gwt-oauth2-";
 
+    //TODO test this - changed name to key
     @SuppressWarnings("deprecation")
     @Override
     public native void set(String key, String value) /*-{
     $doc.cookie = @com.redhat.gwtsecurity.client.oauth.OAuthCookieStoreImpl::COOKIE_PREFIX +
-        encodeURIComponent(name) + '=' + encodeURIComponent(value);
+        encodeURIComponent(key) + '=' + encodeURIComponent(value);
   }-*/;
 
     @Override
