@@ -6,7 +6,7 @@ public class Constants {
     static final String QUERY_STRING_MARKER = "?";
     static final String FRAGMENT_MARKER = "#";
     static final String PARAMETER_SEPARATOR = "&";
-    static final String NAME_VALUE_SEPARATOR = "=";
+    static final String KEY_VALUE_SEPARATOR = "=";
     static final String SEPARATOR = "-----";
     static final String AUTHORISATION_HEADER = "Authorization";
     static final String AUTH_SCHEME = "OAuth";
@@ -27,6 +27,7 @@ public class Constants {
     static final String CLIENT_SECRET = "client_secret";
     static final String CONTENT_TYPE = "Content-Type";
     static final String FORM_URLENCODED = "application/x-www-form-urlencoded";
+    static final String SKYNET_CLIENT_SECRET = "none";
     static final double FIVE_MINUTES = 5 * 60 * 1000;
     static final int SC_OK = 200;
 }

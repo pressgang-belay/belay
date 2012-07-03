@@ -22,18 +22,18 @@ public class App implements EntryPoint {
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/RestSecurity/rest/auth/token";
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String GOOGLE_PROVIDER_URL = "gmail.com";
-    // This app's personal client ID assigned by the Skynet OAuth page
+    // This app's personal client ID assigned by the Skynet OAuth server
     private static final String SKYNET_CLIENT_ID = "skynet_id"; // TODO
 
     private static String accessToken;
 
     public void onModuleLoad() {
+        Authoriser.export();
         addRedHatLogin();
         addGoogleLogin();
         addGetPeople();
         addClearTokens();
         addRefresh();
-        Authoriser.export();
     }
 
     private void addRedHatLogin() {
@@ -44,19 +44,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, RED_HAT_PROVIDER_URL);
-                AUTH_HANDLER.login(req, new Callback<String, Throwable>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Window.alert("Result: " + result);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Error:\n" + caught.getMessage());
-                    }
-                });
+                AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -67,19 +57,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, GOOGLE_PROVIDER_URL);
-                AUTH_HANDLER.login(req, new Callback<String, Throwable>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Window.alert("Result: " + result);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Error:\n" + caught.getMessage());
-                    }
-                });
+                AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -111,19 +91,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest req = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, RED_HAT_PROVIDER_URL);
-                AUTH_HANDLER.doRefresh(req, new Callback<String, Throwable>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Window.alert("Result: " + result);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Error:\n" + caught.getMessage());
-                    }
-                });
+                AUTH_HANDLER.doRefresh(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -146,5 +116,19 @@ public class App implements EntryPoint {
             }
         });
         RootPanel.get().add(button);
+    }
+
+    private static Callback<String, Throwable> getStandardCallback() {
+        return new Callback<String, Throwable>() {
+            @Override
+            public void onSuccess(String result) {
+                Window.alert("Result: " + result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                Window.alert("Error:\n" + caught.getMessage());
+            }
+        };
     }
 }

@@ -6,7 +6,6 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.http.client.*;
 import com.google.gwt.json.client.*;
-import com.google.gwt.user.client.Window;
 
 import static com.redhat.gwtsecurity.client.oauth.Constants.*;
 
@@ -31,15 +30,15 @@ public abstract class Authoriser {
     private final Clock clock;
     final OAuthTokenStore tokenStore;
     final Scheduler scheduler;
-    String oauthWindowUrl;
+    String oAuthWindowUrl;
 
     Authoriser(OAuthTokenStore tokenStore, Clock clock, UrlCodex urlCodex, Scheduler scheduler,
-               String oauthWindowUrl) {
+               String oAuthWindowUrl) {
         this.tokenStore = tokenStore;
         this.clock = clock;
         this.urlCodex = urlCodex;
         this.scheduler = scheduler;
-        this.oauthWindowUrl = oauthWindowUrl;
+        this.oAuthWindowUrl = oAuthWindowUrl;
     }
 
     /**
@@ -77,8 +76,8 @@ public abstract class Authoriser {
             String authUrl = new StringBuilder(request.toLoginUrl(urlCodex))
                     .append(PARAMETER_SEPARATOR)
                     .append(REDIRECT_URI)
-                    .append(NAME_VALUE_SEPARATOR)
-                    .append(urlCodex.encode(oauthWindowUrl))
+                    .append(KEY_VALUE_SEPARATOR)
+                    .append(urlCodex.encode(oAuthWindowUrl))
                     .toString();
             doAuthLogin(authUrl, callback);
         } else if (expiringInFiveOrExpired(info)) {
@@ -113,11 +112,13 @@ public abstract class Authoriser {
     /**
      * Refresh the OAuth 2.0 token for this application.
      */
-    void doRefresh(final AuthorisationRequest authorisationRequest, TokenInfo tokenInfo, final Callback<String, Throwable> callback) {
+    void doRefresh(final AuthorisationRequest authorisationRequest, TokenInfo tokenInfo,
+                   final Callback<String, Throwable> callback) {
         RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, authorisationRequest.getTokenUrl());
         builder.setHeader(CONTENT_TYPE, FORM_URLENCODED);
         try {
-            builder.sendRequest(buildOAuthRefreshTokenString(authorisationRequest.getClientId(), tokenInfo.refreshToken), new RequestCallback() {
+            builder.sendRequest(buildOAuthRefreshTokenString(authorisationRequest.getClientId(), tokenInfo.refreshToken),
+                    new RequestCallback() {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
                     if (SC_OK == response.getStatusCode()) {
@@ -139,7 +140,8 @@ public abstract class Authoriser {
                         }
                     } else {
                         // TODO create exception class/es for these failures
-                        callback.onFailure(new RuntimeException("Could not obtain login authorisation. Response status: " + response.getStatusCode()));
+                        callback.onFailure(new RuntimeException("Could not obtain login authorisation. Response status: "
+                                + response.getStatusCode()));
                     }
                 }
 
@@ -174,13 +176,11 @@ public abstract class Authoriser {
         }
     }
 
-    // We append the client_secret parameter as this is required by the OAuth server, but as we don't have a client secret
-    // we set it as none
     private String buildOAuthRefreshTokenString(String clientId, String refreshToken) {
-        return new StringBuilder(GRANT_TYPE).append(NAME_VALUE_SEPARATOR).append(REFRESH_TOKEN).append(PARAMETER_SEPARATOR)
-                .append(CLIENT_ID).append(NAME_VALUE_SEPARATOR).append(clientId).append(PARAMETER_SEPARATOR)
-                .append(REFRESH_TOKEN).append(NAME_VALUE_SEPARATOR).append(refreshToken).append(PARAMETER_SEPARATOR)
-                .append(CLIENT_SECRET).append(NAME_VALUE_SEPARATOR).append("none")
+        return new StringBuilder(GRANT_TYPE).append(KEY_VALUE_SEPARATOR).append(REFRESH_TOKEN).append(PARAMETER_SEPARATOR)
+                .append(CLIENT_ID).append(KEY_VALUE_SEPARATOR).append(clientId).append(PARAMETER_SEPARATOR)
+                .append(REFRESH_TOKEN).append(KEY_VALUE_SEPARATOR).append(refreshToken).append(PARAMETER_SEPARATOR)
+                .append(CLIENT_SECRET).append(KEY_VALUE_SEPARATOR).append(SKYNET_CLIENT_SECRET)
                 .toString();
     }
 
@@ -190,7 +190,7 @@ public abstract class Authoriser {
      * embedded Explorer.
      */
     public void setOAuthWindowUrl(String url) {
-        this.oauthWindowUrl = url;
+        this.oAuthWindowUrl = url;
     }
 
     /**
@@ -206,9 +206,9 @@ public abstract class Authoriser {
         String errorUri = "";
 
         // Get the refresh token value from the query string if it's there
-        // Future versions of the Apache Amber library should include this in the URI fragment with everything else
+        // Future versions of the Apache Amber library may include this in the URI fragment with everything else
         // but for now this is the way it is delivered
-        String refreshString = REFRESH_TOKEN + NAME_VALUE_SEPARATOR;
+        String refreshString = REFRESH_TOKEN + KEY_VALUE_SEPARATOR;
 
         if (queryString.startsWith(QUERY_STRING_MARKER) && queryString.contains(refreshString)) {
             int tokenStartIndex = queryString.indexOf(refreshString) + refreshString.length();
@@ -263,7 +263,8 @@ public abstract class Authoriser {
             lastCallback.onFailure(
                     new RuntimeException("Error from provider: " + error + errorDesc + errorUri));
         } else if (info.accessToken == null || info.refreshToken == null) {
-            lastCallback.onFailure(new RuntimeException("Could not find access_token and/or refresh_token in hash " + hash));
+            lastCallback.onFailure(new RuntimeException("Could not find access_token and/or refresh_token in hash "
+                    + hash));
         } else {
             setToken(lastAuthRequest, info);
             lastCallback.onSuccess(info.accessToken);

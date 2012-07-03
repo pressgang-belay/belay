@@ -66,10 +66,10 @@ public class AuthorisationRequest {
     String toLoginUrl(Authoriser.UrlCodex urlCodex) {
         return new StringBuilder(authUrl)
                 .append(authUrl.contains(QUERY_STRING_MARKER) ? PARAMETER_SEPARATOR : QUERY_STRING_MARKER)
-                .append(CLIENT_ID).append(NAME_VALUE_SEPARATOR).append(urlCodex.encode(clientId))
-                .append(PARAMETER_SEPARATOR).append(RESPONSE_TYPE).append(NAME_VALUE_SEPARATOR).append(TOKEN)
-                .append(PARAMETER_SEPARATOR).append(SCOPE).append(NAME_VALUE_SEPARATOR).append(scopesToString(urlCodex))
-                .append(PARAMETER_SEPARATOR).append(PROVIDER).append(NAME_VALUE_SEPARATOR).append(urlCodex.encode(openIdProvider))
+                .append(CLIENT_ID).append(KEY_VALUE_SEPARATOR).append(urlCodex.encode(clientId))
+                .append(PARAMETER_SEPARATOR).append(RESPONSE_TYPE).append(KEY_VALUE_SEPARATOR).append(TOKEN)
+                .append(PARAMETER_SEPARATOR).append(SCOPE).append(KEY_VALUE_SEPARATOR).append(scopesToString(urlCodex))
+                .append(PARAMETER_SEPARATOR).append(PROVIDER).append(KEY_VALUE_SEPARATOR).append(urlCodex.encode(openIdProvider))
                 .toString();
     }
 
