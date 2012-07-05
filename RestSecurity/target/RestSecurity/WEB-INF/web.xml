@@ -2,19 +2,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-    <!-- The OpenID Filter handles user authentication -->
+    <!-- The OpenId Filter handles user authentication -->
     <filter>
-        <filter-name>OpenID Filter</filter-name>
+        <filter-name>OpenId Filter</filter-name>
         <filter-class>com.google.code.openid.RelyingPartyFilter</filter-class>
     </filter>
 
-    <!-- This defines the URL that requires OpenID authentication -->
+    <!-- This defines the URL that requires OpenId authentication -->
     <filter-mapping>
-        <filter-name>OpenID Filter</filter-name>
+        <filter-name>OpenId Filter</filter-name>
         <url-pattern>/rest/auth/login</url-pattern>
     </filter-mapping>
 
-    <!-- The OAuth Filter handles authentication/authorization for protected resources -->
+    <!-- The OAuth Filter handles authentication/authorisation for protected resources -->
 	<filter>
 		<filter-name>OAuth Filter</filter-name>
 		<filter-class>org.apache.amber.oauth2.rsfilter.OAuthFilter</filter-class>
@@ -28,7 +28,7 @@
 
 	<context-param>
 		<param-name>oauth.rs.provider-class</param-name>
-		<param-value>com.redhat.prototype.oauth.OAuthRSProviderImpl</param-value>
+		<param-value>com.redhat.prototype.oauth.request.OAuthRSProviderImpl</param-value>
 	</context-param>
 
     <context-param>
@@ -41,8 +41,4 @@
         <param-value>/rest/auth/login</param-value>
     </context-param>
 
-    <context-param>
-        <param-name>oauth.rs.realm</param-name>
-        <param-value>OAuthRealm</param-value>
-    </context-param>
 </web-app>

@@ -1,39 +1,13 @@
 package com.redhat.prototype.rest;
 
-import com.redhat.prototype.Common;
 import com.redhat.prototype.data.PersonRepository;
 import com.redhat.prototype.model.Person;
 import com.redhat.prototype.service.PersonRegistration;
-import org.apache.amber.oauth2.common.OAuth;
-import org.apache.amber.oauth2.common.error.OAuthError;
-import org.apache.amber.oauth2.common.exception.OAuthProblemException;
-import org.apache.amber.oauth2.common.exception.OAuthSystemException;
-import org.apache.amber.oauth2.common.message.OAuthResponse;
-import org.apache.amber.oauth2.common.message.types.ParameterStyle;
-import org.apache.amber.oauth2.common.utils.OAuthUtils;
-import org.apache.amber.oauth2.rs.request.OAuthAccessResourceRequest;
-import org.apache.amber.oauth2.rs.response.OAuthRSResponse;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.impl.auth.DigestScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.util.EntityUtils;
 
-import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -42,7 +16,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -80,7 +53,7 @@ public class PersonService {
             log.info("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        log.info("Found person " + person.getName() + " with id " + id);
+        log.info("Found person " + person.getPersonName() + " with id " + id);
         return person;
     }
 
@@ -96,9 +69,9 @@ public class PersonService {
 
         Response.ResponseBuilder builder = null;
 
-        if (person != null && person.getId() != null) {
+        if (person != null && person.getPersonId() != null) {
             String message = "Use PUT to update person with id "
-                    + person.getId();
+                    + person.getPersonId();
             builder = Response.status(Response.Status.BAD_REQUEST).entity(
                     message);
         } else {
@@ -106,10 +79,10 @@ public class PersonService {
                 // Validates member using bean validation
                 validatePerson(person);
                 personRegistration.register(person);
-                log.info("Registered person " + person.getName() + " with id: "
-                        + person.getId());
+                log.info("Registered person " + person.getPersonName() + " with id: "
+                        + person.getPersonId());
                 // Create an "ok" response
-                long id = person.getId();
+                long id = person.getPersonId();
                 String result = "Person created with id " + id + " at: "
                         + "/rest/people/" + id;
                 builder = Response.ok(result);
@@ -141,7 +114,7 @@ public class PersonService {
 
         Response.ResponseBuilder builder = null;
 
-        if (person != null && person.getId() == null) {
+        if (person != null && person.getPersonId() == null) {
             String message = "Use POST to create a new person and generate an id";
             builder = Response.status(Response.Status.BAD_REQUEST).entity(
                     message);
@@ -150,23 +123,23 @@ public class PersonService {
                 // Validates member using bean validation
                 validatePerson(person);
 
-                Person personWithId = personRepository.findById(person.getId());
+                Person personWithId = personRepository.findById(person.getPersonId());
 
                 if (personWithId == null) {
-                    log.info("Attempt to use PUT to create " + person.getName()
-                            + " with id: " + person.getId());
+                    log.info("Attempt to use PUT to create " + person.getPersonName()
+                            + " with id: " + person.getPersonId());
                     String result = "No person to update at: "
-                            + "/rest/people/" + person.getId();
+                            + "/rest/people/" + person.getPersonId();
                     builder = Response.status(Response.Status.BAD_REQUEST)
                             .entity(result);
 
                 } else {
                     personRegistration.update(person);
-                    log.info("Updated person " + person.getName()
-                            + " with id: " + person.getId());
+                    log.info("Updated person " + person.getPersonName()
+                            + " with id: " + person.getPersonId());
                     // Create an "ok" response
                     String result = "Person at: " + "/rest/people/"
-                            + person.getId() + " is up-to-date";
+                            + person.getPersonId() + " is up-to-date";
                     builder = Response.ok(result);
                 }
             } catch (ConstraintViolationException ce) {
@@ -205,7 +178,7 @@ public class PersonService {
         } else {
             try {
                 personRegistration.delete(person);
-                log.info("Deleted person " + person.getName() + " with id "
+                log.info("Deleted person " + person.getPersonName() + " with id "
                         + id);
                 builder = Response.ok("Deleted person with id " + id);
             } catch (Exception e) {
@@ -246,16 +219,16 @@ public class PersonService {
         }
 
         // Check the uniqueness of the email address
-        if (person.getEmail() != null
-                && emailAlreadyExists(person.getEmail(), person.getId())) {
-            log.info("Email " + person.getEmail() + " already exists");
+        if (person.getPersonEmail() != null
+                && emailAlreadyExists(person.getPersonEmail(), person.getPersonId())) {
+            log.info("Email " + person.getPersonEmail() + " already exists");
             throw new ValidationException("Unique Email Violation");
         }
 
         // Check the uniqueness of the username
-        if (person.getUsername() != null
-                && usernameAlreadyExists(person.getUsername(), person.getId())) {
-            log.info("Username " + person.getUsername() + "already exists");
+        if (person.getPersonUsername() != null
+                && usernameAlreadyExists(person.getPersonUsername(), person.getPersonId())) {
+            log.info("Username " + person.getPersonUsername() + "already exists");
             throw new ValidationException("Unique Username Violation");
         }
     }
@@ -350,6 +323,6 @@ public class PersonService {
 
     private boolean detailDoesNotBelongToPersonBeingProcessed(Long id,
                                                               Person person) {
-        return person.getId() == null || person.getId() != id;
+        return person.getPersonId() == null || person.getPersonId() != id;
     }
 }

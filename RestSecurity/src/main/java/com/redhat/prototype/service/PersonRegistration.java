@@ -23,19 +23,19 @@ public class PersonRegistration {
 	private Event<Person> personEventSrc;
 
 	public void register(Person person) throws Exception {
-		log.info("Registering " + person.getName());
+		log.info("Registering " + person.getPersonName());
 		em.persist(person);
 		personEventSrc.fire(person);
 	}
 	
 	public void update(Person person) throws Exception {
-		log.info("Updating person " + person.getId());
+		log.info("Updating person " + person.getPersonId());
 		em.merge(person);
 		personEventSrc.fire(person);
 	}
 	
 	public void delete(Person person) throws Exception {
-		log.info("Deleting person " + person.getId());
+		log.info("Deleting person " + person.getPersonId());
 		em.remove(em.merge(person));
 	}
 }

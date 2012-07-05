@@ -20,7 +20,7 @@ public class PersonListProducer {
 	
 	private List<Person> people;
 	
-	// @Named provides access the return value via the EL variable name "members" in the UI
+	// @Named provides access to the returned value via the EL variable name "members" in the UI
 	@Produces
 	@Named
 	public List<Person> getPeople() {

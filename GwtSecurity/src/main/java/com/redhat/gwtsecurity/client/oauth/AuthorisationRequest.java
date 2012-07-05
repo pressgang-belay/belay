@@ -1,6 +1,6 @@
 package com.redhat.gwtsecurity.client.oauth;
 
-import static com.redhat.gwtsecurity.client.oauth.Constants.*;
+import static com.redhat.gwtsecurity.client.oauth.Common.*;
 
 /**
  * Includes code from the gwt-oauth2-0.2-alpha library found at http://code.google.com/p/gwt-oauth2/

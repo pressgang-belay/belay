@@ -18,12 +18,7 @@ package com.redhat.prototype.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -34,73 +29,77 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 @XmlRootElement
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "email",
-		"username" }))
+@Table(name="PERSON", uniqueConstraints = @UniqueConstraint(columnNames = { "PERSON_NAME",
+		"PERSON_USERNAME" }))
 public class Person implements Serializable {
 
 	private static final long serialVersionUID = 8570615351546278428L;
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
 
-	@NotNull
-	@Size(min = 1, max = 25)
-	@Pattern(regexp = "[A-Za-z ]*", message = "must contain only letters and spaces")
-	private String name;
-
-	@NotNull
-	@Size(min = 1, max = 15)
-	@Pattern(regexp = "[A-Za-z ]*", message = "must contain only letters and spaces")
-	private String username;
-
-	@NotNull
-	@NotEmpty
-	@Email
-	private String email;
-
-	@NotNull
-	@Size(min = 1, max = 15)
-	@Pattern(regexp = "[A-Za-z0-9!_]*", message = "must contain only letters, numbers or the characters ! or _")
+	private Long personId;
+	private String personName;
+	private String personUsername;
+	private String personEmail;
 	private String password;
 
-	public Long getId() {
-		return id;
+    protected Person() {
+    }
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "PERSON_ID")
+	public Long getPersonId() {
+		return personId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+    @NotNull
+    @Size(min = 1, max = 25)
+    @Pattern(regexp = "[A-Za-z ]*", message = "must contain only letters and spaces")
+    @Column(name = "PERSON_NAME")
+	public String getPersonName() {
+		return personName;
 	}
 
-	public String getName() {
-		return name;
+    @NotNull
+    @Size(min = 1, max = 15)
+    @Pattern(regexp = "[A-Za-z]*", message = "must contain only letters")
+    @Column(name = "PERSON_USERNAME")
+	public String getPersonUsername() {
+		return personUsername;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+    @NotNull
+    @NotEmpty
+    @Email
+    @Column(name = "PERSON_EMAIL")
+	public String getPersonEmail() {
+		return personEmail;
 	}
 
-	public String getUsername() {
-		return username;
+    @NotNull
+    @Size(min = 1, max = 15)
+    @Pattern(regexp = "[A-Za-z0-9!_]*", message = "must contain only letters, numbers or the characters ! or _")
+    @Column(name = "PERSON_PASSWORD")
+    public String getPersonPassword() {
+        return password;
+    }
+
+    public void setPersonId(Long personId) {
+        this.personId = personId;
+    }
+
+    public void setPersonName(String name) {
+        this.personName = name;
+    }
+
+    public void setPersonUsername(String personUsername) {
+        this.personUsername = personUsername;
+    }
+
+	public void setPersonEmail(String personEmail) {
+		this.personEmail = personEmail;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
+	public void setPersonPassword(String password) {
 		this.password = password;
 	}
 }

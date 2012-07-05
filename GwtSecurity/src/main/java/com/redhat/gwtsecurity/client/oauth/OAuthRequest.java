@@ -4,7 +4,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 
-import static com.redhat.gwtsecurity.client.oauth.Constants.*;
+import static com.redhat.gwtsecurity.client.oauth.Common.*;
 
 public class OAuthRequest {
 

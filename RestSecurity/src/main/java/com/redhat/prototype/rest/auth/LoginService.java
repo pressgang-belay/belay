@@ -1,7 +1,7 @@
 package com.redhat.prototype.rest.auth;
 
 import com.google.code.openid.AuthorizationHeaderBuilder;
-import com.redhat.prototype.oauth.OAuthIdRequest;
+import com.redhat.prototype.oauth.login.OAuthIdRequest;
 import org.apache.amber.oauth2.as.issuer.MD5Generator;
 import org.apache.amber.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
@@ -41,12 +41,8 @@ public class LoginService {
 
         log.info("Processing login request");
 
-        OAuthIdRequest oauthRequest = null;
-
         try {
-            oauthRequest = new OAuthIdRequest(request);
-
-            log.info("Storing OAuth params in user session");
+            OAuthIdRequest oauthRequest = new OAuthIdRequest(request);
 
             // Store OAuth request params in the user's session
             request.getSession().setAttribute(OAuth.OAUTH_CLIENT_ID, oauthRequest.getClientId());
@@ -55,29 +51,24 @@ public class LoginService {
                 request.getSession().setAttribute(OAuth.OAUTH_SCOPE, oauthRequest.getScopes());
             }
 
-            // Get user to log into OpenID provider
+            // Get user to log into OpenId provider
             Response.ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-            if (request.getParameter("provider") != null) {
-                log.info("Sending request for login authentication");
-                builder.header("WWW-Authenticate", new AuthorizationHeaderBuilder()
-                        .forIdentifier(request.getParameter("provider"))
-                        .includeStandardAttributes()
-                        .buildHeader());
-            } else {
-                builder.entity("Please specify provider");
-            }
+            log.info("Sending request for login authentication");
+            builder.header("WWW-Authenticate", new AuthorizationHeaderBuilder()
+                    .forIdentifier(request.getParameter("provider"))
+                    .includeStandardAttributes()
+                    .buildHeader());
             return builder.build();
         } catch (OAuthProblemException e) {
 
             log.severe("OAuthProblemException thrown: " + e.getMessage());
 
             final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_FOUND);
-
             String redirectUri = e.getRedirectUri();
 
             if (OAuthUtils.isEmpty(redirectUri)) {
                 throw new WebApplicationException(
-                        responseBuilder.entity("OAuth callback URL needs to be provided by client!!!").build());
+                        responseBuilder.entity("OAuth callback URL needs to be provided by client").build());
             }
             final OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND)
                     .error(e)
@@ -90,23 +81,21 @@ public class LoginService {
     @POST
     public Response authorise(@Context HttpServletRequest request) throws URISyntaxException, OAuthSystemException {
 
-        String redirectUri = "";
-
-        log.info("Processing login attempt");
+        log.info("Processing authorisation attempt");
 
         OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-
         String identifier = (String) request.getAttribute("openid.identifier");
 
         if (identifier != null) {
             log.info("User has been authenticated as: " + identifier);
-
-
             String clientId = (String) request.getSession().getAttribute(OAuth.OAUTH_CLIENT_ID);
+            request.getSession().removeAttribute(OAuth.OAUTH_CLIENT_ID);
             log.info("Authenticated user came from client: " + clientId);
-            redirectUri = (String) request.getSession().getAttribute(OAuth.OAUTH_REDIRECT_URI);
+            String redirectUri = (String) request.getSession().getAttribute(OAuth.OAUTH_REDIRECT_URI);
+            request.getSession().removeAttribute(OAuth.OAUTH_REDIRECT_URI);
             log.info("Redirect URI supplied is: " + redirectUri);
             HashSet<String> scopes = (HashSet<String>) request.getSession().getAttribute(OAuth.OAUTH_SCOPE);
+            request.getSession().removeAttribute(OAuth.OAUTH_SCOPE);
             log.info("User scopes requested are: " + scopes);
 
             OAuthASResponse.OAuthTokenResponseBuilder builder = OAuthASResponse
@@ -123,9 +112,7 @@ public class LoginService {
             builder.setExpiresIn(ONE_HOUR);
             log.info("Access token expires in: " + ONE_HOUR);
 
-            //final OAuthResponse response = builder.location(redirectURI).buildHeaderMessage();
             final OAuthResponse response = builder.location(redirectUri).buildQueryMessage();
-
             URI url = new URI(response.getLocationUri());
             log.info("Location URI: " + url);
             return Response.status(response.getResponseStatus()).location(url).build();

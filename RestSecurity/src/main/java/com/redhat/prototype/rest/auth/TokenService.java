@@ -39,16 +39,14 @@ public class TokenService {
 
         log.info("Processing token refresh request");
 
-        OAuthTokenRequest oauthRequest = null;
-
         OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
 
         try {
-            oauthRequest = new OAuthTokenRequest(request);
+            OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
 
-            // Check if clientid is valid
+            // Check if client_id is valid
             if (!Common.CLIENT_ID.equals(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID))) {
-                log.severe("Client ID could not be found");
+                log.severe("Client_id could not be found");
                 OAuthResponse response =
                         OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                                 .setError(OAuthError.TokenResponse.INVALID_CLIENT).setErrorDescription("client_id not found")

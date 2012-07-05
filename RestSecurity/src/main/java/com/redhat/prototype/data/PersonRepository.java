@@ -1,6 +1,6 @@
 package com.redhat.prototype.data;
 
-import java.util.List;
+import com.redhat.prototype.model.Person;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -8,13 +8,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import com.redhat.prototype.model.Person;
+import java.util.List;
 
 @ApplicationScoped
 public class PersonRepository {
 
-	@Inject
+    @Inject
 	private EntityManager em;
 
 	public Person findById(Long id) {
@@ -30,7 +29,7 @@ public class PersonRepository {
 		// feature in JPA 2.0
 		// criteria.select(Person).where(cb.equal(Person.get(Person_.name),
 		// email));
-		criteria.select(person).where(cb.equal(person.get("email"), email));
+		criteria.select(person).where(cb.equal(person.get("personEmail"), email));
 		return em.createQuery(criteria).getSingleResult();
 	}
 	
@@ -38,12 +37,7 @@ public class PersonRepository {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
 		Root<Person> person = criteria.from(Person.class);
-		// Swap criteria statements if you would like to try out type-safe
-		// criteria queries, a new
-		// feature in JPA 2.0
-		// criteria.select(Person).where(cb.equal(Person.get(Person_.name),
-		// email));
-		criteria.select(person).where(cb.equal(person.get("username"), username));
+		criteria.select(person).where(cb.equal(person.get("personUsername"), username));
 		return em.createQuery(criteria).getSingleResult();
 	}
 
@@ -51,11 +45,7 @@ public class PersonRepository {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
 		Root<Person> person = criteria.from(Person.class);
-		// Swap criteria statements if you would like to try out type-safe
-		// criteria queries, a new
-		// feature in JPA 2.0
-		// criteria.select(Person).orderBy(cb.asc(Person.get(Person_.name)));
-		criteria.select(person).orderBy(cb.asc(person.get("name")));
+		criteria.select(person).orderBy(cb.asc(person.get("personName")));
 		return em.createQuery(criteria).getResultList();
 	}
 
