@@ -8,6 +8,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,16 +19,17 @@ public class User implements Serializable {
     private static final long serialVersionUID = -2816937391756095960L;
 
     private Long userId;
-    private String identifier;
+    private String userIdentifier;
     private String firstName;
     private String lastName;
     private String email;
     private String language;
     private String country;
-    private Set<TokenGrant> tokenGrants;
-    private Set<Scope> userScopes;
+    private OpenIdProvider openIdProvider;
+    private TokenGrant tokenGrant;
+    private Set<Scope> userScopes = new HashSet<Scope>();
 
-    protected User() {
+    public User() {
     }
 
     @Id
@@ -39,10 +41,9 @@ public class User implements Serializable {
 
     @NotNull
     @Size(min = 1, max = 100)
-    @Pattern(regexp = "[A-Za-z0-9!_@.]*", message = "must contain only letters, numbers or the characters: [!_@.]")
     @Column(name = "USER_IDENTIFIER")
-    public String getIdentifier() {
-        return identifier;
+    public String getUserIdentifier() {
+        return userIdentifier;
     }
 
     @Pattern(regexp = "[A-Za-z'-]*", message = "must contain only letters, hyphens or apostrophes")
@@ -73,15 +74,22 @@ public class User implements Serializable {
         return country;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="USER_TOKEN_GRANT", joinColumns = { @JoinColumn(name = "USER_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "TOKEN_GRANT_ID") })
-    public Set<TokenGrant> getTokenGrants() {
-        return tokenGrants;
+    //@NotNull
+    @ManyToOne
+    @JoinTable(name="USER_OPENID_PROVIDER", joinColumns = { @JoinColumn(name = "USER_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "PROVIDER_ID") })
+    public OpenIdProvider getOpenIdProvider() {
+        return openIdProvider;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "USER_SCOPE", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "grantUser")
+    public TokenGrant getTokenGrant() {
+        return tokenGrant;
+    }
+
+    @ManyToMany
+    @JoinTable(name = "USER_SCOPE", joinColumns = { @JoinColumn(name = "USER_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
     public Set<Scope> getUserScopes() {
         return userScopes;
     }
@@ -90,8 +98,8 @@ public class User implements Serializable {
         this.userId = userId;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setUserIdentifier(String userIdentifier) {
+        this.userIdentifier = userIdentifier;
     }
 
     public void setFirstName(String firstName) {
@@ -114,11 +122,36 @@ public class User implements Serializable {
         this.country = country;
     }
 
-    public void setTokenGrants(Set<TokenGrant> tokenGrants) {
-        this.tokenGrants = tokenGrants;
+    public void setOpenIdProvider(OpenIdProvider openIdProvider) {
+        this.openIdProvider = openIdProvider;
+    }
+
+    public void setTokenGrant(TokenGrant tokenGrant) {
+        this.tokenGrant = tokenGrant;
     }
 
     public void setUserScopes(Set<Scope> userScopes) {
         this.userScopes = userScopes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (openIdProvider != null ? !openIdProvider.equals(user.openIdProvider) : user.openIdProvider != null)
+            return false;
+        if (!userIdentifier.equals(user.userIdentifier)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = userIdentifier.hashCode();
+        result = 31 * result + (openIdProvider != null ? openIdProvider.hashCode() : 0);
+        return result;
     }
 }

@@ -6,6 +6,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -19,9 +20,9 @@ public class ClientApplication implements Serializable {
     private String clientIdentifier;
     private String clientName;
     private String clientSecret;
-    private Set<TokenGrant> tokenGrants;
+    private Set<TokenGrant> tokenGrants = new HashSet<TokenGrant>();
 
-    protected ClientApplication() {
+    public ClientApplication() {
     }
 
     @Id
@@ -77,5 +78,25 @@ public class ClientApplication implements Serializable {
 
     public void setTokenGrants(Set<TokenGrant> tokenGrants) {
         this.tokenGrants = tokenGrants;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ClientApplication)) return false;
+
+        ClientApplication that = (ClientApplication) o;
+
+        if (!clientIdentifier.equals(that.clientIdentifier)) return false;
+        if (!clientName.equals(that.clientName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = clientIdentifier.hashCode();
+        result = 31 * result + clientName.hashCode();
+        return result;
     }
 }

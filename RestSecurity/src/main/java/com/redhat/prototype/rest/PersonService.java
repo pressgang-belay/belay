@@ -33,7 +33,7 @@ public class PersonService {
     private PersonRepository personRepository;
 
     @Inject
-    PersonRegistration personRegistration;
+    private PersonRegistration personRegistration;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -23,7 +23,7 @@ public class App implements EntryPoint {
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String GOOGLE_PROVIDER_URL = "gmail.com";
     // This app's personal client ID assigned by the Skynet OAuth server
-    private static final String SKYNET_CLIENT_ID = "skynet_id"; // TODO
+    private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
 
     private static String accessToken;
 

@@ -41,7 +41,7 @@ public class Person implements Serializable {
 	private String personEmail;
 	private String password;
 
-    protected Person() {
+    public Person() {
     }
 
     @Id
@@ -102,4 +102,24 @@ public class Person implements Serializable {
 	public void setPersonPassword(String password) {
 		this.password = password;
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Person)) return false;
+
+        Person person = (Person) o;
+
+        if (!personEmail.equals(person.personEmail)) return false;
+        if (!personUsername.equals(person.personUsername)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = personUsername.hashCode();
+        result = 31 * result + personEmail.hashCode();
+        return result;
+    }
 }

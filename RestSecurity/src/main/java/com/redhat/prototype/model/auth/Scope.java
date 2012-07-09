@@ -4,6 +4,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @XmlRootElement
@@ -14,7 +16,7 @@ public class Scope implements Serializable {
     private long scopeId;
     private String scopeName;
 
-    protected Scope() {
+    public Scope() {
     }
 
     @Id
@@ -36,5 +38,22 @@ public class Scope implements Serializable {
 
     public void setScopeName(String scopeName) {
         this.scopeName = scopeName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Scope)) return false;
+
+        Scope scope = (Scope) o;
+
+        if (!scopeName.equals(scope.scopeName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return scopeName.hashCode();
     }
 }

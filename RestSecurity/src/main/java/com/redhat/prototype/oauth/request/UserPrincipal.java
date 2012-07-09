@@ -18,6 +18,6 @@ public class UserPrincipal implements Principal {
     }
 
     public String getUserId() {
-        return user.getIdentifier();
+        return user.getUserIdentifier();
     }
 }

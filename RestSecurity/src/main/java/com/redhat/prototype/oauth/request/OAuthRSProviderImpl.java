@@ -1,6 +1,7 @@
 package com.redhat.prototype.oauth.request;
 
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
+import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.rsfilter.OAuthDecision;
 import org.apache.amber.oauth2.rsfilter.OAuthRSProvider;
 

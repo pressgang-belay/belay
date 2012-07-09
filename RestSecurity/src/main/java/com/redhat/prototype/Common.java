@@ -42,5 +42,12 @@ public class Common {
     public static final String BEARER = "bearer";
 
     public static final String OPENID_PROVIDER = "provider";
+    public static final String OPENID_IDENTIFIER = "openid.identifier";
+
     public static final String ONE_HOUR = "3600";
+
+    public static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
+
+    public static final String SYSTEM_ERROR = "System error";
+    public static final String INVALID_PROVIDER = "Invalid provider";
 }

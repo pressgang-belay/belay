@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,9 +22,9 @@ public class TokenGrant implements Serializable {
     private Date grantTimeStamp;
     private ClientApplication grantClient;
     private User grantUser;
-    private Set<Scope> grantScopes;
+    private Set<Scope> grantScopes = new HashSet<Scope>();
 
-    protected TokenGrant() {
+    public TokenGrant() {
     }
 
     @Id
@@ -59,20 +60,20 @@ public class TokenGrant implements Serializable {
     }
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     public ClientApplication getGrantClient() {
         return grantClient;
     }
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "OPENID_USER_USER_ID")
     public User getGrantUser() {
         return grantUser;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="TOKEN_GRANT_SCOPE", joinColumns = { @JoinColumn(name = "TOKEN_GRANT_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
+    @OneToMany
+    @JoinColumn(name = "SCOPE_SCOPE_ID")
     public Set<Scope> getGrantScopes() {
         return grantScopes;
     }
@@ -107,5 +108,33 @@ public class TokenGrant implements Serializable {
 
     public void setGrantScopes(Set<Scope> grantScopes) {
         this.grantScopes = grantScopes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TokenGrant)) return false;
+
+        TokenGrant that = (TokenGrant) o;
+
+        if (!accessToken.equals(that.accessToken)) return false;
+        if (!accessTokenExpiry.equals(that.accessTokenExpiry)) return false;
+        if (grantClient != null ? !grantClient.equals(that.grantClient) : that.grantClient != null) return false;
+        if (!grantTimeStamp.equals(that.grantTimeStamp)) return false;
+        if (grantUser != null ? !grantUser.equals(that.grantUser) : that.grantUser != null) return false;
+        if (!refreshToken.equals(that.refreshToken)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = accessToken.hashCode();
+        result = 31 * result + refreshToken.hashCode();
+        result = 31 * result + accessTokenExpiry.hashCode();
+        result = 31 * result + grantTimeStamp.hashCode();
+        result = 31 * result + (grantClient != null ? grantClient.hashCode() : 0);
+        result = 31 * result + (grantUser != null ? grantUser.hashCode() : 0);
+        return result;
     }
 }
