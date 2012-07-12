@@ -1,6 +1,7 @@
-package com.redhat.prototype.data;
+package com.redhat.prototype.data.producer;
 
-import java.util.List;
+import com.redhat.prototype.data.dao.PersonRepository;
+import com.redhat.prototype.data.model.Person;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
@@ -9,8 +10,7 @@ import javax.enterprise.event.Reception;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import com.redhat.prototype.model.Person;
+import java.util.List;
 
 @RequestScoped
 public class PersonListProducer {

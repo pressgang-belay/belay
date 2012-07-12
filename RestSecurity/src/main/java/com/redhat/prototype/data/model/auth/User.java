@@ -1,18 +1,19 @@
-package com.redhat.prototype.model.auth;
+package com.redhat.prototype.data.model.auth;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@XmlRootElement
 @Table(name="OPENID_USER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_IDENTIFIER" }))
 public class User implements Serializable {
 
@@ -139,19 +140,40 @@ public class User implements Serializable {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
 
-        User user = (User) o;
+        User that = (User) o;
 
-        if (openIdProvider != null ? !openIdProvider.equals(user.openIdProvider) : user.openIdProvider != null)
-            return false;
-        if (!userIdentifier.equals(user.userIdentifier)) return false;
-
-        return true;
+        return new EqualsBuilder()
+                .append(userIdentifier, that.getUserIdentifier())
+                .append(firstName, that.getFirstName())
+                .append(lastName, that.getLastName())
+                .append(email, that.getEmail())
+                .append(country, that.getCountry())
+                .append(openIdProvider, that.getOpenIdProvider())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = userIdentifier.hashCode();
-        result = 31 * result + (openIdProvider != null ? openIdProvider.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(userIdentifier)
+                .append(firstName)
+                .append(lastName)
+                .append(email)
+                .append(country)
+                .append(openIdProvider)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("userIdentifier", userIdentifier)
+                .append("firstName", firstName)
+                .append("lastName", lastName)
+                .append("email", email)
+                .append("country", country)
+                .append("openIdProvider", openIdProvider)
+                .append("tokenGrant", tokenGrant)
+                .append("userScopes", userScopes)
+                .toString();
     }
 }

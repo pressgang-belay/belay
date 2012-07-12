@@ -1,15 +1,17 @@
-package com.redhat.prototype.model.auth;
+package com.redhat.prototype.data.model.auth;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@XmlRootElement
 @Table(name="TOKEN_GRANT")
 public class TokenGrant implements Serializable {
 
@@ -117,24 +119,37 @@ public class TokenGrant implements Serializable {
 
         TokenGrant that = (TokenGrant) o;
 
-        if (!accessToken.equals(that.accessToken)) return false;
-        if (!accessTokenExpiry.equals(that.accessTokenExpiry)) return false;
-        if (grantClient != null ? !grantClient.equals(that.grantClient) : that.grantClient != null) return false;
-        if (!grantTimeStamp.equals(that.grantTimeStamp)) return false;
-        if (grantUser != null ? !grantUser.equals(that.grantUser) : that.grantUser != null) return false;
-        if (!refreshToken.equals(that.refreshToken)) return false;
-
-        return true;
+        return new EqualsBuilder()
+                .append(accessToken, that.getAccessToken())
+                .append(refreshToken, that.getRefreshToken())
+                .append(accessTokenExpiry, that.getAccessTokenExpiry())
+                .append(grantTimeStamp, that.getGrantTimeStamp())
+                .append(grantClient, that.getGrantClient())
+                .append(grantUser, that.getGrantUser())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = accessToken.hashCode();
-        result = 31 * result + refreshToken.hashCode();
-        result = 31 * result + accessTokenExpiry.hashCode();
-        result = 31 * result + grantTimeStamp.hashCode();
-        result = 31 * result + (grantClient != null ? grantClient.hashCode() : 0);
-        result = 31 * result + (grantUser != null ? grantUser.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(accessToken)
+                .append(refreshToken)
+                .append(accessTokenExpiry)
+                .append(grantTimeStamp)
+                .append(grantClient)
+                .append(grantUser)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("accessToken", accessToken)
+                .append("refreshToken", refreshToken)
+                .append("accessTokenExpiry", accessTokenExpiry)
+                .append("grantTimeStamp", grantTimeStamp)
+                .append("grantClient", grantClient)
+                .append("grantUser", grantUser)
+                .append("grantScopes", grantScopes)
+                .toString();
     }
 }

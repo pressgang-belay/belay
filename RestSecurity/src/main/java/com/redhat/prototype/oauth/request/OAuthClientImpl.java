@@ -1,6 +1,7 @@
 package com.redhat.prototype.oauth.request;
 
-import com.redhat.prototype.model.auth.ClientApplication;
+import com.redhat.prototype.data.model.auth.ClientApplication;
+import com.redhat.prototype.data.model.auth.ClientApplication;
 import org.apache.amber.oauth2.rsfilter.OAuthClient;
 
 public class OAuthClientImpl implements OAuthClient {

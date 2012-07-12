@@ -1,7 +1,8 @@
 package com.redhat.prototype.service;
 
-import com.redhat.prototype.data.AuthRepository;
-import com.redhat.prototype.model.auth.*;
+import com.google.appengine.repackaged.com.google.common.base.Optional;
+import com.redhat.prototype.data.dao.*;
+import com.redhat.prototype.data.model.auth.*;
 
 import javax.ejb.Stateful;
 import javax.enterprise.event.Event;
@@ -21,43 +22,55 @@ public class AuthService {
     private EntityManager em;
 
     @Inject
-    private Event<User> userEventSrc;
+    private ClientApplicationRepository clientApplicationRepository;
+
+    @Inject
+    private OpenIdProviderRepository openIdProviderRepository;
+
+    @Inject
+    private ScopeRepository scopeRepository;
+
+    @Inject
+    private TokenGrantRepository tokenGrantRepository;
+
+    @Inject
+    private UserRepository userRepository;
 
     @Inject
     private Event<TokenGrant> tokenGrantEventSrc;
 
     @Inject
-    private AuthRepository authRepository;
+    private Event<User> userEventSrc;
 
-    public TokenGrant getTokenGrantByAccessToken(String accessToken) {
-        return authRepository.getTokenGrantFromAccessToken(accessToken);
+    public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) {
+        return tokenGrantRepository.getTokenGrantFromAccessToken(accessToken);
     }
 
-    public TokenGrant getTokenGrantByRefreshToken(String refreshToken) {
-        return authRepository.getTokenGrantFromRefreshToken(refreshToken);
+    public Optional<TokenGrant> getTokenGrantByRefreshToken(String refreshToken) {
+        return tokenGrantRepository.getTokenGrantFromRefreshToken(refreshToken);
     }
 
-    public User getUser(String identifier) {
-        return authRepository.getUserFromIdentifier(identifier);
+    public Optional<User> getUser(String identifier) {
+        return userRepository.getUserFromIdentifier(identifier);
     }
 
     public Scope getDefaultScope() {
-        return authRepository.getDefaultScope();
+        return scopeRepository.getDefaultScope();
     }
 
-    public Scope getScopeByName(String name) {
-        return authRepository.getScopeFromName(name);
+    public Optional<Scope> getScopeByName(String name) {
+        return scopeRepository.getScopeFromName(name);
     }
 
-    public ClientApplication getClient(String clientIdentifier) {
-        return authRepository.getClientApplicationFromClientIdentifier(clientIdentifier);
+    public Optional<ClientApplication> getClient(String clientIdentifier) {
+        return clientApplicationRepository.getClientApplicationFromClientIdentifier(clientIdentifier);
     }
 
-    public OpenIdProvider getOpenIdProvider(String providerUrl) {
-        return authRepository.getOpenIdProviderFromUrl(providerUrl);
+    public Optional<OpenIdProvider> getOpenIdProvider(String providerUrl) {
+        return openIdProviderRepository.getOpenIdProviderFromUrl(providerUrl);
     }
 
-    public void registerUser(User user) {
+    public void addUser(User user) {
         log.info("Registering " + user.getUserIdentifier());
         em.persist(user);
         userEventSrc.fire(user);

@@ -1,6 +1,6 @@
 package com.redhat.prototype.oauth.login;
 
-import com.redhat.prototype.Common;
+import com.redhat.prototype.util.Common;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;

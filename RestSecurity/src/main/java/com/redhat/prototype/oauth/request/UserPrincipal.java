@@ -1,6 +1,6 @@
 package com.redhat.prototype.oauth.request;
 
-import com.redhat.prototype.model.auth.User;
+import com.redhat.prototype.data.model.auth.User;
 
 import java.security.Principal;
 

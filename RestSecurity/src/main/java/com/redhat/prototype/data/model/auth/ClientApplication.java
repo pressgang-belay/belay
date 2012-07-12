@@ -1,16 +1,18 @@
-package com.redhat.prototype.model.auth;
+package com.redhat.prototype.data.model.auth;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@XmlRootElement
 @Table(name="CLIENT", uniqueConstraints = @UniqueConstraint(columnNames = { "CLIENT_IDENTIFIER"}))
 public class ClientApplication implements Serializable {
 
@@ -20,6 +22,7 @@ public class ClientApplication implements Serializable {
     private String clientIdentifier;
     private String clientName;
     private String clientSecret;
+    private String clientRedirectUri;
     private Set<TokenGrant> tokenGrants = new HashSet<TokenGrant>();
 
     public ClientApplication() {
@@ -48,6 +51,12 @@ public class ClientApplication implements Serializable {
         return clientName;
     }
 
+    @NotNull
+    @Column(name = "CLIENT_REDIRECT_URI")
+    public String getClientRedirectUri() {
+        return clientRedirectUri;
+    }
+
     @Column(name = "CLIENT_SECRET")
     public String getClientSecret() {
         return clientSecret;
@@ -72,6 +81,10 @@ public class ClientApplication implements Serializable {
         this.clientName = clientName;
     }
 
+    public void setClientRedirectUri(String clientRedirectUri) {
+        this.clientRedirectUri = clientRedirectUri;
+    }
+
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
@@ -87,16 +100,31 @@ public class ClientApplication implements Serializable {
 
         ClientApplication that = (ClientApplication) o;
 
-        if (!clientIdentifier.equals(that.clientIdentifier)) return false;
-        if (!clientName.equals(that.clientName)) return false;
-
-        return true;
+        return new EqualsBuilder()
+                .append(clientIdentifier, that.getClientIdentifier())
+                .append(clientName, that.getClientName())
+                .append(clientRedirectUri, that.getClientRedirectUri())
+                .append(clientSecret, that.getClientSecret())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = clientIdentifier.hashCode();
-        result = 31 * result + clientName.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(clientIdentifier)
+                .append(clientName)
+                .append(clientRedirectUri)
+                .append(clientSecret)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("clientIdentifier", clientIdentifier)
+                .append("clientName", clientName)
+                .append("clientRedirectUri", clientRedirectUri)
+                .append("clientSecret", clientSecret)
+                .append("tokenGrants", tokenGrants)
+                .toString();
     }
 }

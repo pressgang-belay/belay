@@ -1,14 +1,14 @@
-package com.redhat.prototype.model.auth;
+package com.redhat.prototype.data.model.auth;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@XmlRootElement
 @Table(name="SCOPE", uniqueConstraints = @UniqueConstraint(columnNames = { "SCOPE_NAME" }))
 public class Scope implements Serializable {
     private static final long serialVersionUID = -255914952651554970L;
@@ -45,15 +45,24 @@ public class Scope implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Scope)) return false;
 
-        Scope scope = (Scope) o;
+        Scope that = (Scope) o;
 
-        if (!scopeName.equals(scope.scopeName)) return false;
-
-        return true;
+        return new EqualsBuilder()
+                .append(scopeName, that.getScopeName())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return scopeName.hashCode();
+        return new HashCodeBuilder()
+                .append(scopeName)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("scopeName", scopeName)
+                .toString();
     }
 }

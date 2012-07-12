@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.redhat.prototype.model;
+package com.redhat.prototype.data.model;
 
 import java.io.Serializable;
 
@@ -24,6 +24,9 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -39,9 +42,9 @@ public class Person implements Serializable {
 	private String personName;
 	private String personUsername;
 	private String personEmail;
-	private String password;
+	private String personPassword;
 
-    public Person() {
+    Person() {
     }
 
     @Id
@@ -80,7 +83,7 @@ public class Person implements Serializable {
     @Pattern(regexp = "[A-Za-z0-9!_]*", message = "must contain only letters, numbers or the characters ! or _")
     @Column(name = "PERSON_PASSWORD")
     public String getPersonPassword() {
-        return password;
+        return personPassword;
     }
 
     public void setPersonId(Long personId) {
@@ -91,16 +94,16 @@ public class Person implements Serializable {
         this.personName = name;
     }
 
-    public void setPersonUsername(String personUsername) {
-        this.personUsername = personUsername;
+    public void setPersonUsername(String username) {
+        this.personUsername = username;
     }
 
-	public void setPersonEmail(String personEmail) {
-		this.personEmail = personEmail;
+	public void setPersonEmail(String email) {
+		this.personEmail = email;
 	}
 
 	public void setPersonPassword(String password) {
-		this.password = password;
+		this.personPassword = password;
 	}
 
     @Override
@@ -108,18 +111,32 @@ public class Person implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Person)) return false;
 
-        Person person = (Person) o;
+        Person that = (Person) o;
 
-        if (!personEmail.equals(person.personEmail)) return false;
-        if (!personUsername.equals(person.personUsername)) return false;
-
-        return true;
+        return new EqualsBuilder()
+                .append(personName, that.getPersonName())
+                .append(personUsername, that.getPersonUsername())
+                .append(personEmail, that.getPersonEmail())
+                .append(personPassword, that.getPersonPassword())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = personUsername.hashCode();
-        result = 31 * result + personEmail.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(personName)
+                .append(personUsername)
+                .append(personEmail)
+                .append(personPassword)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("personName", personName)
+                .append("username", personUsername)
+                .append("email", personEmail)
+                .append("password", personPassword)
+                .toString();
     }
 }

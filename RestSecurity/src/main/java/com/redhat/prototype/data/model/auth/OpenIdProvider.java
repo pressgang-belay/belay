@@ -1,14 +1,14 @@
-package com.redhat.prototype.model.auth;
+package com.redhat.prototype.data.model.auth;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@XmlRootElement
 @Table(name="OPENID_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_URL"} ))
 public class OpenIdProvider implements Serializable {
     private static final long serialVersionUID = -7790803759533859471L;
@@ -58,16 +58,24 @@ public class OpenIdProvider implements Serializable {
 
         OpenIdProvider that = (OpenIdProvider) o;
 
-        if (!providerName.equals(that.providerName)) return false;
-        if (!providerUrl.equals(that.providerUrl)) return false;
-
-        return true;
+        return new EqualsBuilder()
+                .append(providerName, that.getProviderName())
+                .append(providerUrl, that.getProviderUrl())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = providerName.hashCode();
-        result = 31 * result + providerUrl.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(providerName)
+                .append(providerUrl)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("providerName", providerName)
+                .append("providerUrl", providerUrl)
+                .toString();
     }
 }

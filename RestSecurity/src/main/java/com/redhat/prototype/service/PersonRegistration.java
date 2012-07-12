@@ -1,13 +1,12 @@
 package com.redhat.prototype.service;
 
-import java.util.logging.Logger;
+import com.redhat.prototype.data.model.Person;
 
 import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-
-import com.redhat.prototype.model.Person;
+import java.util.logging.Logger;
 
 //The @Stateless annotation eliminates the need for manual transaction demarcation
 @Stateless

@@ -1,12 +1,12 @@
 package com.redhat.prototype.rest;
 
-import com.redhat.prototype.data.PersonRepository;
-import com.redhat.prototype.model.Person;
+import com.google.appengine.repackaged.com.google.common.base.Optional;
+import com.redhat.prototype.data.dao.PersonRepository;
+import com.redhat.prototype.data.model.Person;
 import com.redhat.prototype.service.PersonRegistration;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -38,8 +38,8 @@ public class PersonService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Person> listAllPeople(@Context HttpServletRequest request) {
-            log.info("Listed all people");
-            return personRepository.findAllOrderedByName();
+        log.info("Listed all people");
+        return personRepository.findAllOrderedByName();
     }
 
     @GET
@@ -47,14 +47,14 @@ public class PersonService {
     @Produces(MediaType.APPLICATION_JSON)
     public Person lookupPersonById(@PathParam("id") long id) {
 
-        Person person = personRepository.findById(id);
+        Optional<Person> personFound = personRepository.findById(id);
 
-        if (person == null) {
+        if (! personFound.isPresent()) {
             log.info("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        log.info("Found person " + person.getPersonName() + " with id " + id);
-        return person;
+        log.info("Found person " + personFound.get().getPersonName() + " with id " + id);
+        return personFound.get();
     }
 
     /**
@@ -123,9 +123,7 @@ public class PersonService {
                 // Validates member using bean validation
                 validatePerson(person);
 
-                Person personWithId = personRepository.findById(person.getPersonId());
-
-                if (personWithId == null) {
+                if (! (personRepository.findById(person.getPersonId()).isPresent())) {
                     log.info("Attempt to use PUT to create " + person.getPersonName()
                             + " with id: " + person.getPersonId());
                     String result = "No person to update at: "
@@ -170,13 +168,12 @@ public class PersonService {
 
         Response.ResponseBuilder builder = null;
 
-        Person person = personRepository.findById(id);
-
-        if (person == null) {
+        if (! (personRepository.findById(id).isPresent())) {
             log.info("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } else {
             try {
+                Person person = personRepository.findById(id).get();
                 personRegistration.delete(person);
                 log.info("Deleted person " + person.getPersonName() + " with id "
                         + id);
@@ -291,14 +288,9 @@ public class PersonService {
      * @return True if the email already exists, and false otherwise
      */
     public boolean emailAlreadyExists(String email, Long id) {
-        Person person = null;
-        try {
-            person = personRepository.findByEmail(email);
-        } catch (NoResultException e) {
-            // ignore
-        }
-        return person != null
-                && detailDoesNotBelongToPersonBeingProcessed(id, person);
+        Optional<Person> personFound = personRepository.findByEmail(email);
+        return personFound.isPresent()
+                && detailDoesNotBelongToPersonBeingProcessed(id, personFound.get());
     }
 
     /**
@@ -311,14 +303,9 @@ public class PersonService {
      * @return True if the username already exists, and false otherwise
      */
     public boolean usernameAlreadyExists(String username, Long id) {
-        Person person = null;
-        try {
-            person = personRepository.findByUsername(username);
-        } catch (NoResultException e) {
-            // ignore
-        }
-        return person != null
-                && detailDoesNotBelongToPersonBeingProcessed(id, person);
+        Optional<Person> personFound = personRepository.findByUsername(username);
+        return personFound.isPresent()
+                && detailDoesNotBelongToPersonBeingProcessed(id, personFound.get());
     }
 
     private boolean detailDoesNotBelongToPersonBeingProcessed(Long id,
