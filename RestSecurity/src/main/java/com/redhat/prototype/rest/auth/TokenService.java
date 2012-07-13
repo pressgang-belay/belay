@@ -1,6 +1,9 @@
 package com.redhat.prototype.rest.auth;
 
 import com.google.appengine.repackaged.com.google.common.base.Optional;
+import com.google.appengine.repackaged.com.google.common.collect.Sets;
+import com.google.inject.Scopes;
+import com.redhat.prototype.data.model.auth.Scope;
 import com.redhat.prototype.data.model.auth.TokenGrant;
 import com.redhat.prototype.service.AuthService;
 import org.apache.amber.oauth2.as.issuer.MD5Generator;
@@ -27,8 +30,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.redhat.prototype.util.Common.*;
 
 @Path("/auth/token")
@@ -106,23 +111,36 @@ public class TokenService {
 
     private boolean isRefreshTokenValid(String refreshToken, String clientId, String clientSecret) {
         Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByRefreshToken(refreshToken);
-        //TODO add check to ensure TokenGrant is current if necessary
         return tokenGrantFound.isPresent()
+                && tokenGrantFound.get().getGrantCurrent()
                 && tokenGrantFound.get().getGrantClient().getClientIdentifier().equals(clientId)
                 && tokenGrantFound.get().getGrantClient().getClientSecret().equals(clientSecret);
     }
 
     private TokenGrant createTokenGrant(OAuthIssuer oauthIssuerImpl, OAuthTokenRequest oauthRequest)
             throws OAuthSystemException {
-        TokenGrant tokenGrant = authService.getTokenGrantByRefreshToken(oauthRequest
+        TokenGrant oldTokenGrant = authService.getTokenGrantByRefreshToken(oauthRequest
                                     .getParam(OAuth.OAUTH_REFRESH_TOKEN)).get();
-        tokenGrant.setAccessToken(oauthIssuerImpl.accessToken());
-        tokenGrant.setRefreshToken(oauthIssuerImpl.refreshToken());
-        tokenGrant.setAccessTokenExpiry(ONE_HOUR);
-        tokenGrant.setGrantTimeStamp(new Date());
-        //TODO make sure old TokenGrant info now properly invalidated if necessary
-        authService.updateGrant(tokenGrant);
-        return tokenGrant;
+        // Make sure no token grants held by the user are marked as current before issuing new one
+        Set<TokenGrant> userTokenGrants = oldTokenGrant.getGrantUser().getTokenGrants();
+        for (TokenGrant userTokenGrant : userTokenGrants) {
+            if (userTokenGrant.getGrantCurrent()) {
+                userTokenGrant.setGrantCurrent(false);
+                authService.updateGrant(userTokenGrant);
+            }
+        }
+        // Issue new grant
+        TokenGrant newTokenGrant = new TokenGrant();
+        newTokenGrant.setGrantUser(oldTokenGrant.getGrantUser());
+        newTokenGrant.setGrantClient(oldTokenGrant.getGrantClient());
+        newTokenGrant.setGrantScopes(newHashSet(oldTokenGrant.getGrantScopes()));
+        newTokenGrant.setAccessToken(oauthIssuerImpl.accessToken());
+        newTokenGrant.setRefreshToken(oauthIssuerImpl.refreshToken());
+        newTokenGrant.setAccessTokenExpiry(ONE_HOUR);
+        newTokenGrant.setGrantTimeStamp(new Date());
+        newTokenGrant.setGrantCurrent(true);
+        authService.addGrant(newTokenGrant);
+        return newTokenGrant;
     }
 
     private boolean isClientIdKnown(String clientIdentifier) {

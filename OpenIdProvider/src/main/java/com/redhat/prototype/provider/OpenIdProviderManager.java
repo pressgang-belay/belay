@@ -89,7 +89,7 @@ public class OpenIdProviderManager {
         }
 
         public String getDestinationURL(boolean httpget) {
-            return ((AuthSuccess) message).getDestinationUrl(httpget);
+            return message.getDestinationUrl(httpget);
         }
 
         public String getResponseText() {

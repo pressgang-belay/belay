@@ -24,6 +24,7 @@ public class TokenGrant implements Serializable {
     private Date grantTimeStamp;
     private ClientApplication grantClient;
     private User grantUser;
+    private Boolean grantCurrent;
     private Set<Scope> grantScopes = new HashSet<Scope>();
 
     public TokenGrant() {
@@ -68,10 +69,16 @@ public class TokenGrant implements Serializable {
     }
 
     @NotNull
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "OPENID_USER_USER_ID")
     public User getGrantUser() {
         return grantUser;
+    }
+
+    @NotNull
+    @Column(name = "TOKEN_GRANT_CURRENT")
+    public Boolean getGrantCurrent() {
+        return grantCurrent;
     }
 
     @OneToMany
@@ -108,6 +115,10 @@ public class TokenGrant implements Serializable {
         this.grantUser = grantUser;
     }
 
+    public void setGrantCurrent(Boolean grantCurrent) {
+        this.grantCurrent = grantCurrent;
+    }
+
     public void setGrantScopes(Set<Scope> grantScopes) {
         this.grantScopes = grantScopes;
     }
@@ -126,6 +137,7 @@ public class TokenGrant implements Serializable {
                 .append(grantTimeStamp, that.getGrantTimeStamp())
                 .append(grantClient, that.getGrantClient())
                 .append(grantUser, that.getGrantUser())
+                .append(grantCurrent, that.getGrantCurrent())
                 .isEquals();
     }
 
@@ -138,6 +150,7 @@ public class TokenGrant implements Serializable {
                 .append(grantTimeStamp)
                 .append(grantClient)
                 .append(grantUser)
+                .append(grantCurrent)
                 .toHashCode();
     }
 
@@ -149,6 +162,7 @@ public class TokenGrant implements Serializable {
                 .append("grantTimeStamp", grantTimeStamp)
                 .append("grantClient", grantClient)
                 .append("grantUser", grantUser)
+                .append("grantCurrent", grantCurrent)
                 .append("grantScopes", grantScopes)
                 .toString();
     }

@@ -38,16 +38,18 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Logger;
 
+import static com.redhat.prototype.provider.Common.*;
 import static com.redhat.prototype.provider.OpenIdProviderManager.OpenIdMessage;
 
 @Path("/provider")
 @RequestScoped
 public class OpenIdProvider {
 
+    private final String SECURE_PAGE_URL = "https://localhost:8443/OpenIdProvider/securepage.jsp";
+
     @Inject
     private Logger log;
 
-    private final String SECURE_PAGE_NAME = "https://localhost:8443/OpenIdProvider/securepage.jsp";
     private OpenIdProviderManager providerManager = new OpenIdProviderManager();
 
     @GET
@@ -57,78 +59,82 @@ public class OpenIdProvider {
 
     @POST
     public Response processRequest(@Context HttpServletRequest request) throws IOException {
-
         log.info("Processing OpenId request");
 
-        Response.ResponseBuilder builder = null;
+        Response.ResponseBuilder builder;
         HttpSession session = request.getSession();
 
         if (providerManager.getEndPoint() == null) {
-            String endpoint = request.getScheme() + "://" +
-                    request.getServerName() + ":" +
+            String endpoint = request.getScheme() + SCHEME_END +
+                    request.getServerName() + COLON +
                     request.getServerPort() +
                     request.getContextPath() +
-                    "/openid/provider/";
+                    PROVIDER_ENDPOINT;
             log.info("Setting OP endpoint URL to: " + endpoint);
             providerManager.setEndPoint(endpoint);
         }
 
         OpenIdParameterList requestParameters;
 
-        if ("complete".equals(request.getParameter("_action"))) // Completing the authz and authn process by redirecting here
-        {
-            OpenIdParameterList list = (OpenIdParameterList) session.getAttribute("parameterlist"); // On a redirect from the OP authn & authz sequence
+        if (COMPLETE.equals(request.getParameter(ACTION))) {
+            // Completing the authz and authn process by redirecting here
+            OpenIdParameterList list = (OpenIdParameterList) session.getAttribute(PARAM_LIST);
+            // On a redirect from the OP authn/authz sequence
             if (list != null) {
                 requestParameters = list;
             } else {
-                throw new RuntimeException("No OpenId parameters found");
+                throw new RuntimeException(NO_OPENID_PARAMS_ERROR);
             }
         } else {
             requestParameters = new OpenIdParameterList(request.getParameterMap());
-            if (requestParameters.hasParameter("openid.identity") && requestParameters.getParameter("openid.identity").getValue().length() > 0) {
-                session.setAttribute("openid.identity", requestParameters.getParameter("openid.identity").getValue());
+            if (requestParameters.hasParameter(OPENID_IDENTITY)
+                    && requestParameters.getParameter(OPENID_IDENTITY).getValue().length() > 0) {
+                session.setAttribute(OPENID_IDENTITY, requestParameters.getParameter(OPENID_IDENTITY).getValue());
+                log.info("OpenId identity supplied is: " + session.getAttribute(OPENID_IDENTITY));
             } else {
-                builder = Response.status(Response.Status.BAD_REQUEST).entity("OpenId identity was not supplied");
+                builder = Response.status(Response.Status.BAD_REQUEST).entity(MISSING_IDENTITY_ERROR);
                 return builder.build();
             }
         }
 
         log.info("About to check for openid.mode param");
-        String mode = requestParameters.hasParameter("openid.mode") ?
-                requestParameters.getParameterValue("openid.mode") : null;
+        String mode = requestParameters.hasParameter(OPENID_MODE) ?
+                requestParameters.getParameterValue(OPENID_MODE) : null;
 
         OpenIdMessage responseMessage;
         String responseText;
 
-        if ("associate".equals(mode)) {
-            // --- process an association request ---
+        if (ASSOCIATE.equals(mode)) {
+            // Process an association request
             responseMessage = providerManager.processAssociationRequest(requestParameters);
             responseText = responseMessage.getResponseText();
-        } else if ("checkid_setup".equals(mode)
-                || "checkid_immediate".equals(mode)) {
-            // interact with the user and obtain data needed to continue
-            //List userData = userInteraction(requestParameters);
-            String userSelectedId = null;
-            String userSelectedClaimedId = null;
-            Boolean authenticatedAndApproved = Boolean.FALSE;
+        } else if (CHECKID_SETUP.equals(mode)
+                || CHECKID_IMMEDIATE.equals(mode)) {
+            // Interact with the user and obtain data needed to continue
+            // List userData = userInteraction(requestParameters);
+            String userSelectedId;
+            String userSelectedClaimedId;
+            Boolean authenticatedAndApproved;
 
-            if ((session.getAttribute("authenticatedAndApproved") == null) ||
-                    (((Boolean) session.getAttribute("authenticatedAndApproved")) == Boolean.FALSE)) {
-                session.setAttribute("parameterlist", requestParameters);
-                URI redirectUri = URI.create(this.SECURE_PAGE_NAME);
+            if ((session.getAttribute(AUTHENTICATED_APPROVED) == null) ||
+                    ((session.getAttribute(AUTHENTICATED_APPROVED)) == Boolean.FALSE)) {
+                session.setAttribute(PARAM_LIST, requestParameters);
+                URI redirectUri = URI.create(this.SECURE_PAGE_URL);
                 log.info("Redirecting to secure page: " + redirectUri);
                 builder = Response.seeOther(redirectUri);
                 return builder.build();
             } else {
-                userSelectedId = (String) session.getAttribute("openid.claimed_id");
-                userSelectedClaimedId = (String) session.getAttribute("openid.identity");
-                authenticatedAndApproved = (Boolean) session.getAttribute("authenticatedAndApproved");
+                userSelectedId = (String) session.getAttribute(OPENID_CLAIMED);
+                log.info("Claimed Id: " + userSelectedId);
+                userSelectedClaimedId = (String) session.getAttribute(OPENID_IDENTITY);
+                log.info("OpenId identity: " + userSelectedClaimedId);
+                authenticatedAndApproved = (Boolean) session.getAttribute(AUTHENTICATED_APPROVED);
                 // Remove the parameterlist so this provider can accept requests from elsewhere
-                session.removeAttribute("parameterlist");
-                session.setAttribute("authenticatedAndApproved", Boolean.FALSE); // Makes you authorize each and every time
+                session.removeAttribute(PARAM_LIST);
+                session.setAttribute(AUTHENTICATED_APPROVED, Boolean.FALSE); // Makes you authorise each and every time
             }
 
-            // --- process an authentication request ---
+            // Process an authentication request
             responseMessage = providerManager.processAuthenticationRequest(requestParameters,
                     userSelectedId,
                     userSelectedClaimedId,
@@ -140,15 +146,15 @@ public class OpenIdProvider {
                 log.info("Redirecting to: " + redirectUri);
                 return builder.build();
             } else {
-                responseText = "<pre>" + responseMessage.getResponseText() + "</pre>";
+                responseText = PRE_TAG_OPEN + responseMessage.getResponseText() + PRE_TAG_CLOSE;
             }
-        } else if ("check_authentication".equals(mode)) {
-            // --- processing a verification request ---
+        } else if (CHECK_AUTHENTICATION.equals(mode)) {
+            // Processing a verification request
             responseMessage = providerManager.verify(requestParameters);
             responseText = responseMessage.getResponseText();
         } else {
-            // --- error response ---
-            responseMessage = providerManager.getDirectError("Unknown request");
+            // Error response
+            responseMessage = providerManager.getDirectError(UNKNOWN_REQUEST_ERROR);
             responseText = responseMessage.getResponseText();
         }
 

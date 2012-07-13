@@ -85,45 +85,52 @@ public class LoginService {
         String providerUrl = getOpenIdProviderFromSession(request);
 
         try {
-        if (identifier == null) {
-            log.warning("No user identifier received");
-            throw OAuthProblemException.error(INVALID_USER_IDENTIFIER);
-        }
+            if (identifier == null) {
+                log.warning("No user identifier received");
+                throw OAuthProblemException.error(INVALID_USER_IDENTIFIER);
+            }
 
-        log.info("User has been authenticated as: " + identifier);
+            log.info("User has been authenticated as: " + identifier);
 
-        // Check redirect URI matches expectation
-        if (isRedirectUriInvalid(clientId, redirectUri)) {
-            log.warning("Invalid callback URI: " + redirectUri);
-            throw OAuthProblemException.error(INVALID_CALLBACK_URI);
-        }
+            // Check redirect URI matches expectation
+            if (isRedirectUriInvalid(clientId, redirectUri)) {
+                log.warning("Invalid callback URI: " + redirectUri);
+                throw OAuthProblemException.error(INVALID_CALLBACK_URI);
+            }
 
-        // Check if this is a known user or new user
-        Optional<User> userFound = authService.getUser(identifier);
-        User user;
+            // Check if this is a known user or new user
+            Optional<User> userFound = authService.getUser(identifier);
+            User user;
 
-        if (userFound.isPresent()) {
-            user = userFound.get();
-            updateUser(providerUrl, user, request);
-        } else {
-            user = addNewUser(identifier, providerUrl, request);
-        }
+            if (userFound.isPresent()) {
+                user = userFound.get();
+                updateUser(providerUrl, user, request);
+            } else {
+                user = addNewUser(identifier, providerUrl, request);
+            }
 
-        OAuthASResponse.OAuthTokenResponseBuilder builder = OAuthASResponse
-                .tokenResponse(HttpServletResponse.SC_FOUND);
+            OAuthASResponse.OAuthTokenResponseBuilder builder = OAuthASResponse
+                    .tokenResponse(HttpServletResponse.SC_FOUND);
 
-        //TODO check if this user already has a token grant; if so, cancel old refresh token?
+            // Check if user already has current grant/s; if so, make them invalid
+            Set<TokenGrant> grants = user.getTokenGrants();
+            for (TokenGrant grant : grants) {
+                if (grant.getGrantCurrent()) {
+                    grant.setGrantCurrent(false);
+                    authService.updateGrant(grant);
+                }
+            }
 
-        TokenGrant tokenGrant = createTokenGrant(oauthIssuerImpl, clientId, scopes, user);
-        log.info("Issuing access token: " + tokenGrant.getAccessToken() + " to " + identifier);
-        builder.setAccessToken(tokenGrant.getAccessToken());
-        log.info("Issuing refresh token: " + tokenGrant.getRefreshToken());
-        builder.setRefreshToken(tokenGrant.getRefreshToken());
-        log.info("Access token expires in: " + tokenGrant.getAccessTokenExpiry());
-        builder.setExpiresIn(tokenGrant.getAccessTokenExpiry());
+            TokenGrant tokenGrant = createTokenGrant(oauthIssuerImpl, clientId, scopes, user);
+            log.info("Issuing access token: " + tokenGrant.getAccessToken() + " to " + identifier);
+            builder.setAccessToken(tokenGrant.getAccessToken());
+            log.info("Issuing refresh token: " + tokenGrant.getRefreshToken());
+            builder.setRefreshToken(tokenGrant.getRefreshToken());
+            log.info("Access token expires in: " + tokenGrant.getAccessTokenExpiry());
+            builder.setExpiresIn(tokenGrant.getAccessTokenExpiry());
 
-        final OAuthResponse response = builder.location(redirectUri).buildQueryMessage();
-        return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
+            final OAuthResponse response = builder.location(redirectUri).buildQueryMessage();
+            return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
             log.warning("OAuthProblemException thrown: " + e.getError());
             return Response.status(Response.Status.UNAUTHORIZED)
@@ -246,13 +253,13 @@ public class LoginService {
     }
 
     private void setExtraUserAttributes(HttpServletRequest request, User user) {
-        String firstName = (String)request.getAttribute(OPENID_FIRSTNAME);
+        String firstName = (String) request.getAttribute(OPENID_FIRSTNAME);
         if (firstName != null) user.setFirstName(firstName);
-        String lastName = (String)request.getAttribute(OPENID_LASTNAME);
+        String lastName = (String) request.getAttribute(OPENID_LASTNAME);
         if (lastName != null) user.setLastName(lastName);
-        String email = (String)request.getAttribute(OPENID_EMAIL);
+        String email = (String) request.getAttribute(OPENID_EMAIL);
         if (email != null) user.setEmail(email);
-        String country = (String)request.getAttribute(OPENID_COUNTRY);
+        String country = (String) request.getAttribute(OPENID_COUNTRY);
         if (country != null) user.setCountry(country);
     }
 
@@ -282,6 +289,7 @@ public class LoginService {
         tokenGrant.setRefreshToken(oauthIssuerImpl.refreshToken());
         tokenGrant.setAccessTokenExpiry(ONE_HOUR);
         tokenGrant.setGrantTimeStamp(new Date());
+        tokenGrant.setGrantCurrent(true);
         authService.addGrant(tokenGrant);
         return tokenGrant;
     }

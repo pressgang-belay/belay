@@ -27,7 +27,7 @@ public class User implements Serializable {
     private String language;
     private String country;
     private OpenIdProvider openIdProvider;
-    private TokenGrant tokenGrant;
+    private Set<TokenGrant> tokenGrants;
     private Set<Scope> userScopes = new HashSet<Scope>();
 
     public User() {
@@ -83,9 +83,9 @@ public class User implements Serializable {
         return openIdProvider;
     }
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "grantUser")
-    public TokenGrant getTokenGrant() {
-        return tokenGrant;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantUser")
+    public Set<TokenGrant> getTokenGrants() {
+        return tokenGrants;
     }
 
     @ManyToMany
@@ -127,8 +127,8 @@ public class User implements Serializable {
         this.openIdProvider = openIdProvider;
     }
 
-    public void setTokenGrant(TokenGrant tokenGrant) {
-        this.tokenGrant = tokenGrant;
+    public void setTokenGrants(Set<TokenGrant> tokenGrants) {
+        this.tokenGrants = tokenGrants;
     }
 
     public void setUserScopes(Set<Scope> userScopes) {
@@ -172,7 +172,7 @@ public class User implements Serializable {
                 .append("email", email)
                 .append("country", country)
                 .append("openIdProvider", openIdProvider)
-                .append("tokenGrant", tokenGrant)
+                .append("tokenGrants", tokenGrants)
                 .append("userScopes", userScopes)
                 .toString();
     }

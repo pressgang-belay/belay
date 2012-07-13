@@ -59,12 +59,12 @@ public class OAuthDecisionImpl implements OAuthDecision {
 
     private void setAuthorisation(TokenGrant tokenGrant, HttpServletRequest request) throws OAuthProblemException {
         //TODO check scopes here by checking against request URI/method?
-        // Throw exception if token has expired
+        // Throw exception if token has expired or is not current
         DateTime expiryDate = new DateTime(tokenGrant.getGrantTimeStamp()).
                 plusSeconds(Integer.parseInt(tokenGrant.getAccessTokenExpiry()));
-        if (expiryDate.isBeforeNow()) {
+        if (expiryDate.isBeforeNow() || (! tokenGrant.getGrantCurrent())) {
             isAuthorized = false;
-            log.warning("Attempt to use expired token " + tokenGrant.getAccessToken());
+            log.warning("Attempt to use expired or superseded token " + tokenGrant.getAccessToken());
             throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
         }
         log.info("Verified token " + tokenGrant.getAccessToken());

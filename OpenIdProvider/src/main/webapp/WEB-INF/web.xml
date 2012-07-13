@@ -4,7 +4,6 @@
 
 <web-app>
     <display-name>Skynet OpenId Provider</display-name>
-
     <security-constraint>
         <display-name>Secure Page</display-name>
         <web-resource-collection>

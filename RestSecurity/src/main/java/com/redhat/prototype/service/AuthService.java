@@ -5,6 +5,8 @@ import com.redhat.prototype.data.dao.*;
 import com.redhat.prototype.data.model.auth.*;
 
 import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
