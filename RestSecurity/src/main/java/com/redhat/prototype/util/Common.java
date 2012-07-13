@@ -22,6 +22,10 @@ public class Common {
     public static final String INVALID_CLIENT = "Invalid client application";
     public static final String INVALID_REFRESH_TOKEN = "Invalid refresh token";
     public static final String INVALID_GRANT_TYPE = "Cannot process request with this grant_type";
+    public static final String INVALID_METHOD = "Method not set to GET";
+    public static final String INVALID_RESPONSE_TYPE = "Unsupported or invalid response_type parameter value";
+    public static final String MISSING_RESPONSE_TYPE = "Missing response_type parameter value";
+
 
     // General
     public static final String ONE_HOUR = "3600";

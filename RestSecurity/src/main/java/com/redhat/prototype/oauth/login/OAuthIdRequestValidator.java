@@ -8,6 +8,8 @@ import org.apache.amber.oauth2.common.validators.AbstractValidator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.redhat.prototype.util.Common.INVALID_METHOD;
+
 public class OAuthIdRequestValidator extends AbstractValidator {
 
     public OAuthIdRequestValidator() {
@@ -22,7 +24,7 @@ public class OAuthIdRequestValidator extends AbstractValidator {
         String method = request.getMethod();
         if (!method.equals(OAuth.HttpMethod.GET)) {
             throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_REQUEST)
-                    .description("Method not set to GET.");
+                    .description(INVALID_METHOD);
         }
     }
 

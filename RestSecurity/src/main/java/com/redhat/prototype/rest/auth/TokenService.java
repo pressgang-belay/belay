@@ -24,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -41,8 +42,8 @@ public class TokenService {
     private AuthService authService;
 
     @POST
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
 
         log.info("Processing token refresh request");
@@ -54,7 +55,7 @@ public class TokenService {
 
             // Check that client_id is registered
             if (! isClientIdKnown(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID))) {
-                log.severe("client_id could not be found");
+                log.warning("client_id could not be found");
                 OAuthResponse response =
                         OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                                 .setError(OAuthError.TokenResponse.INVALID_CLIENT)
@@ -76,10 +77,9 @@ public class TokenService {
                             .setExpiresIn(tokenGrant.getAccessTokenExpiry())
                             .setRefreshToken(tokenGrant.getRefreshToken())
                             .buildJSONMessage();
-                    log.info("Entity body: " + response.getBody());
                     return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
                 } else {
-                    log.severe("Invalid refresh token: " + oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN));
+                    log.warning("Invalid refresh token: " + oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN));
                     OAuthResponse response = OAuthASResponse
                             .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                             .setError(OAuthError.TokenResponse.INVALID_GRANT)
@@ -97,7 +97,7 @@ public class TokenService {
                     .buildJSONMessage();
             return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
         } catch (OAuthProblemException e) {
-            log.info("OAuthProblemException: " + e.getMessage());
+            log.warning("OAuthProblemException: " + e.getMessage());
             OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e)
                     .buildJSONMessage();
             return Response.status(res.getResponseStatus()).entity(res.getBody()).build();

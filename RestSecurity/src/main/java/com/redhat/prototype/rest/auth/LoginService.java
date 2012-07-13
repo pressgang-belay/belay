@@ -49,7 +49,6 @@ public class LoginService {
     @GET
     public Response login(@Context HttpServletRequest request) throws IOException, URISyntaxException,
             OAuthSystemException {
-
         log.info("Processing login request");
 
         try {
@@ -61,7 +60,7 @@ public class LoginService {
             return builder.build();
         } catch (OAuthProblemException e) {
 
-            log.info("OAuthProblemException thrown: " + e.getMessage());
+            log.warning("OAuthProblemException thrown: " + e.getMessage());
 
             final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_FOUND);
             String redirectUri = e.getRedirectUri();
@@ -87,7 +86,7 @@ public class LoginService {
 
         try {
         if (identifier == null) {
-            log.info("No user identifier received");
+            log.warning("No user identifier received");
             throw OAuthProblemException.error(INVALID_USER_IDENTIFIER);
         }
 
@@ -95,7 +94,7 @@ public class LoginService {
 
         // Check redirect URI matches expectation
         if (isRedirectUriInvalid(clientId, redirectUri)) {
-            log.info("Invalid callback URI: " + redirectUri);
+            log.warning("Invalid callback URI: " + redirectUri);
             throw OAuthProblemException.error(INVALID_CALLBACK_URI);
         }
 
@@ -126,9 +125,11 @@ public class LoginService {
         final OAuthResponse response = builder.location(redirectUri).buildQueryMessage();
         return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
+            log.warning("OAuthProblemException thrown: " + e.getError());
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(e.getError()).location(new URI(redirectUri)).build();
         } catch (OAuthSystemException e) {
+            log.warning("OAuthSystemException thrown: " + e.getMessage());
             return Response.status(Response.Status.UNAUTHORIZED)
                     .entity(e.getMessage()).location(new URI(redirectUri)).build();
         }

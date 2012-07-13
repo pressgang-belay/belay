@@ -10,6 +10,9 @@ import org.apache.amber.oauth2.common.validators.OAuthValidator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.redhat.prototype.util.Common.INVALID_RESPONSE_TYPE;
+import static com.redhat.prototype.util.Common.MISSING_RESPONSE_TYPE;
+
 public class OAuthIdRequest extends OAuthRequest {
 
     public OAuthIdRequest(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException {
@@ -22,11 +25,11 @@ public class OAuthIdRequest extends OAuthRequest {
         validators.put(ResponseType.TOKEN.toString(), OAuthIdRequestValidator.class);
         String requestTypeValue = getParam(OAuth.OAUTH_RESPONSE_TYPE);
         if (OAuthUtils.isEmpty(requestTypeValue)) {
-            throw OAuthUtils.handleOAuthProblemException("Missing response_type parameter value");
+            throw OAuthUtils.handleOAuthProblemException(MISSING_RESPONSE_TYPE);
         }
         Class clazz = validators.get(requestTypeValue);
         if (clazz == null) {
-            throw OAuthUtils.handleOAuthProblemException("Unsupported or invalid response_type parameter value");
+            throw OAuthUtils.handleOAuthProblemException(INVALID_RESPONSE_TYPE);
         }
         return (OAuthValidator)OAuthUtils.instantiateClass(clazz);
     }

@@ -50,7 +50,7 @@ public class PersonService {
         Optional<Person> personFound = personRepository.findById(id);
 
         if (! personFound.isPresent()) {
-            log.info("Could not find requested person with id: " + id);
+            log.warning("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         log.info("Found person " + personFound.get().getPersonName() + " with id " + id);
@@ -67,11 +67,12 @@ public class PersonService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createPerson(Person person) {
 
-        Response.ResponseBuilder builder = null;
+        Response.ResponseBuilder builder;
 
         if (person != null && person.getPersonId() != null) {
             String message = "Use PUT to update person with id "
                     + person.getPersonId();
+            log.warning(message);
             builder = Response.status(Response.Status.BAD_REQUEST).entity(
                     message);
         } else {
@@ -95,6 +96,7 @@ public class PersonService {
                 builder = createValidationResponse(e);
             } catch (Exception e) {
                 // Handle generic exceptions
+                log.warning("Exception raised while creating person" + e.getMessage());
                 builder = createGeneralExceptionResponse(e,
                         "Exception raised while creating person", e.getMessage());
             }
@@ -112,10 +114,11 @@ public class PersonService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createOrUpdatePersonWithId(Person person) {
 
-        Response.ResponseBuilder builder = null;
+        Response.ResponseBuilder builder;
 
         if (person != null && person.getPersonId() == null) {
             String message = "Use POST to create a new person and generate an id";
+            log.warning(message);
             builder = Response.status(Response.Status.BAD_REQUEST).entity(
                     message);
         } else {
@@ -124,7 +127,7 @@ public class PersonService {
                 validatePerson(person);
 
                 if (! (personRepository.findById(person.getPersonId()).isPresent())) {
-                    log.info("Attempt to use PUT to create " + person.getPersonName()
+                    log.warning("Attempt to use PUT to create " + person.getPersonName()
                             + " with id: " + person.getPersonId());
                     String result = "No person to update at: "
                             + "/rest/people/" + person.getPersonId();
@@ -148,6 +151,7 @@ public class PersonService {
                 builder = createValidationResponse(e);
             } catch (Exception e) {
                 // Handle generic exceptions
+                log.warning("Exception raised while updating person" + e.getMessage());
                 builder = createGeneralExceptionResponse(e,
                         "Exception raised while updating person", e.getMessage());
             }
@@ -169,7 +173,7 @@ public class PersonService {
         Response.ResponseBuilder builder = null;
 
         if (! (personRepository.findById(id).isPresent())) {
-            log.info("Could not find requested person with id: " + id);
+            log.warning("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } else {
             try {
@@ -179,6 +183,7 @@ public class PersonService {
                         + id);
                 builder = Response.ok("Deleted person with id " + id);
             } catch (Exception e) {
+                log.warning("Exception raised while deleting person: " + e.getMessage());
                 builder = createGeneralExceptionResponse(e,
                         "Exception raised while deleting person", "Could not delete person");
             }
@@ -210,7 +215,7 @@ public class PersonService {
                 .validate(person);
 
         if (!violations.isEmpty()) {
-            log.info("Contraint violations was not empty");
+            log.warning("Contraint violations was not empty");
             throw new ConstraintViolationException(
                     new HashSet<ConstraintViolation<?>>(violations));
         }
@@ -218,14 +223,14 @@ public class PersonService {
         // Check the uniqueness of the email address
         if (person.getPersonEmail() != null
                 && emailAlreadyExists(person.getPersonEmail(), person.getPersonId())) {
-            log.info("Email " + person.getPersonEmail() + " already exists");
+            log.warning("Email " + person.getPersonEmail() + " already exists");
             throw new ValidationException("Unique Email Violation");
         }
 
         // Check the uniqueness of the username
         if (person.getPersonUsername() != null
                 && usernameAlreadyExists(person.getPersonUsername(), person.getPersonId())) {
-            log.info("Username " + person.getPersonUsername() + "already exists");
+            log.warning("Username " + person.getPersonUsername() + "already exists");
             throw new ValidationException("Unique Username Violation");
         }
     }
@@ -245,7 +250,8 @@ public class PersonService {
         return builder;
     }
 
-    private Response.ResponseBuilder createGeneralExceptionResponse(Exception e, String logMessage, String errorMessage) {
+    private Response.ResponseBuilder createGeneralExceptionResponse(Exception e, String logMessage,
+                                                                    String errorMessage) {
         Response.ResponseBuilder builder;
         log.warning(logMessage + ": "
                 + e.getMessage());
@@ -310,6 +316,6 @@ public class PersonService {
 
     private boolean detailDoesNotBelongToPersonBeingProcessed(Long id,
                                                               Person person) {
-        return person.getPersonId() == null || person.getPersonId() != id;
+        return person.getPersonId() == null || (!person.getPersonId().equals(id));
     }
 }
