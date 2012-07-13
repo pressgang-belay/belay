@@ -1,7 +1,8 @@
 package com.redhat.prototype.provider;
 
 /**
- * This class is based on org.picketlink.identity.federation.api.openid.provider.OpenIDProviderManager by Anil Saldhana
+ * This class is based on org.picketlink.identity.federation.api.openid.provider.OpenIDProviderManager by Anil Saldhana.
+ * It has been modified from the original, in 2012.
  *
  * JBoss, Home of Professional Open Source.
  * Copyright 2008, Red Hat Middleware LLC, and individual contributors
