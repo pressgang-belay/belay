@@ -1,8 +1,9 @@
 package com.redhat.gwtsecurity.client.oauth;
 
 /**
- * This code is from the gwt-oauth2-0.2-alpha libary found at http://code.google.com/p/gwt-oauth2/.
+ * This a renamed copy of the TokenStore class from the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/).
  * It is recreated here as it is package private in the original library.
+ * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
  *
  * Interface for storing, retrieving, and clearing stored tokens.
  *

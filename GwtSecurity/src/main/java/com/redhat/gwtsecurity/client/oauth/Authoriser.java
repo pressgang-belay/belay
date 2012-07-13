@@ -10,7 +10,9 @@ import com.google.gwt.json.client.*;
 import static com.redhat.gwtsecurity.client.oauth.Common.*;
 
 /**
- * Includes code from the gwt-oauth2-0.2-alpha library found at http://code.google.com/p/gwt-oauth2/
+ * Includes code from the Auth class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/).
+ * Library code has been modified.
+ * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
  * <p/>
  * Provides methods to manage authentication flow.
  */

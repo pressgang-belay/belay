@@ -4,9 +4,7 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.http.client.*;
 import com.google.gwt.user.client.Window;
 
-/**
- * Includes code from the gwt-oauth2-0.2-alpha library found at http://code.google.com/p/gwt-oauth2/
- *
+/** *
  * Provides methods to manage authentication and subsequent requests.
  **/
 

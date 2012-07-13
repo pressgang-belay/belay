@@ -25,8 +25,6 @@ public class App implements EntryPoint {
     // This app's personal client ID assigned by the Skynet OAuth server
     private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
 
-    private static String accessToken;
-
     public void onModuleLoad() {
         Authoriser.export();
         addRedHatLogin();
@@ -98,10 +96,6 @@ public class App implements EntryPoint {
         });
         RootPanel.get().add(button);
     }
-
-    // //////////////////////////////////////////////////////////////////////////
-    // CLEARING STORED TOKENS ///////////////////////////////////////////////////
-    // //////////////////////////////////////////////////////////////////////////
 
     // Clears all tokens stored in the browser by this library. Subsequent calls
     // to authorise() will result in the popup being shown, though it may immediately

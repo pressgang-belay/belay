@@ -3,7 +3,9 @@ package com.redhat.gwtsecurity.client.oauth;
 import static com.redhat.gwtsecurity.client.oauth.Common.*;
 
 /**
- * Includes code from the gwt-oauth2-0.2-alpha library found at http://code.google.com/p/gwt-oauth2/
+ * Includes code from the AuthRequest class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/).
+ * Library code has been modified.
+ * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
  * <p/>
  * Represents a request for authentication to an OAuth 2.0 provider server, using an OpenId provider for authentication.
  */
@@ -69,7 +71,8 @@ public class AuthorisationRequest {
                 .append(CLIENT_ID).append(KEY_VALUE_SEPARATOR).append(urlCodex.encode(clientId))
                 .append(PARAMETER_SEPARATOR).append(RESPONSE_TYPE).append(KEY_VALUE_SEPARATOR).append(TOKEN)
                 .append(PARAMETER_SEPARATOR).append(SCOPE).append(KEY_VALUE_SEPARATOR).append(scopesToString(urlCodex))
-                .append(PARAMETER_SEPARATOR).append(PROVIDER).append(KEY_VALUE_SEPARATOR).append(urlCodex.encode(openIdProvider))
+                .append(PARAMETER_SEPARATOR).append(PROVIDER).append(KEY_VALUE_SEPARATOR)
+                .append(urlCodex.encode(openIdProvider))
                 .toString();
     }
 
