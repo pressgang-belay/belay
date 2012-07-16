@@ -25,17 +25,20 @@ package com.redhat.prototype.provider;
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+import com.jamesmurty.utils.XMLBuilder;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.net.URI;
+import java.security.Principal;
 import java.util.logging.Logger;
 
 import static com.redhat.prototype.provider.Common.*;
@@ -52,9 +55,41 @@ public class OpenIdProvider {
 
     private OpenIdProviderManager providerManager = new OpenIdProviderManager();
 
+    @Produces({ APPLICATION_XRDS_XML, "text/plain", "text/html" })
     @GET
-    public Response redirectGet(@Context HttpServletRequest request) throws IOException {
-        return processRequest(request);
+    public Response redirectGet(@Context HttpServletRequest request, @QueryParam("id") String id) throws IOException {
+        if (id == null) {
+            return processRequest(request);
+        } else {
+            try {
+                // Make sure logged in user is same user we are returning XRDS for
+                if (request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(id)) {
+                    log.info("Building XRDS response for id " + id);
+                    String response = XMLBuilder.create(XRDS_TAG)
+                            .a(XRDS_NS_TAG, XRDS_XRI)
+                            .a(NS_TAG, XRD2_NS_XRI)
+                                .e(XRD_TAG)
+                                    .e(SERVICE_TAG)
+                                    .a(PRIORITY, FIRST)
+                                        .e(TYPE_TAG).t(OPENID2_SIGNON)
+                                        .up()
+                                        .e(TYPE_TAG).t(OPENID_AX_EXT)
+                                        .up()
+                                        .e(URI_TAG).t(providerManager.getEndPoint())
+                                        .up()
+                                    .up()
+                                .up()
+                            .up()
+                            .asString();
+                    return Response.ok(response).build();
+                }
+            } catch (TransformerException e) {
+                log.severe("TransformerException during user endpoint discovery: " + e.getMessage());
+            } catch (ParserConfigurationException e) {
+                log.severe("ParserConfigurationException during user endpoint discovery: " + e.getMessage());
+            }
+            return Response.serverError().entity(USER_ENDPOINT_ERROR).build();
+        }
     }
 
     @POST
@@ -77,6 +112,7 @@ public class OpenIdProvider {
         OpenIdParameterList requestParameters;
 
         if (COMPLETE.equals(request.getParameter(ACTION))) {
+            log.info("Completing OpenId request");
             // Completing the authz and authn process by redirecting here
             OpenIdParameterList list = (OpenIdParameterList) session.getAttribute(PARAM_LIST);
             // On a redirect from the OP authn/authz sequence
@@ -92,24 +128,26 @@ public class OpenIdProvider {
                 session.setAttribute(OPENID_IDENTITY, requestParameters.getParameter(OPENID_IDENTITY).getValue());
                 log.info("OpenId identity supplied is: " + session.getAttribute(OPENID_IDENTITY));
             } else {
-                builder = Response.status(Response.Status.BAD_REQUEST).entity(MISSING_IDENTITY_ERROR);
-                return builder.build();
+                // This is not an error for us as we will determine the identifier
+                log.info("No OpenId identity supplied");
             }
         }
 
-        log.info("About to check for openid.mode param");
         String mode = requestParameters.hasParameter(OPENID_MODE) ?
                 requestParameters.getParameterValue(OPENID_MODE) : null;
+        log.info("OpenId mode is: " + mode);
 
         OpenIdMessage responseMessage;
         String responseText;
 
         if (ASSOCIATE.equals(mode)) {
+            log.info("Processing association request");
             // Process an association request
             responseMessage = providerManager.processAssociationRequest(requestParameters);
             responseText = responseMessage.getResponseText();
         } else if (CHECKID_SETUP.equals(mode)
                 || CHECKID_IMMEDIATE.equals(mode)) {
+            log.info("Processing checkid request");
             // Interact with the user and obtain data needed to continue
             // List userData = userInteraction(requestParameters);
             String userSelectedId;
@@ -118,17 +156,32 @@ public class OpenIdProvider {
 
             if ((session.getAttribute(AUTHENTICATED_APPROVED) == null) ||
                     ((session.getAttribute(AUTHENTICATED_APPROVED)) == Boolean.FALSE)) {
+                log.info("User not yet authenticated");
                 session.setAttribute(PARAM_LIST, requestParameters);
                 URI redirectUri = URI.create(this.SECURE_PAGE_URL);
                 log.info("Redirecting to secure page: " + redirectUri);
                 builder = Response.seeOther(redirectUri);
                 return builder.build();
             } else {
-                userSelectedId = (String) session.getAttribute(OPENID_CLAIMED);
-                log.info("Claimed Id: " + userSelectedId);
+                log.info("User has been authenticated");
                 userSelectedClaimedId = (String) session.getAttribute(OPENID_IDENTITY);
                 log.info("OpenId identity: " + userSelectedClaimedId);
+                userSelectedId = (String) session.getAttribute(OPENID_CLAIMED);
+                log.info("Claimed Id: " + userSelectedId);
                 authenticatedAndApproved = (Boolean) session.getAttribute(AUTHENTICATED_APPROVED);
+                Principal user = request.getUserPrincipal();
+                if (userSelectedId == null && user != null && user.getName() != null) {
+                    String userIdentifier = providerManager.getEndPoint() + "?id=" + user.getName();
+                    log.info("Setting OpenId identity/claimed id to: " + userIdentifier);
+                    userSelectedClaimedId = userIdentifier;
+                    userSelectedId = userIdentifier;
+                } else {
+                    // If we can't resolve a user identifier, don't authenticate user
+                    if (authenticatedAndApproved) {
+                        log.warning("User was authenticated but could not resolve identifier so revoking authentication");
+                    }
+                    authenticatedAndApproved = false;
+                }
                 // Remove the parameterlist so this provider can accept requests from elsewhere
                 session.removeAttribute(PARAM_LIST);
                 session.setAttribute(AUTHENTICATED_APPROVED, Boolean.FALSE); // Makes you authorise each and every time
@@ -149,10 +202,12 @@ public class OpenIdProvider {
                 responseText = PRE_TAG_OPEN + responseMessage.getResponseText() + PRE_TAG_CLOSE;
             }
         } else if (CHECK_AUTHENTICATION.equals(mode)) {
+            log.info("Processing check authentication request");
             // Processing a verification request
             responseMessage = providerManager.verify(requestParameters);
             responseText = responseMessage.getResponseText();
         } else {
+            log.warning("Reached an error state");
             // Error response
             responseMessage = providerManager.getDirectError(UNKNOWN_REQUEST_ERROR);
             responseText = responseMessage.getResponseText();

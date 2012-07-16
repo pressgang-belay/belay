@@ -10,6 +10,7 @@ public class Common {
     public static final String OPENID_FIRSTNAME = "openid.ax.firstname";
     public static final String OPENID_LASTNAME = "openid.ax.lastname";
     public static final String OPENID_EMAIL = "openid.ax.email";
+    public static final String OPENID_LANGUAGE = "openid.ax.language";
     public static final String OPENID_COUNTRY = "openid.ax.country";
     public static final String APPLICATION_XRDS_XML = "application/xrds+xml";
 
@@ -26,6 +27,7 @@ public class Common {
     public static final String INVALID_METHOD = "Method not set to GET";
     public static final String INVALID_RESPONSE_TYPE = "Unsupported or invalid response_type parameter value";
     public static final String MISSING_RESPONSE_TYPE = "Missing response_type parameter value";
+    public static final String REALM_ENDPOINT_ERROR = "Could not perform realm endpoint discovery on Relying Party";
 
     // General
     public static final String ONE_HOUR = "3600";
@@ -41,10 +43,8 @@ public class Common {
     public static final String URI_TAG = "URI";
     public static final String XRDS_TAG = "xrds:XRDS";
     public static final String XRDS_NS_TAG = NS_TAG + ":xrds";
-    public static final String OPENID_NS_TAG = NS_TAG + ":openid";
     public static final String XRDS_XRI = "xri://$xrds";
     public static final String XRD2_NS_XRI = "xri://$xrd*($v*2.0)";
-    public static final String OPENID_NS_URI = "http://openid.net/xmlns/1.0";
     public static final String OPENID2_RETURN_TO = "http://specs.openid.net/auth/2.0/return_to";
 
 }

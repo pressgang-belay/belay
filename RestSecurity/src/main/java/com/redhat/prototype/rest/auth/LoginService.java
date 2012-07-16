@@ -114,10 +114,12 @@ public class LoginService {
 
             // Check if user already has current grant/s; if so, make them invalid
             Set<TokenGrant> grants = user.getTokenGrants();
-            for (TokenGrant grant : grants) {
-                if (grant.getGrantCurrent()) {
-                    grant.setGrantCurrent(false);
-                    authService.updateGrant(grant);
+            if (grants != null) {
+                for (TokenGrant grant : grants) {
+                    if (grant.getGrantCurrent()) {
+                        grant.setGrantCurrent(false);
+                        authService.updateGrant(grant);
+                    }
                 }
             }
 
@@ -261,6 +263,8 @@ public class LoginService {
         if (lastName != null) user.setLastName(lastName);
         String email = (String) request.getAttribute(OPENID_EMAIL);
         if (email != null) user.setEmail(email);
+        String language = (String) request.getAttribute(OPENID_LANGUAGE);
+        if (language != null) user.setLanguage(language);
         String country = (String) request.getAttribute(OPENID_COUNTRY);
         if (country != null) user.setCountry(country);
     }

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.util.logging.Logger;
@@ -22,11 +23,10 @@ public class RealmService {
 
     @Produces(APPLICATION_XRDS_XML)
     @GET
-    public String returnRelyingPartyRealmEndpoints() {
+    public Response returnRelyingPartyRealmEndpoints() {
         try {
-            return XMLBuilder.create(XRDS_TAG)
+            String response = XMLBuilder.create(XRDS_TAG)
                     .a(XRDS_NS_TAG, XRDS_XRI)
-                    .a(OPENID_NS_TAG, OPENID_NS_URI)
                     .a(NS_TAG, XRD2_NS_XRI)
                         .e(XRD_TAG)
                             .e(SERVICE_TAG)
@@ -38,11 +38,12 @@ public class RealmService {
                         .up()
                     .up()
                     .asString();
+            return javax.ws.rs.core.Response.ok(response).build();
         } catch (TransformerException e) {
             log.severe("TransformerException during Relying Party realm endpoint discovery: " + e.getMessage());
         } catch (ParserConfigurationException e) {
             log.severe("ParserConfigurationException during Relying Party realm endpoint discovery: " + e.getMessage());
         }
-        return "";
+        return javax.ws.rs.core.Response.serverError().entity(REALM_ENDPOINT_ERROR).build();
     }
 }
