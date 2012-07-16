@@ -9,7 +9,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import java.util.logging.Logger;
 
 import static com.redhat.prototype.util.Common.*;
@@ -40,9 +39,9 @@ public class RealmService {
                     .up()
                     .asString();
         } catch (TransformerException e) {
-            log.severe("TransformerException during Relying Party realm verification: " + e.getMessage());
+            log.severe("TransformerException during Relying Party realm endpoint discovery: " + e.getMessage());
         } catch (ParserConfigurationException e) {
-            log.severe("ParserConfigurationException during Relying Party realm verification: " + e.getMessage());
+            log.severe("ParserConfigurationException during Relying Party realm endpoint discovery: " + e.getMessage());
         }
         return "";
     }
