@@ -38,7 +38,7 @@ public class OpenIdProviderManager {
 
     static {
         serverManager = new ServerManager();
-        //serverManager.setEnforceRpId(true);  //TODO
+        serverManager.setEnforceRpId(true);
         initialize();
     }
 

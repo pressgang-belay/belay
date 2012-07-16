@@ -11,6 +11,7 @@ public class Common {
     public static final String OPENID_LASTNAME = "openid.ax.lastname";
     public static final String OPENID_EMAIL = "openid.ax.email";
     public static final String OPENID_COUNTRY = "openid.ax.country";
+    public static final String APPLICATION_XRDS_XML = "application/xrds+xml";
 
     // Errors
     public static final String OAUTH_CALLBACK_URL_REQUIRED = "OAuth callback URL needs to be provided by client";
@@ -26,8 +27,24 @@ public class Common {
     public static final String INVALID_RESPONSE_TYPE = "Unsupported or invalid response_type parameter value";
     public static final String MISSING_RESPONSE_TYPE = "Missing response_type parameter value";
 
-
     // General
     public static final String ONE_HOUR = "3600";
     public static final String UTF_ENCODING = "UTF-8";
+    public static final String OPENID_REALM = "https://localhost:8443/RestSecurity/rest/auth/";
+    public static final String OPENID_RETURN_URL = "https://localhost:8443/RestSecurity/rest/auth/login";
+
+    // Yadis
+    public static final String NS_TAG = "xmlns";
+    public static final String XRD_TAG = "XRD";
+    public static final String SERVICE_TAG = "Service";
+    public static final String TYPE_TAG = "Type";
+    public static final String URI_TAG = "URI";
+    public static final String XRDS_TAG = "xrds:XRDS";
+    public static final String XRDS_NS_TAG = NS_TAG + ":xrds";
+    public static final String OPENID_NS_TAG = NS_TAG + ":openid";
+    public static final String XRDS_XRI = "xri://$xrds";
+    public static final String XRD2_NS_XRI = "xri://$xrd*($v*2.0)";
+    public static final String OPENID_NS_URI = "http://openid.net/xmlns/1.0";
+    public static final String OPENID2_RETURN_TO = "http://specs.openid.net/auth/2.0/return_to";
+
 }

@@ -162,6 +162,8 @@ public class LoginService {
         log.info("Sending request for login authentication");
         builder.header(AUTHENTICATE_HEADER, new AuthorizationHeaderBuilder()
                 .forIdentifier(providerUrl)
+                .usingRealm(OPENID_REALM)
+                .returnTo(OPENID_RETURN_URL)
                 .includeStandardAttributes()
                 .buildHeader());
         return builder;
