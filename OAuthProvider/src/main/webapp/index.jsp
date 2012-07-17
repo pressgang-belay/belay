@@ -1,6 +1,6 @@
 <html>
 <body>
-	<h2>This is an OAuth Server prototype for securing RESTful web services</h2>
+	<h2>This is an OAuth Provider prototype for securing RESTful web services</h2>
 	<p>
 		The RESTful endpoints provided are:
 		<ul>
