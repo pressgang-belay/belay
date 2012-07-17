@@ -3,7 +3,7 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-    <display-name>Skynet OpenId Provider</display-name>
+    <display-name>PressgangCCMS OpenId Provider Prototype</display-name>
     <security-constraint>
         <display-name>Secure Page</display-name>
         <web-resource-collection>

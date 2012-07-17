@@ -1,0 +1,43 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+    <!-- The OpenId Filter handles user authentication -->
+    <filter>
+        <filter-name>OpenId Filter</filter-name>
+        <filter-class>com.google.code.openid.RelyingPartyFilter</filter-class>
+    </filter>
+
+    <!-- This defines the URL that requires OpenId authentication -->
+    <filter-mapping>
+        <filter-name>OpenId Filter</filter-name>
+        <url-pattern>/rest/auth/login</url-pattern>
+    </filter-mapping>
+
+    <!-- The OAuth Filter handles authentication/authorisation for protected resources -->
+	<filter>
+		<filter-name>OAuth Filter</filter-name>
+		<filter-class>org.apache.amber.oauth2.rsfilter.OAuthFilter</filter-class>
+	</filter>
+
+	<!-- This defines the URLs which require OAuth authentication -->
+	<filter-mapping>
+		<filter-name>OAuth Filter</filter-name>
+		<url-pattern>/rest/people/*</url-pattern>
+	</filter-mapping>
+
+	<context-param>
+		<param-name>oauth.rs.provider-class</param-name>
+		<param-value>org.jboss.pressgangccms.oauth.server.oauth.request.OAuthRSProviderImpl</param-value>
+	</context-param>
+
+    <context-param>
+        <param-name>oauth.provider.tokens.request</param-name>
+        <param-value>/rest/auth/token</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>oauth.provider.tokens.access</param-name>
+        <param-value>/rest/auth/login</param-value>
+    </context-param>
+</web-app>
