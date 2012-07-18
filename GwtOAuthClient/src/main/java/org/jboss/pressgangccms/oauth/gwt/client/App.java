@@ -18,6 +18,7 @@ public class App implements EntryPoint {
     // Use the implementation of Auth intended to be used in the GWT client app.
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
     private static final String PEOPLE_URL = "https://localhost:8443/OAuthProvider/rest/people";
+    private static final String PERSON_1_URL = "https://localhost:8443/OAuthProvider/rest/people/1";
     private static final String SKYNET_LOGIN_URL = "https://localhost:8443/OAuthProvider/rest/auth/login";
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuthProvider/rest/auth/token";
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
@@ -30,6 +31,7 @@ public class App implements EntryPoint {
         addRedHatLogin();
         addGoogleLogin();
         addGetPeople();
+        addGetPerson();
         addClearTokens();
         addRefresh();
     }
@@ -69,6 +71,27 @@ public class App implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), new RequestCallback() {
+                    @Override
+                    public void onResponseReceived(Request request, Response response) {
+                        Window.alert("Result: " + response.getText());
+                    }
+
+                    @Override
+                    public void onError(Request request, Throwable exception) {
+                        Window.alert("Error:\n" + exception.getMessage());
+                    }
+                });
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
+    private void addGetPerson() {
+        Button button = new Button("GET person one");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PERSON_1_URL), new RequestCallback() {
                     @Override
                     public void onResponseReceived(Request request, Response response) {
                         Window.alert("Result: " + response.getText());

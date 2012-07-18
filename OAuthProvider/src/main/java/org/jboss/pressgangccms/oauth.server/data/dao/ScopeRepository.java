@@ -1,6 +1,7 @@
 package org.jboss.pressgangccms.oauth.server.data.dao;
 
 import com.google.appengine.repackaged.com.google.common.base.Optional;
+import org.jboss.pressgangccms.oauth.server.data.model.auth.Endpoint;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Scope;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Scope_;
 
@@ -11,6 +12,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.sql.ResultSet;
 import java.util.logging.Logger;
 
 /**

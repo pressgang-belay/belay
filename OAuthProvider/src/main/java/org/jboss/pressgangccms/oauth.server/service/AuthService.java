@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
+import javax.servlet.http.HttpServletRequest;
 import java.util.logging.Logger;
 
 /**
@@ -41,6 +42,9 @@ public class AuthService {
 
     @Inject
     private UserRepository userRepository;
+
+    @Inject
+    private EndpointRepository endpointRepository;
 
     @Inject
     private Event<TokenGrant> tokenGrantEventSrc;
@@ -74,6 +78,10 @@ public class AuthService {
 
     public Optional<OpenIdProvider> getOpenIdProvider(String providerUrl) {
         return openIdProviderRepository.getOpenIdProviderFromUrl(providerUrl);
+    }
+
+    public Optional<Endpoint> getEndpointForRequest(HttpServletRequest request) {
+        return endpointRepository.findEndpointMatchingRequest(request);
     }
 
     //TODO move these methods to repositories

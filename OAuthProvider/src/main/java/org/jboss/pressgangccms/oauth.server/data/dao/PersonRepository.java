@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -28,7 +29,7 @@ public class PersonRepository {
     @Inject
     private Logger log;
 
-	public Optional<Person> findById(Long id) {
+	public Optional<Person> findById(BigInteger id) {
 		Person person = em.find(Person.class, id);
         if (person == null) {
             log.fine("Could not find Person with id " + id);

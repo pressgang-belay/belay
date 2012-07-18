@@ -16,19 +16,19 @@
  */
 package org.jboss.pressgangccms.oauth.server.data.model;
 
-import java.io.Serializable;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
  * Persistence logic for Person. For use with sample REST services.
@@ -37,13 +37,15 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @Entity
 @XmlRootElement
-@Table(name="PERSON", uniqueConstraints = @UniqueConstraint(columnNames = { "PERSON_NAME",
-		"PERSON_USERNAME" }))
+@Table(name="PERSON", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "PERSON_NAME" }),
+        @UniqueConstraint(columnNames = { "PERSON_USERNAME" })
+})
 public class Person implements Serializable {
 
 	private static final long serialVersionUID = 8570615351546278428L;
 
-	private Long personId;
+	private BigInteger personId;
 	private String personName;
 	private String personUsername;
 	private String personEmail;
@@ -55,7 +57,7 @@ public class Person implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "PERSON_ID")
-	public Long getPersonId() {
+	public BigInteger getPersonId() {
 		return personId;
 	}
 
@@ -91,7 +93,7 @@ public class Person implements Serializable {
         return personPassword;
     }
 
-    public void setPersonId(Long personId) {
+    public void setPersonId(BigInteger personId) {
         this.personId = personId;
     }
 

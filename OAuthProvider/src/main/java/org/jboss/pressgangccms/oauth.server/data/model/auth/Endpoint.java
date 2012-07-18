@@ -8,6 +8,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
  * Persistence logic for application endpoints.
@@ -15,12 +16,12 @@ import java.io.Serializable;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="ENDPOINT", uniqueConstraints = @UniqueConstraint(columnNames = { "ENDPOINT_URL" }))
+@Table(name="ENDPOINT", uniqueConstraints = @UniqueConstraint(columnNames = { "ENDPOINT_URL_PATTERN", "ENDPOINT_METHOD" }))
 public class Endpoint implements Serializable {
     private static final long serialVersionUID = -7272768043550790917L;
 
-    private long endpointId;
-    private String endpointUrl;
+    private BigInteger endpointId;
+    private String endpointUrlPattern;  // URL String or regex String if URL contains variable parts
     private HTTPMethod endpointMethod;
 
     public Endpoint() {
@@ -29,14 +30,14 @@ public class Endpoint implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "ENDPOINT_ID")
-    public long getEndpointId() {
+    public BigInteger getEndpointId() {
         return endpointId;
     }
 
     @NotNull
-    @Column(name = "ENDPOINT_URL")
-    public String getEndpointUrl() {
-        return endpointUrl;
+    @Column(name = "ENDPOINT_URL_PATTERN")
+    public String getEndpointUrlPattern() {
+        return endpointUrlPattern;
     }
 
     @Enumerated(value = EnumType.STRING)
@@ -45,12 +46,12 @@ public class Endpoint implements Serializable {
         return endpointMethod;
     }
 
-    public void setEndpointId(long endpointId) {
+    public void setEndpointId(BigInteger endpointId) {
         this.endpointId = endpointId;
     }
 
-    public void setEndpointUrl(String endpointUrl) {
-        this.endpointUrl = endpointUrl;
+    public void setEndpointUrlPattern(String endpointUrlPattern) {
+        this.endpointUrlPattern = endpointUrlPattern;
     }
 
     public void setEndpointMethod(HTTPMethod endpointMethod) {
@@ -65,7 +66,7 @@ public class Endpoint implements Serializable {
         Endpoint that = (Endpoint) o;
 
         return new EqualsBuilder()
-                .append(endpointUrl, that.getEndpointUrl())
+                .append(endpointUrlPattern, that.getEndpointUrlPattern())
                 .append(endpointMethod, that.getEndpointMethod())
                 .isEquals();
     }
@@ -73,7 +74,7 @@ public class Endpoint implements Serializable {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(endpointUrl)
+                .append(endpointUrlPattern)
                 .append(endpointMethod)
                 .toHashCode();
     }
@@ -81,7 +82,7 @@ public class Endpoint implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("endpointUrl", endpointUrl)
+                .append("endpointUrlPattern", endpointUrlPattern)
                 .append("endpointMethod", endpointMethod)
                 .toString();
     }

@@ -7,6 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 public class Scope implements Serializable {
     private static final long serialVersionUID = -255914952651554970L;
 
-    private long scopeId;
+    private BigInteger scopeId;
     private String scopeName;
     private Set<Endpoint> scopeEndpoints = new HashSet<Endpoint>();
 
@@ -30,7 +31,7 @@ public class Scope implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "SCOPE_ID")
-    public long getScopeId() {
+    public BigInteger getScopeId() {
         return scopeId;
     }
 
@@ -47,7 +48,7 @@ public class Scope implements Serializable {
         return scopeEndpoints;
     }
 
-    public void setScopeId(long scopeId) {
+    public void setScopeId(BigInteger scopeId) {
         this.scopeId = scopeId;
     }
 

@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +25,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -2816937391756095960L;
 
-    private Long userId;
+    private BigInteger userId;
     private String userIdentifier;
     private String firstName;
     private String lastName;
@@ -41,7 +42,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    public Long getUserId() {
+    public BigInteger getUserId() {
         return userId;
     }
 
@@ -100,7 +101,7 @@ public class User implements Serializable {
         return userScopes;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
 

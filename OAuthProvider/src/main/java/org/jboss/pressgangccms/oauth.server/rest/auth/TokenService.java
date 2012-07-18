@@ -1,7 +1,6 @@
 package org.jboss.pressgangccms.oauth.server.rest.auth;
 
 import com.google.appengine.repackaged.com.google.common.base.Optional;
-import org.apache.amber.oauth2.as.issuer.OAuthIssuer;
 import org.apache.amber.oauth2.as.request.OAuthTokenRequest;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
@@ -47,14 +46,15 @@ public class TokenService {
     @Inject
     private AuthService authService;
 
+    @Inject
+    private TokenIssuerService tokenIssuerService;
+
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
 
         log.info("Processing token refresh request");
-
-        OAuthIssuer oauthIssuer = new TokenIssuerService();
 
         try {
             OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
@@ -75,7 +75,7 @@ public class TokenService {
                 if (isRefreshTokenValid(oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN),
                         oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID),
                         oauthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET))) {
-                    TokenGrant tokenGrant = createTokenGrant(oauthIssuer, oauthRequest);
+                    TokenGrant tokenGrant = createTokenGrant(oauthRequest);
                     log.info("Issuing access token: " + tokenGrant.getAccessToken());
                     log.info("Issuing refresh token: " + tokenGrant.getRefreshToken());
                     OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK)
@@ -118,7 +118,7 @@ public class TokenService {
                 && tokenGrantFound.get().getGrantClient().getClientSecret().equals(clientSecret);
     }
 
-    private TokenGrant createTokenGrant(OAuthIssuer oauthIssuer, OAuthTokenRequest oauthRequest)
+    private TokenGrant createTokenGrant(OAuthTokenRequest oauthRequest)
             throws OAuthSystemException {
         TokenGrant oldTokenGrant = authService.getTokenGrantByRefreshToken(oauthRequest
                                     .getParam(OAuth.OAUTH_REFRESH_TOKEN)).get();
@@ -135,8 +135,8 @@ public class TokenService {
         newTokenGrant.setGrantUser(oldTokenGrant.getGrantUser());
         newTokenGrant.setGrantClient(oldTokenGrant.getGrantClient());
         newTokenGrant.setGrantScopes(newHashSet(oldTokenGrant.getGrantScopes()));
-        newTokenGrant.setAccessToken(oauthIssuer.accessToken());
-        newTokenGrant.setRefreshToken(oauthIssuer.refreshToken());
+        newTokenGrant.setAccessToken(tokenIssuerService.accessToken());
+        newTokenGrant.setRefreshToken(tokenIssuerService.refreshToken());
         newTokenGrant.setAccessTokenExpiry(ONE_HOUR);
         newTokenGrant.setGrantTimeStamp(new Date());
         newTokenGrant.setGrantCurrent(true);

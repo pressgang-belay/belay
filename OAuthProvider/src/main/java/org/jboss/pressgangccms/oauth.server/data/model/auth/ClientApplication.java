@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class ClientApplication implements Serializable {
 
     private static final long serialVersionUID = 2098266256101575627L;
 
-    private Long clientId;
+    private BigInteger clientId;
     private String clientIdentifier;
     private String clientName;
     private String clientSecret;
@@ -36,7 +37,7 @@ public class ClientApplication implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "CLIENT_ID")
-    public Long getClientId() {
+    public BigInteger getClientId() {
         return clientId;
     }
 
@@ -74,7 +75,7 @@ public class ClientApplication implements Serializable {
         return tokenGrants;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(BigInteger clientId) {
         this.clientId = clientId;
     }
 

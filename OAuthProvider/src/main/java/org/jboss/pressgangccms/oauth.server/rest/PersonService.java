@@ -16,6 +16,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -50,7 +51,7 @@ public class PersonService {
     @GET
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Person lookupPersonById(@PathParam("id") long id) {
+    public Person lookupPersonById(@PathParam("id") BigInteger id) {
 
         Optional<Person> personFound = personRepository.findById(id);
 
@@ -88,7 +89,7 @@ public class PersonService {
                 log.info("Registered person " + person.getPersonName() + " with id: "
                         + person.getPersonId());
                 // Create an "ok" response
-                long id = person.getPersonId();
+                BigInteger id = person.getPersonId();
                 String result = "Person created with id " + id + " at: "
                         + "/rest/people/" + id;
                 builder = Response.ok(result);
@@ -173,9 +174,9 @@ public class PersonService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id:[0-9][0-9]*}")
-    public Response deletePerson(@PathParam("id") long id) {
+    public Response deletePerson(@PathParam("id") BigInteger id) {
 
-        Response.ResponseBuilder builder = null;
+        Response.ResponseBuilder builder;
 
         if (! (personRepository.findById(id).isPresent())) {
             log.warning("Could not find requested person with id: " + id);
@@ -298,7 +299,7 @@ public class PersonService {
      * @param email The email to check
      * @return True if the email already exists, and false otherwise
      */
-    public boolean emailAlreadyExists(String email, Long id) {
+    public boolean emailAlreadyExists(String email, BigInteger id) {
         Optional<Person> personFound = personRepository.findByEmail(email);
         return personFound.isPresent()
                 && detailDoesNotBelongToPersonBeingProcessed(id, personFound.get());
@@ -313,13 +314,13 @@ public class PersonService {
      * @param username The username to check
      * @return True if the username already exists, and false otherwise
      */
-    public boolean usernameAlreadyExists(String username, Long id) {
+    public boolean usernameAlreadyExists(String username, BigInteger id) {
         Optional<Person> personFound = personRepository.findByUsername(username);
         return personFound.isPresent()
                 && detailDoesNotBelongToPersonBeingProcessed(id, personFound.get());
     }
 
-    private boolean detailDoesNotBelongToPersonBeingProcessed(Long id,
+    private boolean detailDoesNotBelongToPersonBeingProcessed(BigInteger id,
                                                               Person person) {
         return person.getPersonId() == null || (!person.getPersonId().equals(id));
     }

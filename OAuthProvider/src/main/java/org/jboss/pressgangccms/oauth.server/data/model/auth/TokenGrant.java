@@ -7,6 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +23,7 @@ public class TokenGrant implements Serializable {
 
     private static final long serialVersionUID = -2401887340233987092L;
 
-    private Long tokenGrantId;
+    private BigInteger tokenGrantId;
     private String accessToken;
     private String refreshToken;
     private String accessTokenExpiry; // In seconds, from time granted
@@ -38,7 +39,7 @@ public class TokenGrant implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "TOKEN_GRANT_ID")
-    public Long getTokenGrantId() {
+    public BigInteger getTokenGrantId() {
         return tokenGrantId;
     }
 
@@ -92,7 +93,7 @@ public class TokenGrant implements Serializable {
         return grantScopes;
     }
 
-    public void setTokenGrantId(Long tokenGrantId) {
+    public void setTokenGrantId(BigInteger tokenGrantId) {
         this.tokenGrantId = tokenGrantId;
     }
 
