@@ -7,6 +7,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Persistence logic for OAuth scopes.
@@ -20,6 +22,7 @@ public class Scope implements Serializable {
 
     private long scopeId;
     private String scopeName;
+    private Set<Endpoint> scopeEndpoints = new HashSet<Endpoint>();
 
     public Scope() {
     }
@@ -37,12 +40,23 @@ public class Scope implements Serializable {
         return scopeName;
     }
 
+    @ManyToMany
+    @JoinTable(name = "SCOPE_ENDPOINT", joinColumns = { @JoinColumn(name = "SCOPE_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "ENDPOINT_ID") })
+    public Set<Endpoint> getScopeEndpoints() {
+        return scopeEndpoints;
+    }
+
     public void setScopeId(long scopeId) {
         this.scopeId = scopeId;
     }
 
     public void setScopeName(String scopeName) {
         this.scopeName = scopeName;
+    }
+
+    public void setScopeEndpoints(Set<Endpoint> scopeEndpoints) {
+        this.scopeEndpoints = scopeEndpoints;
     }
 
     @Override
@@ -68,6 +82,7 @@ public class Scope implements Serializable {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("scopeName", scopeName)
+                .append("scopeEndpoints", scopeEndpoints)
                 .toString();
     }
 }

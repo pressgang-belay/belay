@@ -32,7 +32,7 @@ public class User implements Serializable {
     private String language;
     private String country;
     private OpenIdProvider openIdProvider;
-    private Set<TokenGrant> tokenGrants;
+    private Set<TokenGrant> tokenGrants = new HashSet<TokenGrant>();
     private Set<Scope> userScopes = new HashSet<Scope>();
 
     public User() {

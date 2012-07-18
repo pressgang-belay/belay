@@ -4,17 +4,17 @@ import com.google.appengine.repackaged.com.google.common.base.Optional;
 import com.google.code.openid.AuthorizationHeaderBuilder;
 import com.google.code.openid.GuiceModule;
 import com.google.step2.xmlsimplesign.DefaultCertValidator;
-import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
-import org.jboss.pressgangccms.oauth.server.oauth.login.OAuthIdRequest;
-import org.jboss.pressgangccms.oauth.server.service.AuthService;
-import org.apache.amber.oauth2.as.issuer.MD5Generator;
-import org.apache.amber.oauth2.as.issuer.OAuthIssuerImpl;
+import org.apache.amber.oauth2.as.issuer.OAuthIssuer;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
+import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
+import org.jboss.pressgangccms.oauth.server.oauth.login.OAuthIdRequest;
+import org.jboss.pressgangccms.oauth.server.service.AuthService;
+import org.jboss.pressgangccms.oauth.server.service.TokenIssuerService;
 import org.openid4java.consumer.InMemoryConsumerAssociationStore;
 
 import javax.enterprise.context.RequestScoped;
@@ -85,7 +85,7 @@ public class LoginService {
     public Response authorise(@Context HttpServletRequest request) throws URISyntaxException {
         log.info("Processing authorisation attempt");
 
-        OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
+        OAuthIssuer oauthIssuer = new TokenIssuerService();
         String identifier = (String) request.getAttribute(OPENID_IDENTIFIER);
         String clientId = getClientIdFromSession(request, identifier);
         String redirectUri = getRedirectUriFromSession(request);
@@ -131,7 +131,7 @@ public class LoginService {
                 }
             }
 
-            TokenGrant tokenGrant = createTokenGrant(oauthIssuerImpl, clientId, scopes, user);
+            TokenGrant tokenGrant = createTokenGrant(oauthIssuer, clientId, scopes, user);
             log.info("Issuing access token: " + tokenGrant.getAccessToken() + " to " + identifier);
             builder.setAccessToken(tokenGrant.getAccessToken());
             log.info("Issuing refresh token: " + tokenGrant.getRefreshToken());
@@ -279,7 +279,7 @@ public class LoginService {
         if (country != null) user.setCountry(country);
     }
 
-    private TokenGrant createTokenGrant(OAuthIssuerImpl oauthIssuerImpl, String clientId, Set<String> scopes, User user)
+    private TokenGrant createTokenGrant(OAuthIssuer oauthIssuer, String clientId, Set<String> scopes, User user)
             throws OAuthProblemException, OAuthSystemException {
         TokenGrant tokenGrant = new TokenGrant();
         tokenGrant.setGrantUser(user);
@@ -301,8 +301,8 @@ public class LoginService {
             // Set default scope
             tokenGrant.setGrantScopes(newHashSet(authService.getDefaultScope()));
         }
-        tokenGrant.setAccessToken(oauthIssuerImpl.accessToken());
-        tokenGrant.setRefreshToken(oauthIssuerImpl.refreshToken());
+        tokenGrant.setAccessToken(oauthIssuer.accessToken());
+        tokenGrant.setRefreshToken(oauthIssuer.refreshToken());
         tokenGrant.setAccessTokenExpiry(ONE_HOUR);
         tokenGrant.setGrantTimeStamp(new Date());
         tokenGrant.setGrantCurrent(true);

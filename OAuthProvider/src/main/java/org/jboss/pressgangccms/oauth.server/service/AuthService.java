@@ -1,6 +1,7 @@
 package org.jboss.pressgangccms.oauth.server.service;
 
 import com.google.appengine.repackaged.com.google.common.base.Optional;
+import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgangccms.oauth.server.data.dao.*;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
 
@@ -47,11 +48,11 @@ public class AuthService {
     @Inject
     private Event<User> userEventSrc;
 
-    public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) {
+    public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) throws OAuthSystemException {
         return tokenGrantRepository.getTokenGrantFromAccessToken(accessToken);
     }
 
-    public Optional<TokenGrant> getTokenGrantByRefreshToken(String refreshToken) {
+    public Optional<TokenGrant> getTokenGrantByRefreshToken(String refreshToken) throws OAuthSystemException {
         return tokenGrantRepository.getTokenGrantFromRefreshToken(refreshToken);
     }
 

@@ -3,6 +3,7 @@ package org.jboss.pressgangccms.oauth.server.oauth.request;
 import com.google.appengine.repackaged.com.google.common.base.Optional;
 import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
+import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.rsfilter.OAuthClient;
 import org.apache.amber.oauth2.rsfilter.OAuthDecision;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.TokenGrant;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.logging.Logger;
 
+import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 import static org.jboss.pressgangccms.oauth.server.util.Common.SYSTEM_ERROR;
 
 /**
@@ -33,19 +35,22 @@ public class OAuthDecisionImpl implements OAuthDecision {
     private static final String AUTH_SERVICE_JNDI_ADDRESS = "java:global/OAuthProvider/AuthService";
 
     public OAuthDecisionImpl(String realm, String token, HttpServletRequest request) throws OAuthProblemException {
-        if (token.toLowerCase().startsWith(Common.BEARER)) {
+        if (token.toLowerCase().startsWith(BEARER)) {
             // Remove leading header
-            token = token.substring(Common.BEARER.length()).trim();
+            token = token.substring(BEARER.length()).trim();
         }
         log.info("Processing decision on access token " + token);
         AuthService authService;
+        Optional<TokenGrant> tokenGrantFound;
         try {
             authService = (AuthService) new InitialContext().lookup(AUTH_SERVICE_JNDI_ADDRESS);
+            tokenGrantFound = authService.getTokenGrantByAccessToken(token);
         } catch (NamingException e) {
             log.severe("JNDI error with AuthService: " + e.getMessage());
             throw OAuthProblemException.error(SYSTEM_ERROR);
+        } catch (OAuthSystemException e) {
+            throw OAuthProblemException.error(SYSTEM_ERROR);
         }
-        Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByAccessToken(token);
         if (tokenGrantFound.isPresent()) {
             log.info("Found match for token " + token);
             TokenGrant tokenGrant = tokenGrantFound.get();

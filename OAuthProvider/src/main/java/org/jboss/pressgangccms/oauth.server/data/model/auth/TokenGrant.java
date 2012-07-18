@@ -25,7 +25,7 @@ public class TokenGrant implements Serializable {
     private Long tokenGrantId;
     private String accessToken;
     private String refreshToken;
-    private String accessTokenExpiry;
+    private String accessTokenExpiry; // In seconds, from time granted
     private Date grantTimeStamp;
     private ClientApplication grantClient;
     private User grantUser;
