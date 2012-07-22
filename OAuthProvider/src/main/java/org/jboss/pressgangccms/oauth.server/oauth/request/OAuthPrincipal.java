@@ -11,18 +11,14 @@ import java.security.Principal;
  */
 public class OAuthPrincipal implements Principal {
 
-    private User user;
+    private String userIdentifier;
 
-    public OAuthPrincipal(User user) {
-        this.user = user;
+    public OAuthPrincipal(String userIdentifier) {
+        this.userIdentifier = userIdentifier;
     }
 
     @Override
     public String getName() {
-        return user.getFirstName() + " " + user.getLastName();
-    }
-
-    public String getUserId() {
-        return user.getUserIdentifier();
+        return userIdentifier;
     }
 }

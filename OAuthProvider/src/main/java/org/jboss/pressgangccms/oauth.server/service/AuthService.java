@@ -12,7 +12,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 
 /**
  * Service class wraps calls to data repositories and persistence logic.
@@ -51,6 +54,9 @@ public class AuthService {
 
     @Inject
     private Event<User> userEventSrc;
+
+    @Inject
+    private Event<UserGroup> userGroupEventSrc;
 
     public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) throws OAuthSystemException {
         return tokenGrantRepository.getTokenGrantFromAccessToken(accessToken);
@@ -97,6 +103,25 @@ public class AuthService {
         userEventSrc.fire(user);
     }
 
+    public UserGroup createEmptyUserGroup() {
+        log.info("Creating new user group");
+        UserGroup userGroup = new UserGroup();
+        em.persist(userGroup);
+        userGroupEventSrc.fire(userGroup);
+        return userGroup;
+    }
+
+    public void updateUserGroup(UserGroup userGroup) {
+        log.info("Updating user group");
+        em.merge(userGroup);
+        userGroupEventSrc.fire(userGroup);
+    }
+
+    public void deleteUserGroup(UserGroup userGroup) {
+        log.info("Deleting user group");
+        em.remove(em.merge(userGroup));
+    }
+
     public void addGrant(TokenGrant tokenGrant) {
         log.info("Adding token grant");
         em.persist(tokenGrant);
@@ -107,5 +132,13 @@ public class AuthService {
         log.info("Updating token grant");
         em.merge(tokenGrant);
         tokenGrantEventSrc.fire(tokenGrant);
+    }
+
+    public static String trimAccessToken(String accessToken) {
+        if (accessToken.toLowerCase().startsWith(BEARER)) {
+            // Remove leading header
+            accessToken = accessToken.substring(BEARER.length()).trim();
+        }
+        return accessToken;
     }
 }

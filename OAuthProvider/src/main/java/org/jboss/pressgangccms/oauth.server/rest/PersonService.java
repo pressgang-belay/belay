@@ -17,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -65,8 +66,8 @@ public class PersonService {
 
     /**
      * Creates a new person from the values provided and generates an id/uri.
-     * Performs validation, and will return a JAX-RS response with either 200
-     * OK, or with a map of fields, and related errors.
+     * Performs validation, and will return a JAX-RS response with either 201,
+     * or with a map of fields, and related errors.
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -92,7 +93,7 @@ public class PersonService {
                 BigInteger id = person.getPersonId();
                 String result = "Person created with id " + id + " at: "
                         + "/rest/people/" + id;
-                builder = Response.ok(result);
+                builder = Response.created(URI.create("/rest/people/" + id));
 
             } catch (ConstraintViolationException ce) {
                 // Handle bean validation issues

@@ -4,7 +4,7 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 
-/** *
+/**
  * Provides methods to manage OAuth login and subsequent requests.
  *
  * @author kamiller@redhat.com (Katie Miller)

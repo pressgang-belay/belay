@@ -10,14 +10,14 @@ import org.apache.amber.oauth2.rsfilter.OAuthClient;
  */
 public class OAuthClientImpl implements OAuthClient {
 
-    private ClientApplication client;
+    private String clientIdentifier;
 
-    public OAuthClientImpl(ClientApplication client) {
-        this.client = client;
+    public OAuthClientImpl(String clientIdentifier) {
+        this.clientIdentifier = clientIdentifier;
     }
 
     @Override
     public String getClientId() {
-        return client.getClientIdentifier();
+        return clientIdentifier;
     }
 }

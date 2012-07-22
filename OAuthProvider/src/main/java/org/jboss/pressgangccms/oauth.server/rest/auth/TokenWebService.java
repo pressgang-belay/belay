@@ -29,6 +29,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.createTokenGrantWithDefaults;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.makeGrantsNonCurrent;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
@@ -38,7 +41,7 @@ import static org.jboss.pressgangccms.oauth.server.util.Common.*;
  */
 @Path("/auth/token")
 @RequestScoped
-public class TokenService {
+public class TokenWebService {
 
     @Inject
     private Logger log;
@@ -63,7 +66,7 @@ public class TokenService {
             if (! isClientIdKnown(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID))) {
                 log.warning("client_id could not be found");
                 OAuthResponse response =
-                        OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                        OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_FOUND)
                                 .setError(OAuthError.TokenResponse.INVALID_CLIENT)
                                 .setErrorDescription(INVALID_CLIENT)
                                 .buildJSONMessage();
@@ -76,18 +79,14 @@ public class TokenService {
                         oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID),
                         oauthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET))) {
                     TokenGrant tokenGrant = createTokenGrant(oauthRequest);
-                    log.info("Issuing access token: " + tokenGrant.getAccessToken());
-                    log.info("Issuing refresh token: " + tokenGrant.getRefreshToken());
-                    OAuthResponse response = OAuthASResponse.tokenResponse(HttpServletResponse.SC_OK)
-                            .setAccessToken(tokenGrant.getAccessToken())
-                            .setExpiresIn(tokenGrant.getAccessTokenExpiry())
-                            .setRefreshToken(tokenGrant.getRefreshToken())
-                            .buildJSONMessage();
+                    OAuthTokenResponseBuilder oAuthTokenResponseBuilder
+                            = OAuthUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK);
+                    OAuthResponse response = oAuthTokenResponseBuilder.buildJSONMessage();
                     return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
                 } else {
                     log.warning("Invalid refresh token: " + oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN));
                     OAuthResponse response = OAuthASResponse
-                            .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                            .errorResponse(HttpServletResponse.SC_NOT_FOUND)
                             .setError(OAuthError.TokenResponse.INVALID_GRANT)
                             .setErrorDescription(INVALID_REFRESH_TOKEN)
                             .buildJSONMessage();
@@ -97,14 +96,14 @@ public class TokenService {
 
             // Anything else is invalid
             OAuthResponse response = OAuthASResponse
-                    .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
+                    .errorResponse(HttpServletResponse.SC_NOT_FOUND)
                     .setError(OAuthError.TokenResponse.INVALID_GRANT)
                     .setErrorDescription(INVALID_GRANT_TYPE)
                     .buildJSONMessage();
             return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
         } catch (OAuthProblemException e) {
             log.warning("OAuthProblemException: " + e.getMessage());
-            OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e)
+            OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_FOUND).error(e)
                     .buildJSONMessage();
             return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
         }
@@ -123,23 +122,12 @@ public class TokenService {
         TokenGrant oldTokenGrant = authService.getTokenGrantByRefreshToken(oauthRequest
                                     .getParam(OAuth.OAUTH_REFRESH_TOKEN)).get();
         // Make sure no token grants held by the user are marked as current before issuing new one
-        Set<TokenGrant> userTokenGrants = oldTokenGrant.getGrantUser().getTokenGrants();
-        for (TokenGrant userTokenGrant : userTokenGrants) {
-            if (userTokenGrant.getGrantCurrent()) {
-                userTokenGrant.setGrantCurrent(false);
-                authService.updateGrant(userTokenGrant);
-            }
-        }
+        makeGrantsNonCurrent(authService, oldTokenGrant.getGrantUser().getTokenGrants());
+
         // Issue new grant
-        TokenGrant newTokenGrant = new TokenGrant();
-        newTokenGrant.setGrantUser(oldTokenGrant.getGrantUser());
-        newTokenGrant.setGrantClient(oldTokenGrant.getGrantClient());
+        TokenGrant newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
+                oldTokenGrant.getGrantUser(), oldTokenGrant.getGrantClient());
         newTokenGrant.setGrantScopes(newHashSet(oldTokenGrant.getGrantScopes()));
-        newTokenGrant.setAccessToken(tokenIssuerService.accessToken());
-        newTokenGrant.setRefreshToken(tokenIssuerService.refreshToken());
-        newTokenGrant.setAccessTokenExpiry(ONE_HOUR);
-        newTokenGrant.setGrantTimeStamp(new Date());
-        newTokenGrant.setGrantCurrent(true);
         authService.addGrant(newTokenGrant);
         return newTokenGrant;
     }

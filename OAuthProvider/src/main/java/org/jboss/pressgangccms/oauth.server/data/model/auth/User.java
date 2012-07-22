@@ -33,6 +33,7 @@ public class User implements Serializable {
     private String language;
     private String country;
     private OpenIdProvider openIdProvider;
+    private UserGroup userGroup;
     private Set<TokenGrant> tokenGrants = new HashSet<TokenGrant>();
     private Set<Scope> userScopes = new HashSet<Scope>();
 
@@ -89,6 +90,14 @@ public class User implements Serializable {
         return openIdProvider;
     }
 
+    //@NotNull
+    @ManyToOne
+    @JoinTable(name="USER_USER_GROUP", joinColumns = { @JoinColumn(name = "USER_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "USER_GROUP_ID") })
+    public UserGroup getUserGroup() {
+        return userGroup;
+    }
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantUser")
     public Set<TokenGrant> getTokenGrants() {
         return tokenGrants;
@@ -131,6 +140,10 @@ public class User implements Serializable {
 
     public void setOpenIdProvider(OpenIdProvider openIdProvider) {
         this.openIdProvider = openIdProvider;
+    }
+
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroup = userGroup;
     }
 
     public void setTokenGrants(Set<TokenGrant> tokenGrants) {
@@ -178,6 +191,7 @@ public class User implements Serializable {
                 .append("email", email)
                 .append("country", country)
                 .append("openIdProvider", openIdProvider)
+                .append("userGroup", userGroup)
                 .append("tokenGrants", tokenGrants)
                 .append("userScopes", userScopes)
                 .toString();

@@ -6,12 +6,10 @@ import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.rsfilter.OAuthClient;
 import org.apache.amber.oauth2.rsfilter.OAuthDecision;
-import org.jboss.pressgangccms.oauth.server.data.dao.EndpointRepository;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Endpoint;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Scope;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.TokenGrant;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
-import org.jboss.pressgangccms.oauth.server.util.Common;
 import org.joda.time.DateTime;
 
 import javax.naming.InitialContext;
@@ -40,10 +38,7 @@ public class OAuthDecisionImpl implements OAuthDecision {
     private static final String AUTH_SERVICE_JNDI_ADDRESS = "java:global/OAuthProvider/AuthService";
 
     public OAuthDecisionImpl(String realm, String token, HttpServletRequest request) throws OAuthProblemException {
-        if (token.toLowerCase().startsWith(BEARER)) {
-            // Remove leading header
-            token = token.substring(BEARER.length()).trim();
-        }
+        token = AuthService.trimAccessToken(token);
         log.info("Processing decision on access token " + token);
         Optional<TokenGrant> tokenGrantFound;
         try {
@@ -58,8 +53,8 @@ public class OAuthDecisionImpl implements OAuthDecision {
         if (tokenGrantFound.isPresent()) {
             log.info("Found match for token " + token);
             TokenGrant tokenGrant = tokenGrantFound.get();
-            this.oAuthClient = new OAuthClientImpl(tokenGrant.getGrantClient());
-            this.principal = new OAuthPrincipal(tokenGrant.getGrantUser());
+            this.oAuthClient = new OAuthClientImpl(tokenGrant.getGrantClient().getClientIdentifier());
+            this.principal = new OAuthPrincipal(tokenGrant.getGrantUser().getUserIdentifier());
             setAuthorisation(tokenGrant, request);
         } else {
             log.info("Invalid token " + token);
@@ -72,21 +67,37 @@ public class OAuthDecisionImpl implements OAuthDecision {
 
     private void setAuthorisation(TokenGrant tokenGrant, HttpServletRequest request) throws OAuthProblemException {
         isAuthorized = false;
-        // Throw exception if token has expired or is not current
+        checkTokenCurrentAndNotExpired(tokenGrant);
+        Optional<Endpoint> requestEndpoint = findEndpointForRequest(request);
+        if (grantScopeMatchesRequest(tokenGrant, requestEndpoint)) {
+            log.info("Verified token " + tokenGrant.getAccessToken());
+            isAuthorized = true;
+            return;
+        }
+        log.info("Could not find grant scope matching request");
+        throw OAuthProblemException.error(OAuthError.ResourceResponse.INSUFFICIENT_SCOPE);
+    }
+
+    private void checkTokenCurrentAndNotExpired(TokenGrant tokenGrant) throws OAuthProblemException {
         DateTime expiryDate = new DateTime(tokenGrant.getGrantTimeStamp()).
                 plusSeconds(Integer.parseInt(tokenGrant.getAccessTokenExpiry()));
         if (expiryDate.isBeforeNow() || (! tokenGrant.getGrantCurrent())) {
             log.warning("Attempt to use expired or superseded token " + tokenGrant.getAccessToken());
             throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
         }
-        // Find endpoint that matches request
+    }
+
+    private Optional<Endpoint> findEndpointForRequest(HttpServletRequest request) throws OAuthProblemException {
         Optional<Endpoint> requestEndpoint = authService.getEndpointForRequest(request);
         if (! requestEndpoint.isPresent()) {
             log.severe("Could not find endpoint matching " + request.getMethod() + " request for: "
-                + request.getRequestURL());
+                    + request.getRequestURL());
             throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_REQUEST);
         }
-        // Check grant contains a scope that permits request
+        return requestEndpoint;
+    }
+
+    private boolean grantScopeMatchesRequest(TokenGrant tokenGrant, Optional<Endpoint> requestEndpoint) throws OAuthProblemException {
         Set<Scope> grantScopes = tokenGrant.getGrantScopes();
         if (grantScopes == null) {
             log.severe("No scopes associated with token grant; set was null");
@@ -100,14 +111,11 @@ public class OAuthDecisionImpl implements OAuthDecision {
             }
             for (Endpoint scopeEndpoint : scopeEndpoints) {
                 if (requestEndpoint.get().equals(scopeEndpoint)) {
-                    log.info("Verified token " + tokenGrant.getAccessToken());
-                    isAuthorized = true;
-                    return;
+                    return true;
                 }
             }
         }
-        log.info("Could not find grant scope matching request");
-        throw OAuthProblemException.error(OAuthError.ResourceResponse.INSUFFICIENT_SCOPE);
+        return false;
     }
 
     @Override

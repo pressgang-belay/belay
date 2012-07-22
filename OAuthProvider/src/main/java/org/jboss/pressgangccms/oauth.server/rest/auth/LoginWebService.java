@@ -2,9 +2,6 @@ package org.jboss.pressgangccms.oauth.server.rest.auth;
 
 import com.google.appengine.repackaged.com.google.common.base.Optional;
 import com.google.code.openid.AuthorizationHeaderBuilder;
-import com.google.code.openid.GuiceModule;
-import com.google.step2.xmlsimplesign.DefaultCertValidator;
-import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
@@ -14,7 +11,6 @@ import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
 import org.jboss.pressgangccms.oauth.server.oauth.login.OAuthIdRequest;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
 import org.jboss.pressgangccms.oauth.server.service.TokenIssuerService;
-import org.openid4java.consumer.InMemoryConsumerAssociationStore;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -31,21 +27,22 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
  * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint.
  *
- *@author kamiller@redhat.com (Katie Miller)
+ * @author kamiller@redhat.com (Katie Miller)
  */
 @Path("/auth/login")
 @RequestScoped
-public class LoginService {
+public class LoginWebService {
 
     @Inject
     private Logger log;
@@ -72,7 +69,7 @@ public class LoginService {
 
             log.warning("OAuthProblemException thrown: " + e.getMessage());
 
-            final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_FOUND);
+            final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_NOT_FOUND);
             String redirectUri = e.getRedirectUri();
 
             if (OAuthUtils.isEmpty(redirectUri)) {
@@ -88,10 +85,10 @@ public class LoginService {
         log.info("Processing authorisation attempt");
 
         String identifier = (String) request.getAttribute(OPENID_IDENTIFIER);
-        String clientId = getClientIdFromSession(request, identifier);
-        String redirectUri = getRedirectUriFromSession(request);
-        Set<String> scopes = getScopesFromSession(request);
-        String providerUrl = getOpenIdProviderFromSession(request);
+        String clientId = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_CLIENT_ID, "OAuth client id");
+        String redirectUri = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_REDIRECT_URI, "OAuth redirect URI");
+        Set<String> scopes = getStringSetAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_SCOPE, "Scopes requested");
+        String providerUrl = getStringAttributeFromSessionAndRemove(request, log, OPENID_PROVIDER, "OpenId provider");
 
         try {
             if (identifier == null) {
@@ -118,37 +115,41 @@ public class LoginService {
                 user = addNewUser(identifier, providerUrl, request);
             }
 
-            OAuthASResponse.OAuthTokenResponseBuilder builder = OAuthASResponse
-                    .tokenResponse(HttpServletResponse.SC_FOUND);
+            // Check if this is part of a user association request
+            if (clientId.equals(OAUTH_PROVIDER_ID) && redirectUri.equals(ASSOCIATE_USER_ENDPOINT)) {
+                request.getSession().setAttribute(OPENID_IDENTIFIER, identifier);
+                StringBuilder uriBuilder = new StringBuilder(ASSOCIATE_USER_ENDPOINT);
+                String accessToken = (String)request.getSession().getAttribute(OAuth.OAUTH_TOKEN);
+                if (accessToken != null) {
+                    log.info("Setting OAuth token for redirect");
+                    uriBuilder.append(QUERY_STRING_MARKER)
+                            .append(OAuth.OAUTH_TOKEN)
+                            .append(KEY_VALUE_SEPARATOR)
+                            .append(accessToken);
+                }
+
+                log.info("Redirecting back to: " + uriBuilder.toString());
+
+                return Response.seeOther(URI.create(uriBuilder.toString())).build();
+            }
 
             // Check if user already has current grant/s; if so, make them invalid
             Set<TokenGrant> grants = user.getTokenGrants();
             if (grants != null) {
-                for (TokenGrant grant : grants) {
-                    if (grant.getGrantCurrent()) {
-                        grant.setGrantCurrent(false);
-                        authService.updateGrant(grant);
-                    }
-                }
+                makeGrantsNonCurrent(authService, grants);
             }
 
-            TokenGrant tokenGrant = createTokenGrant(clientId, scopes, user);
-            log.info("Issuing access token: " + tokenGrant.getAccessToken() + " to " + identifier);
-            builder.setAccessToken(tokenGrant.getAccessToken());
-            log.info("Issuing refresh token: " + tokenGrant.getRefreshToken());
-            builder.setRefreshToken(tokenGrant.getRefreshToken());
-            log.info("Access token expires in: " + tokenGrant.getAccessTokenExpiry());
-            builder.setExpiresIn(tokenGrant.getAccessTokenExpiry());
-
-            final OAuthResponse response = builder.location(redirectUri).buildQueryMessage();
+            OAuthTokenResponseBuilder oAuthTokenResponseBuilder =
+                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, user), HttpServletResponse.SC_FOUND);
+            OAuthResponse response = oAuthTokenResponseBuilder.location(redirectUri).buildQueryMessage();
             return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
             log.warning("OAuthProblemException thrown: " + e.getError());
-            return Response.status(Response.Status.UNAUTHORIZED)
+            return Response.status(Response.Status.NOT_FOUND)
                     .entity(e.getError()).location(new URI(redirectUri)).build();
         } catch (OAuthSystemException e) {
             log.warning("OAuthSystemException thrown: " + e.getMessage());
-            return Response.status(Response.Status.UNAUTHORIZED)
+            return Response.status(Response.Status.NOT_FOUND)
                     .entity(e.getMessage()).location(new URI(redirectUri)).build();
         }
     }
@@ -171,8 +172,6 @@ public class LoginService {
     private Response.ResponseBuilder createAuthResponse(String providerUrl) {
         Response.ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
         log.info("Sending request for login authentication");
-        GuiceModule guiceModule = new GuiceModule(new InMemoryConsumerAssociationStore());
-        guiceModule.provideCertValidator(new DefaultCertValidator());
         builder.header(AUTHENTICATE_HEADER, new AuthorizationHeaderBuilder()
                 .forIdentifier(providerUrl)
                 .usingRealm(OPENID_REALM)
@@ -207,52 +206,28 @@ public class LoginService {
         return providerUrl;
     }
 
-    private void storeOAuthRequestParams(HttpServletRequest request, OAuthIdRequest oauthRequest) {
-        request.getSession().setAttribute(OAuth.OAUTH_CLIENT_ID, oauthRequest.getClientId());
-        request.getSession().setAttribute(OAuth.OAUTH_REDIRECT_URI, oauthRequest.getRedirectURI());
-        if (oauthRequest.getScopes() != null) {
-            request.getSession().setAttribute(OAuth.OAUTH_SCOPE, oauthRequest.getScopes());
+    private void storeOAuthRequestParams(HttpServletRequest request, OAuthIdRequest oAuthRequest) {
+        request.getSession().setAttribute(OAuth.OAUTH_CLIENT_ID, oAuthRequest.getClientId());
+        request.getSession().setAttribute(OAuth.OAUTH_REDIRECT_URI, oAuthRequest.getRedirectURI());
+        if (oAuthRequest.getScopes() != null) {
+            request.getSession().setAttribute(OAuth.OAUTH_SCOPE, oAuthRequest.getScopes());
         }
-    }
-
-    private String getOpenIdProviderFromSession(HttpServletRequest request) {
-        String providerUrl = (String) request.getSession().getAttribute(OPENID_PROVIDER);
-        request.getSession().removeAttribute(OPENID_PROVIDER);
-        return providerUrl;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Set<String> getScopesFromSession(HttpServletRequest request) {
-        Set<String> scopes = (Set<String>) request.getSession().getAttribute(OAuth.OAUTH_SCOPE);
-        log.info("User scopes requested are: " + scopes);
-        request.getSession().removeAttribute(OAuth.OAUTH_SCOPE);
-        return scopes;
-    }
-
-    private String getRedirectUriFromSession(HttpServletRequest request) {
-        String redirectUri = (String) request.getSession().getAttribute(OAuth.OAUTH_REDIRECT_URI);
-        log.info("Redirect URI supplied is: " + redirectUri);
-        request.getSession().removeAttribute(OAuth.OAUTH_REDIRECT_URI);
-        return redirectUri;
-    }
-
-    private String getClientIdFromSession(HttpServletRequest request, String identifier) {
-        String clientId = (String) request.getSession().getAttribute(OAuth.OAUTH_CLIENT_ID);
-        log.info("Authenticated user came from client: " + clientId);
-        request.getSession().removeAttribute(OAuth.OAUTH_CLIENT_ID);
-        return clientId;
     }
 
     private User addNewUser(String identifier, String providerUrl, HttpServletRequest request) {
         log.info("Creating new user");
         User newUser = new User();
+        UserGroup newUserGroup = authService.createEmptyUserGroup();
         newUser.setUserIdentifier(identifier);
         newUser.setUserScopes(newHashSet(authService.getDefaultScope()));
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(providerUrl);
         newUser.setOpenIdProvider(providerFound.get());
+        newUser.setUserGroup(newUserGroup);
         // Set extra attributes if available
         setExtraUserAttributes(request, newUser);
         authService.addUser(newUser);
+        newUserGroup.setPrimaryUser(newUser);
+        authService.updateUserGroup(newUserGroup);
         return newUser;
     }
 
@@ -282,31 +257,13 @@ public class LoginService {
 
     private TokenGrant createTokenGrant(String clientId, Set<String> scopes, User user)
             throws OAuthProblemException, OAuthSystemException {
-        TokenGrant tokenGrant = new TokenGrant();
-        tokenGrant.setGrantUser(user);
-        tokenGrant.setGrantClient(authService.getClient(clientId).get());
+        TokenGrant tokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService, user,
+                authService.getClient(clientId).get());
         // If specific grant scopes requested, check these are valid and add to token grant
         if (scopes != null) {
-            Set<Scope> userScopes = user.getUserScopes();
-            Set<Scope> requestedScopes = newHashSet(authService.getDefaultScope());
-            for (String scopeName : scopes) {
-                Optional<Scope> scopeFound = authService.getScopeByName(scopeName);
-                if ((!scopeFound.isPresent()) || (!userScopes.contains(scopeFound.get()))) {
-                    throw OAuthProblemException.error(INVALID_SCOPE);
-                } else {
-                    requestedScopes.add(scopeFound.get());
-                }
-            }
-            tokenGrant.setGrantScopes(requestedScopes);
-        } else {
-            // Set default scope
-            tokenGrant.setGrantScopes(newHashSet(authService.getDefaultScope()));
+            Set<Scope> grantScopes = checkScopes(authService, scopes, user.getUserScopes());
+            tokenGrant.setGrantScopes(grantScopes);
         }
-        tokenGrant.setAccessToken(tokenIssuerService.accessToken());
-        tokenGrant.setRefreshToken(tokenIssuerService.refreshToken());
-        tokenGrant.setAccessTokenExpiry(ONE_HOUR);
-        tokenGrant.setGrantTimeStamp(new Date());
-        tokenGrant.setGrantCurrent(true);
         authService.addGrant(tokenGrant);
         return tokenGrant;
     }

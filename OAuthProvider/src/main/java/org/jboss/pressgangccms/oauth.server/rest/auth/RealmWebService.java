@@ -21,7 +21,7 @@ import static org.jboss.pressgangccms.oauth.server.util.Common.*;
  */
 @Path("/auth")
 @RequestScoped
-public class RealmService {
+public class RealmWebService {
 
     @Inject
     private Logger log;

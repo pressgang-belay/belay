@@ -6,7 +6,7 @@ import static org.jboss.pressgangccms.oauth.gwt.client.oauth.Common.*;
  * Includes code from the AuthRequest class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),
  * written by Jason Hall. Library code has been modified.
  * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
- * <p/>
+ *
  * Represents a request for authentication to an OAuth 2.0 provider server, using an OpenId provider for authentication.
  *
  * @author kamiller@redhat.com (Katie Miller)
@@ -15,19 +15,21 @@ public class AuthorisationRequest {
     private final String authUrl;
     private final String tokenUrl;
     private final String clientId;
+    private final String clientSecret;
     private String[] scopes;
-    private String openIdProvider;
+    private boolean forceNewRequest;
     private String scopeDelimiter = " ";  // Default delimiter
 
     /**
-     * @param authUrl     URL of the OAuth 2.0 provider server
-     * @param clientId    Your application's unique client ID
+     * @param authUrl  URL of the OAuth 2.0 provider server
+     * @param clientId Your application's unique client ID
      */
-    public AuthorisationRequest(String authUrl, String tokenUrl, String clientId, String openIdProvider) {
+    public AuthorisationRequest(String authUrl, String tokenUrl, String clientId, String clientSecret) {
         this.authUrl = authUrl;
         this.tokenUrl = tokenUrl;
         this.clientId = clientId;
-        this.openIdProvider = openIdProvider;
+        this.clientSecret = clientSecret;
+        this.forceNewRequest = false;
     }
 
     /**
@@ -35,6 +37,16 @@ public class AuthorisationRequest {
      */
     public AuthorisationRequest withScopes(String... scopes) {
         this.scopes = scopes;
+        return this;
+    }
+
+    /**
+     * Ensure request will go to OAuth provider, regardless of whether or not a valid
+     * token for this request exists. Defaults to false if not set and resets to default
+     * after a successful login.
+     */
+    public AuthorisationRequest forceNewRequest(boolean forceNewRequest) {
+        this.forceNewRequest = forceNewRequest;
         return this;
     }
 
@@ -46,15 +58,21 @@ public class AuthorisationRequest {
         return clientId;
     }
 
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public boolean isForceNewRequest() {
+        return forceNewRequest;
+    }
+
     /**
      * Since some OAuth providers expect multiple scopes to be delimited with
      * spaces (conforming with spec), or spaces, or plus signs, you can set the
      * scope delimiter here that will be used for this AuthorisationRequest.
      *
-     * <p>
      * By default, this will be a single space, in conformance with the latest
      * draft of the OAuth 2.0 spec.
-     * </p>
      */
 
     public AuthorisationRequest withScopeDelimiter(String scopeDelimiter) {
@@ -63,8 +81,8 @@ public class AuthorisationRequest {
     }
 
     /**
-     * Returns a URL representation of this request, appending the client ID and
-     * scopes to the original authUrl.
+     * Returns a URL representation of this request, appending the client ID, scopes and, if provided,
+     * OpenID provider to the original authUrl.
      */
     String toLoginUrl(Authoriser.UrlCodex urlCodex) {
         return new StringBuilder(authUrl)
@@ -72,8 +90,6 @@ public class AuthorisationRequest {
                 .append(CLIENT_ID).append(KEY_VALUE_SEPARATOR).append(urlCodex.encode(clientId))
                 .append(PARAMETER_SEPARATOR).append(RESPONSE_TYPE).append(KEY_VALUE_SEPARATOR).append(TOKEN)
                 .append(PARAMETER_SEPARATOR).append(SCOPE).append(KEY_VALUE_SEPARATOR).append(scopesToString(urlCodex))
-                .append(PARAMETER_SEPARATOR).append(PROVIDER).append(KEY_VALUE_SEPARATOR)
-                .append(urlCodex.encode(openIdProvider))
                 .toString();
     }
 
@@ -81,7 +97,6 @@ public class AuthorisationRequest {
      * Returns a unique representation of this request for use as a cookie name.
      */
     String asString() {
-        //TODO should we add a user identity to this?
         return clientId + SEPARATOR + scopesToString(null);
     }
 

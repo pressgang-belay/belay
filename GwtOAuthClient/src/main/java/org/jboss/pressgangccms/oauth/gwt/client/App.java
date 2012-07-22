@@ -4,7 +4,10 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.http.client.*;
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -17,14 +20,19 @@ public class App implements EntryPoint {
 
     // Use the implementation of Auth intended to be used in the GWT client app.
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
+    private static final String GOOGLE_PROVIDER_URL = "gmail.com";
+    private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String PEOPLE_URL = "https://localhost:8443/OAuthProvider/rest/people";
     private static final String PERSON_1_URL = "https://localhost:8443/OAuthProvider/rest/people/1";
+    private static final String SKYNET_ASSOCIATE_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/associate";
     private static final String SKYNET_LOGIN_URL = "https://localhost:8443/OAuthProvider/rest/auth/login";
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuthProvider/rest/auth/token";
-    private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
-    private static final String GOOGLE_PROVIDER_URL = "gmail.com";
+    private static final String SKYNET_CLIENT_SECRET = "none";
     // This app's personal client ID assigned by the Skynet OAuth server
     private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
+    private final String PROVIDER_PARAM_STRING = "?provider=";
+    private final String TOKEN_PARAM_STRING = "&oauth_token=";
+    private static String currentToken;
 
     public void onModuleLoad() {
         Authoriser.export();
@@ -32,6 +40,7 @@ public class App implements EntryPoint {
         addGoogleLogin();
         addGetPeople();
         addGetPerson();
+        addAssociateUser();
         addClearTokens();
         addRefresh();
     }
@@ -44,8 +53,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, RED_HAT_PROVIDER_URL);
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + RED_HAT_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -57,8 +67,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, GOOGLE_PROVIDER_URL);
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + GOOGLE_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -107,13 +118,38 @@ public class App implements EntryPoint {
         RootPanel.get().add(button);
     }
 
+    private void addAssociateUser() {
+        Button button = new Button("Associate Google user");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_ASSOCIATE_URL + PROVIDER_PARAM_STRING
+                        + GOOGLE_PROVIDER_URL + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
+                AUTH_HANDLER.login(request, new Callback<String, Throwable>() {
+                    @Override
+                    public void onFailure(Throwable reason) {
+                        Window.alert("Error:\n" + reason.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        Window.alert("Result: " + result);
+                    }
+                });
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
     private void addRefresh() {
         Button button = new Button("Force token refresh");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, RED_HAT_PROVIDER_URL);
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + RED_HAT_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
                 AUTH_HANDLER.doRefresh(request, getStandardCallback());
             }
         });
@@ -121,8 +157,8 @@ public class App implements EntryPoint {
     }
 
     // Clears all tokens stored in the browser by this library. Subsequent calls
-    // to authorise() will result in the popup being shown, though it may immediately
-    // disappear if the token has not expired.
+// to authorise() will result in the popup being shown, though it may immediately
+// disappear if the token has not expired.
     private void addClearTokens() {
         Button button = new Button("Clear stored tokens");
         button.addClickHandler(new ClickHandler() {
@@ -140,6 +176,7 @@ public class App implements EntryPoint {
             @Override
             public void onSuccess(String result) {
                 Window.alert("Result: " + result);
+                currentToken = result;
             }
 
             @Override

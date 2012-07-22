@@ -13,7 +13,7 @@ import static org.jboss.pressgangccms.oauth.gwt.client.oauth.Common.*;
  * Includes code from the Auth class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),
  * written by Jason Hall. Library code has been modified.
  * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
- * <p/>
+ *
  * Provides methods to manage authentication flow.
  *
  * @author kamiller@redhat.com (Katie Miller)
@@ -48,22 +48,20 @@ public abstract class Authoriser {
     /**
      * Ensure the user has a valid access token from an OAuth 2.0 provider,
      * requesting one if necessary.
-     * <p/>
-     * <p>
+     *
      * If it can be determined that the user has already granted access, and the
      * token has not yet expired, and that the token will not expire soon, the
-     * existing token will be passed to the callback.
-     * </p>
-     * <p/>
+     * existing token will be passed to the callback -- provided the request flag
+     * is not set to force a call to the OAuth provider.
+     *
      * If a refresh token is available, this will be used to obtain a new access
      * token.
-     * <p>
+     *
      * Otherwise, a popup window will be displayed which may prompt the user to
-     * grant access. If the user has already granted access the popup will
-     * immediately close and the token will be passed to the callback. If access
-     * hasn't been granted, the user will be prompted, and when they grant, the
-     * token will be passed to the callback.
-     * </p>
+     * login and/or grant access. If the user has already granted access the popup
+     * will close and the token will be passed to the callback. If access
+     * hasn't been granted the user will be prompted, and when they grant access,
+     * the token will be passed to the callback.
      *
      * @param request  Request for authentication.
      * @param callback Callback to pass the token to when access has been granted.
@@ -74,9 +72,9 @@ public abstract class Authoriser {
 
         // Try to look up the token we have stored.
         final TokenInfo info = getToken(request);
-        if (info == null || info.expires == null || info.refreshToken == null) {
-            // Token wasn't found, or doesn't have an expiration, or we have no refresh
-            // token to use to get a new one. Request a new access token.
+        if (request.isForceNewRequest() || info == null || info.expires == null || info.refreshToken == null) {
+            // A new request has been forced, token wasn't found or doesn't have an expiration, or there is
+            // no refresh token to use to get a new one. Request a new access token.
             String authUrl = new StringBuilder(request.toLoginUrl(urlCodex))
                     .append(PARAMETER_SEPARATOR)
                     .append(REDIRECT_URI)
@@ -121,7 +119,7 @@ public abstract class Authoriser {
         RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, authorisationRequest.getTokenUrl());
         builder.setHeader(CONTENT_TYPE, FORM_URLENCODED);
         try {
-            builder.sendRequest(buildOAuthRefreshTokenString(authorisationRequest.getClientId(), tokenInfo.refreshToken),
+            builder.sendRequest(buildOAuthRefreshTokenString(authorisationRequest, tokenInfo.refreshToken),
                     new RequestCallback() {
                 @Override
                 public void onResponseReceived(Request request, Response response) {
@@ -180,11 +178,11 @@ public abstract class Authoriser {
         }
     }
 
-    private String buildOAuthRefreshTokenString(String clientId, String refreshToken) {
+    private String buildOAuthRefreshTokenString(AuthorisationRequest request, String refreshToken) {
         return new StringBuilder(GRANT_TYPE).append(KEY_VALUE_SEPARATOR).append(REFRESH_TOKEN).append(PARAMETER_SEPARATOR)
-                .append(CLIENT_ID).append(KEY_VALUE_SEPARATOR).append(clientId).append(PARAMETER_SEPARATOR)
+                .append(CLIENT_ID).append(KEY_VALUE_SEPARATOR).append(request.getClientId()).append(PARAMETER_SEPARATOR)
                 .append(REFRESH_TOKEN).append(KEY_VALUE_SEPARATOR).append(refreshToken).append(PARAMETER_SEPARATOR)
-                .append(CLIENT_SECRET).append(KEY_VALUE_SEPARATOR).append(SKYNET_CLIENT_SECRET)
+                .append(CLIENT_SECRET).append(KEY_VALUE_SEPARATOR).append(request.getClientSecret())
                 .toString();
     }
 
@@ -271,6 +269,8 @@ public abstract class Authoriser {
                     + hash));
         } else {
             setToken(lastAuthRequest, info);
+            // Reset forceAuthRequest flag
+            lastAuthRequest.forceNewRequest(false);
             lastCallback.onSuccess(info.accessToken);
         }
     }
@@ -364,14 +364,14 @@ public abstract class Authoriser {
 
     /**
      * Exports a function to the page's global scope that can be called from regular JavaScript.
-     * <p/>
-     * <p>Usage (in JavaScript):</p>
+     *
+     * Usage (in JavaScript):
      * <code>
      * oauth2win.authorise({
      * "authUrl": "..." // the auth URL to use
      * "tokenUrl": "..." // the token URL to use
      * "clientId": "..." // the client ID for this app
-     * "openIdProvider": "..." // the OpenId provider to use for authentication
+     * "clientSecret": "..." // the client secret for this app
      * "scopes": ["...", "..."], // (optional au) the scopes to request access to
      * "scopeDelimiter": "..." // (optional) the scope delimiter to use
      * }, function(token) { // (optional) called on success, with the token
@@ -401,7 +401,7 @@ public abstract class Authoriser {
     }
 
     private static AuthorisationRequest fromJso(AuthRequestJso jso) {
-        return new AuthorisationRequest(jso.getAuthUrl(), jso.getTokenUrl(), jso.getClientId(), jso.getOpenIdProvider())
+        return new AuthorisationRequest(jso.getAuthUrl(), jso.getTokenUrl(), jso.getClientId(), jso.getClientSecret())
                 .withScopes(jso.getScopes())
                 .withScopeDelimiter(jso.getScopeDelimiter());
     }
@@ -423,8 +423,8 @@ public abstract class Authoriser {
             return this.clientId;
         }-*/;
 
-        public final native String getOpenIdProvider() /*-{
-            return this.openIdProvider;
+        private final native String getClientSecret() /*-{
+            return this.clientSecret;
         }-*/;
 
         private final native JsArrayString getScopesNative() /*-{

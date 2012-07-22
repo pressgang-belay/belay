@@ -31,7 +31,7 @@ class Common {
     static final String CLIENT_SECRET = "client_secret";
     static final String CONTENT_TYPE = "Content-Type";
     static final String FORM_URLENCODED = "application/x-www-form-urlencoded";
-    static final String SKYNET_CLIENT_SECRET = "none";
+    static final String OAUTH_POPUP_NAME = "oAuthWindow.html";
     static final double FIVE_MINUTES = 5 * 60 * 1000;
     static final int SC_OK = 200;
 }

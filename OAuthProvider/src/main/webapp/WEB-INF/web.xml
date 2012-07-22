@@ -26,6 +26,7 @@
 	<filter-mapping>
 		<filter-name>OAuth Filter</filter-name>
 		<url-pattern>/rest/people/*</url-pattern>
+        <url-pattern>/rest/auth/user/*</url-pattern>
 	</filter-mapping>
 
 	<context-param>
@@ -42,4 +43,11 @@
         <param-name>oauth.provider.tokens.access</param-name>
         <param-value>/rest/auth/login</param-value>
     </context-param>
+
+    <!-- Allowing query-style params on requests for /user/associate endpoint -->
+    <context-param>
+        <param-name>oauth.rs.tokens</param-name>
+        <param-value>QUERY,HEADER</param-value>
+    </context-param>
+
 </web-app>
