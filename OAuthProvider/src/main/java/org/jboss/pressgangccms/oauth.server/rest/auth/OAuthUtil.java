@@ -18,9 +18,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
-import static org.jboss.pressgangccms.oauth.server.util.Common.INVALID_SCOPE;
-import static org.jboss.pressgangccms.oauth.server.util.Common.ONE_HOUR;
-import static org.jboss.pressgangccms.oauth.server.util.Common.OPENID_IDENTIFIER;
+import static org.jboss.pressgangccms.oauth.server.util.Common.*;
+import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 
 /**
  * Encapsulates logic shared across auth web services.
@@ -108,5 +107,13 @@ public class OAuthUtil {
         log.info(attributeName + " is: " + attribute);
         request.getSession().removeAttribute(attributeKey);
         return attribute;
+    }
+
+    public static String trimAccessToken(String accessToken) {
+        if (accessToken.toLowerCase().startsWith(BEARER)) {
+            // Remove leading header
+            accessToken = accessToken.substring(BEARER.length()).trim();
+        }
+        return accessToken;
     }
 }

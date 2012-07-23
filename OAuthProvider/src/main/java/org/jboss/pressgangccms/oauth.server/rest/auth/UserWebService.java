@@ -9,6 +9,7 @@ import org.apache.amber.oauth2.common.message.types.ParameterStyle;
 import org.apache.amber.oauth2.common.message.types.ResponseType;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
 import org.apache.amber.oauth2.rs.request.OAuthAccessResourceRequest;
+import org.jboss.pressgangccms.oauth.server.data.domain.UserInfo;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
 import org.jboss.pressgangccms.oauth.server.oauth.login.OAuthIdRequest;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
@@ -18,11 +19,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,10 +31,9 @@ import java.util.logging.Logger;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
-import static org.apache.amber.oauth2.common.OAuth.*;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.getBooleanAttributeFromSessionAndRemove;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.getStringAttributeFromSessionAndRemove;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.getStringSetAttributeFromSessionAndRemove;
+import static org.apache.amber.oauth2.common.OAuth.OAUTH_REDIRECT_URI;
+import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
@@ -71,8 +69,8 @@ public class UserWebService {
      * @param provider     OpenID provider for the second registration
      * @param redirectUri  OAuth redirect URI
      * @param accessToken  OAuth access token, if this request is being made using the OAuth query-string style
-     * @return OAuth response containing access token, refresh token and expiry parameters, or an error
-     * @throws WebApplicationException if OAuth redirect URI is not provided
+     * @return             OAuth response containing access token, refresh token and expiry parameters, or an error
+     * @throws             WebApplicationException if OAuth redirect URI is not provided
      */
     @GET
     @Path("/associate")
@@ -206,12 +204,12 @@ public class UserWebService {
             // the primary, or the requested scopes if not
             TokenGrant newTokenGrant;
             try {
-                newTokenGrant = OAuthUtil.createTokenGrantWithDefaults(tokenIssuerService, authService,
+                newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
                         primaryUser, clientFound.get());
                 Set<Scope> grantScopes = null;
                 if (secondUserIsPrimary) {
                     if (scopesRequested != null) {
-                        grantScopes = OAuthUtil.checkScopes(authService, scopesRequested, secondUser.getUserScopes());
+                        grantScopes = checkScopes(authService, scopesRequested, secondUser.getUserScopes());
                     } else {
                         log.warning("User has default scope after association request as no scopes requested");
                     }
@@ -226,7 +224,7 @@ public class UserWebService {
                 authService.updateGrant(requestTokenGrant);
 
                 OAuthTokenResponseBuilder oAuthTokenResponseBuilder
-                        = OAuthUtil.addTokenGrantResponseParams(newTokenGrant, HttpServletResponse.SC_FOUND);
+                        = addTokenGrantResponseParams(newTokenGrant, HttpServletResponse.SC_FOUND);
                 OAuthResponse response = oAuthTokenResponseBuilder.location(oAuthRedirectUri).buildQueryMessage();
                 log.info("Sending token response to " + oAuthRedirectUri);
                 return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
@@ -247,7 +245,7 @@ public class UserWebService {
         if (accessToken == null) {
             OAuthAccessResourceRequest oAuthRequest = new
                     OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-            accessToken = AuthService.trimAccessToken(oAuthRequest.getAccessToken());
+            accessToken = trimAccessToken(oAuthRequest.getAccessToken());
         }
         Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByAccessToken(accessToken);
         if (!tokenGrantFound.isPresent()) {
@@ -272,5 +270,41 @@ public class UserWebService {
     // Second endpoint to change primary account
     // Supply identifier to make primary
 
-    // Third endpoint to get information about primary user
+    /**
+     * This endpoint provides information about authenticated users. If a userIdentifier is provided and the
+     * user represented by that identifier is part of the authorised user group, information will be provided
+     * on that user. Otherwise, information will be returned on the primary user from the authorised user group.
+     *
+     * @param request           The servlet request
+     * @param userIdentifier    Identifier of the user to return information about
+     * @return                  User information in JSON format
+     */
+    @GET
+    @Path("/query")
+    @Produces(MediaType.APPLICATION_JSON)
+    public UserInfo getPrimaryUserInfo(@Context HttpServletRequest request,
+                                       @QueryParam(USER_IDENTIFIER) String userIdentifier) {
+        Principal userPrincipal = request.getUserPrincipal();
+        String identifierToQuery;
+
+        if (userIdentifier == null) {
+            identifierToQuery = userPrincipal.getName();
+        } else {
+            Optional<User> primaryUser = authService.getUser(request.getUserPrincipal().getName());
+            if ((! primaryUser.isPresent() || (! authService.isUserInGroup(userIdentifier, primaryUser.get().getUserGroup())))) {
+                log.warning("Could not process query on user " + userIdentifier + "; user unauthorised or system error");
+                throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
+                        .entity(UNAUTHORISED_QUERY_ERROR + " " + userIdentifier).build());
+            }
+            identifierToQuery = userIdentifier;
+        }
+        Optional<UserInfo> userInfoFound = authService.getUserInfo(identifierToQuery);
+        if (! userInfoFound.isPresent()) {
+            log.warning("User query failed; could not find user info for " + identifierToQuery);
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .entity(USER_QUERY_ERROR).build());
+        }
+        log.info("Returning user info for " + identifierToQuery);
+        return userInfoFound.get();
+    }
 }

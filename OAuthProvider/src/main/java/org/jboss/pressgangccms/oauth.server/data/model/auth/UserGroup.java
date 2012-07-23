@@ -42,7 +42,7 @@ public class UserGroup implements Serializable {
         return primaryUser;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userGroup")
+    @OneToMany(mappedBy = "userGroup")
     public Set<User> getGroupUsers() {
         return groupUsers;
     }

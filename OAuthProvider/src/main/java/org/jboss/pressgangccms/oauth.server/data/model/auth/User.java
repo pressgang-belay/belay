@@ -91,7 +91,7 @@ public class User implements Serializable {
     }
 
     //@NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinTable(name="USER_USER_GROUP", joinColumns = { @JoinColumn(name = "USER_ID") },
             inverseJoinColumns = { @JoinColumn(name = "USER_GROUP_ID") })
     public UserGroup getUserGroup() {
@@ -167,6 +167,7 @@ public class User implements Serializable {
                 .append(lastName, that.getLastName())
                 .append(email, that.getEmail())
                 .append(country, that.getCountry())
+                .append(language, that.getLanguage())
                 .append(openIdProvider, that.getOpenIdProvider())
                 .isEquals();
     }
@@ -179,6 +180,7 @@ public class User implements Serializable {
                 .append(lastName)
                 .append(email)
                 .append(country)
+                .append(language)
                 .append(openIdProvider)
                 .toHashCode();
     }
@@ -190,6 +192,7 @@ public class User implements Serializable {
                 .append("lastName", lastName)
                 .append("email", email)
                 .append("country", country)
+                .append("language", language)
                 .append("openIdProvider", openIdProvider)
                 .append("userGroup", userGroup)
                 .append("tokenGrants", tokenGrants)

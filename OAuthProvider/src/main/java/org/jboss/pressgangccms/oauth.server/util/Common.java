@@ -2,8 +2,6 @@ package org.jboss.pressgangccms.oauth.server.util;
 
 /**
  * Values common across classes.
- *
- * @author kamiller@redhat.com (Katie Miller)
  */
 public class Common {
 
@@ -19,6 +17,7 @@ public class Common {
     public static final String OPENID_COUNTRY = "openid.ax.country";
     public static final String APPLICATION_XRDS_XML = "application/xrds+xml";
     public static final String NEW_ASSOC_PRIMARY = "newAssociationPrimary";
+    public static final String USER_IDENTIFIER = "userId";
     public static final String FIRST_USER_ID = "firstUserIdentifier";
     public static final String QUERY_STRING_MARKER = "?";
     public static final String PARAMETER_SEPARATOR = "&";
@@ -39,6 +38,8 @@ public class Common {
     public static final String MISSING_RESPONSE_TYPE = "Missing response_type parameter value";
     public static final String REALM_ENDPOINT_ERROR = "Could not perform realm endpoint discovery on Relying Party";
     public static final String USERS_ASSOCIATED_ERROR = "Users already associated";
+    public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query user";
+    public static final String USER_QUERY_ERROR = "Could not obtain user information";
 
     // General
     public static final String ONE_HOUR = "3600";

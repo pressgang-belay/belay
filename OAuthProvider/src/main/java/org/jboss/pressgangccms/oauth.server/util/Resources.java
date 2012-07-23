@@ -1,8 +1,5 @@
 package org.jboss.pressgangccms.oauth.server.util;
 
-import org.jboss.pressgangccms.oauth.server.service.TokenIssuerService;
-
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.persistence.EntityManager;

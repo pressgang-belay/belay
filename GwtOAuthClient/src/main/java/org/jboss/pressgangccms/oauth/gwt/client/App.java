@@ -24,6 +24,7 @@ public class App implements EntryPoint {
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String PEOPLE_URL = "https://localhost:8443/OAuthProvider/rest/people";
     private static final String PERSON_1_URL = "https://localhost:8443/OAuthProvider/rest/people/1";
+    private static final String SKYNET_USER_QUERY_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/query";
     private static final String SKYNET_ASSOCIATE_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/associate";
     private static final String SKYNET_LOGIN_URL = "https://localhost:8443/OAuthProvider/rest/auth/login";
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuthProvider/rest/auth/token";
@@ -41,6 +42,7 @@ public class App implements EntryPoint {
         addGetPeople();
         addGetPerson();
         addAssociateUser();
+        getUserInfo();
         addClearTokens();
         addRefresh();
     }
@@ -134,7 +136,29 @@ public class App implements EntryPoint {
 
                     @Override
                     public void onSuccess(String result) {
+                        currentToken = result;
                         Window.alert("Result: " + result);
+                    }
+                });
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
+    private void getUserInfo() {
+        Button button = new Button("GET user info");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, SKYNET_USER_QUERY_URL), new RequestCallback() {
+                    @Override
+                    public void onResponseReceived(Request request, Response response) {
+                        Window.alert("Result: " + response.getText());
+                    }
+
+                    @Override
+                    public void onError(Request request, Throwable exception) {
+                        Window.alert("Error:\n" + exception.getMessage());
                     }
                 });
             }

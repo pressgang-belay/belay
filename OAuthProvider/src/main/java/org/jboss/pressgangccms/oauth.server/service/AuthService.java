@@ -3,6 +3,7 @@ package org.jboss.pressgangccms.oauth.server.service;
 import com.google.appengine.repackaged.com.google.common.base.Optional;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgangccms.oauth.server.data.dao.*;
+import org.jboss.pressgangccms.oauth.server.data.domain.UserInfo;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
 
 import javax.ejb.Stateful;
@@ -12,7 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
@@ -47,6 +47,9 @@ public class AuthService {
     private UserRepository userRepository;
 
     @Inject
+    private UserGroupRepository userGroupRepository;
+
+    @Inject
     private EndpointRepository endpointRepository;
 
     @Inject
@@ -68,6 +71,16 @@ public class AuthService {
 
     public Optional<User> getUser(String identifier) {
         return userRepository.getUserFromIdentifier(identifier);
+    }
+
+    public Optional<UserInfo> getUserInfo(String identifier) {
+        return userRepository.getUserInfoFromIdentifier(identifier);
+    }
+
+    public boolean isUserInGroup(String userIdentifier, UserGroup userGroup) {
+        Optional<User> userFound = getUser(userIdentifier);
+        if ((! userFound.isPresent()) || userGroup == null) return false;
+        return userGroupRepository.isUserInGroup(userFound.get(), userGroup);
     }
 
     public Scope getDefaultScope() {
@@ -132,13 +145,5 @@ public class AuthService {
         log.info("Updating token grant");
         em.merge(tokenGrant);
         tokenGrantEventSrc.fire(tokenGrant);
-    }
-
-    public static String trimAccessToken(String accessToken) {
-        if (accessToken.toLowerCase().startsWith(BEARER)) {
-            // Remove leading header
-            accessToken = accessToken.substring(BEARER.length()).trim();
-        }
-        return accessToken;
     }
 }

@@ -9,6 +9,7 @@ import org.apache.amber.oauth2.rsfilter.OAuthDecision;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Endpoint;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Scope;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.TokenGrant;
+import org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
 import org.joda.time.DateTime;
 
@@ -19,6 +20,7 @@ import java.security.Principal;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.trimAccessToken;
 import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 import static org.jboss.pressgangccms.oauth.server.util.Common.SYSTEM_ERROR;
 
@@ -38,7 +40,7 @@ public class OAuthDecisionImpl implements OAuthDecision {
     private static final String AUTH_SERVICE_JNDI_ADDRESS = "java:global/OAuthProvider/AuthService";
 
     public OAuthDecisionImpl(String realm, String token, HttpServletRequest request) throws OAuthProblemException {
-        token = AuthService.trimAccessToken(token);
+        token = trimAccessToken(token);
         log.info("Processing decision on access token " + token);
         Optional<TokenGrant> tokenGrantFound;
         try {
@@ -97,7 +99,8 @@ public class OAuthDecisionImpl implements OAuthDecision {
         return requestEndpoint;
     }
 
-    private boolean grantScopeMatchesRequest(TokenGrant tokenGrant, Optional<Endpoint> requestEndpoint) throws OAuthProblemException {
+    private boolean grantScopeMatchesRequest(TokenGrant tokenGrant, Optional<Endpoint> requestEndpoint)
+            throws OAuthProblemException {
         Set<Scope> grantScopes = tokenGrant.getGrantScopes();
         if (grantScopes == null) {
             log.severe("No scopes associated with token grant; set was null");
@@ -111,6 +114,8 @@ public class OAuthDecisionImpl implements OAuthDecision {
             }
             for (Endpoint scopeEndpoint : scopeEndpoints) {
                 if (requestEndpoint.get().equals(scopeEndpoint)) {
+                    log.info("Endpoint " + requestEndpoint.get().getEndpointUrlPattern() + " matches grant scope "
+                            + scope.getScopeName());
                     return true;
                 }
             }
