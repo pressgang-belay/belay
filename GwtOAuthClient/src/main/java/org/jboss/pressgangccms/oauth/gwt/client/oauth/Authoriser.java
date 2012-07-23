@@ -73,6 +73,8 @@ public abstract class Authoriser {
         // Try to look up the token we have stored.
         final TokenInfo info = getToken(request);
         if (request.isForceNewRequest() || info == null || info.expires == null || info.refreshToken == null) {
+            // Reset forceAuthRequest flag
+            lastAuthRequest.forceNewRequest(false);
             // A new request has been forced, token wasn't found or doesn't have an expiration, or there is
             // no refresh token to use to get a new one. Request a new access token.
             String authUrl = new StringBuilder(request.toLoginUrl(urlCodex))
@@ -155,6 +157,10 @@ public abstract class Authoriser {
         } catch (RequestException e) {
             callback.onFailure(e);
         }
+    }
+
+    public String encodeUrl(String url) {
+        return urlCodex.encode(url);
     }
 
     private TokenInfo extractTokenInfo(JSONObject jsonObject) {
@@ -269,8 +275,6 @@ public abstract class Authoriser {
                     + hash));
         } else {
             setToken(lastAuthRequest, info);
-            // Reset forceAuthRequest flag
-            lastAuthRequest.forceNewRequest(false);
             lastCallback.onSuccess(info.accessToken);
         }
     }

@@ -1,6 +1,7 @@
 package org.jboss.pressgangccms.oauth.server.rest.auth;
 
 import com.google.appengine.repackaged.com.google.common.base.Optional;
+import org.apache.amber.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
@@ -33,6 +34,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REDIRECT_URI;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
+import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE;
 import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
@@ -69,8 +71,8 @@ public class UserWebService {
      * @param provider     OpenID provider for the second registration
      * @param redirectUri  OAuth redirect URI
      * @param accessToken  OAuth access token, if this request is being made using the OAuth query-string style
-     * @return             OAuth response containing access token, refresh token and expiry parameters, or an error
-     * @throws             WebApplicationException if OAuth redirect URI is not provided
+     * @return OAuth response containing access token, refresh token and expiry parameters, or an error
+     * @throws WebApplicationException if OAuth redirect URI is not provided
      */
     @GET
     @Path("/associate")
@@ -88,7 +90,8 @@ public class UserWebService {
         OAuthIdRequest oAuthRequest = null;
         TokenGrant requestTokenGrant;
 
-        // Error checking //TODO refactor ugliness
+        //TODO refactor this to two endpoints - GET and POST for second request
+        // Error checking //TODO refactor exception ugliness on this and other endpoints + refactor this ugliness
         try {
             if (isFirstRequest) {
                 oAuthRequest = new OAuthIdRequest(request);
@@ -103,7 +106,7 @@ public class UserWebService {
                             Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(SYSTEM_ERROR).build());
                 }
             }
-            requestTokenGrant = getTokenGrantFromAccessToken(request, accessToken);
+            requestTokenGrant = getTokenGrantFromAccessToken(request, accessToken, oAuthRedirectUri);
         } catch (OAuthProblemException e) {
             final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_NOT_FOUND);
             String requestRedirectUri = e.getRedirectUri();
@@ -200,47 +203,58 @@ public class UserWebService {
             // Grant token to primary user of resulting group
             User primaryUser = finalGroup.getPrimaryUser();
 
-            // Create new TokenGrant for primary user, using scopes from previous TokenGrant if first user group was
-            // the primary, or the requested scopes if not
-            TokenGrant newTokenGrant;
-            try {
-                newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
-                        primaryUser, clientFound.get());
-                Set<Scope> grantScopes = null;
-                if (secondUserIsPrimary) {
-                    if (scopesRequested != null) {
+            // Use scopes from previous TokenGrant if first user group was the primary, or the requested scopes if not
+            Set<Scope> grantScopes = null;
+
+            if (secondUserIsPrimary) {
+                if (scopesRequested != null) {
+                    try {
                         grantScopes = checkScopes(authService, scopesRequested, secondUser.getUserScopes());
-                    } else {
-                        log.warning("User has default scope after association request as no scopes requested");
+                    } catch (OAuthProblemException e) {
+                        log.warning("OAuthProblemException thrown: " + e.getError());
+                        return Response.status(Response.Status.NOT_FOUND)
+                                .entity(e.getError()).location(new URI(oAuthRedirectUri)).build();
                     }
                 } else {
-                    grantScopes = newHashSet(requestTokenGrant.getGrantScopes());
+                    log.warning("User has default scope after association request as no scopes requested");
                 }
-                newTokenGrant.setGrantScopes(grantScopes);
-                authService.addGrant(newTokenGrant);
-
-                // Make original TokenGrant non-current
-                requestTokenGrant.setGrantCurrent(false);
-                authService.updateGrant(requestTokenGrant);
-
-                OAuthTokenResponseBuilder oAuthTokenResponseBuilder
-                        = addTokenGrantResponseParams(newTokenGrant, HttpServletResponse.SC_FOUND);
-                OAuthResponse response = oAuthTokenResponseBuilder.location(oAuthRedirectUri).buildQueryMessage();
-                log.info("Sending token response to " + oAuthRedirectUri);
-                return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
-            } catch (OAuthSystemException e) {
-                log.severe("Could not create new token grant: " + e.getMessage());
-                return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(SYSTEM_ERROR)
-                        .location(URI.create(oAuthRedirectUri)).build();
-            } catch (OAuthProblemException e) {
-                log.warning("OAuthProblemException thrown: " + e.getError());
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity(e.getError()).location(new URI(oAuthRedirectUri)).build();
+            } else {
+                grantScopes = newHashSet(requestTokenGrant.getGrantScopes());
             }
+            Response response = createTokenGrantResponseForUser(oAuthRedirectUri, clientFound.get(), grantScopes, primaryUser);
+
+            if (response.getStatus() == HttpServletResponse.SC_FOUND) {
+                // Make original TokenGrant non-current
+                makeGrantNonCurrent(authService, requestTokenGrant);
+            }
+            log.info("Sending token response to " + oAuthRedirectUri);
+            return response;
         }
     }
 
-    private TokenGrant getTokenGrantFromAccessToken(HttpServletRequest request, String accessToken)
+    private Response createTokenGrantResponseForUser(String oAuthRedirectUri, ClientApplication client, Set<Scope> grantScopes,
+                                                     User user) {
+        TokenGrant newTokenGrant;
+        try {
+            newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
+                    user, client);
+            if (grantScopes != null) {
+                newTokenGrant.setGrantScopes(grantScopes);
+            }
+            authService.addGrant(newTokenGrant);
+
+            OAuthTokenResponseBuilder oAuthTokenResponseBuilder
+                    = addTokenGrantResponseParams(newTokenGrant, HttpServletResponse.SC_FOUND);
+            OAuthResponse response = oAuthTokenResponseBuilder.location(oAuthRedirectUri).buildQueryMessage();
+            return Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
+        } catch (OAuthSystemException e) {
+            log.severe("Could not create new token grant: " + e.getMessage());
+            return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(SYSTEM_ERROR)
+                    .location(URI.create(oAuthRedirectUri)).build();
+        }
+    }
+
+    private TokenGrant getTokenGrantFromAccessToken(HttpServletRequest request, String accessToken, String redirectUri)
             throws OAuthSystemException, OAuthProblemException {
         if (accessToken == null) {
             OAuthAccessResourceRequest oAuthRequest = new
@@ -249,7 +263,8 @@ public class UserWebService {
         }
         Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByAccessToken(accessToken);
         if (!tokenGrantFound.isPresent()) {
-            throw OAuthProblemException.error(SYSTEM_ERROR);
+            log.severe("Token grant could not be found");
+            throw createOAuthProblemException(SYSTEM_ERROR, redirectUri);
         }
         return tokenGrantFound.get();
     }
@@ -267,17 +282,102 @@ public class UserWebService {
                 .toString();
     }
 
-    // Second endpoint to change primary account
-    // Supply identifier to make primary
+    /**
+     * This endpoint allows a user from the currently authorised user group to be set as the primary user of the
+     * group. If the request is successful, a new token response will be generated for the resulting primary user,
+     * with the standard access token, refresh token and access token expiry time parameters. A new token response
+     * will be generated even if the user identified was already the primary user of the group. The standard OAuth
+     * parameters must be supplied as part of the request: redirect_uri, client_id and response_type. If an OAuth
+     * parameter is missing or invalid, or the userIdentifier is invalid or not part of the current user group, an
+     * error response will be returned.
+     *
+     * @param request           The servlet request
+     * @param userIdentifier    The identifier of the user to set as primary
+     * @return                  A token response for the new primary user
+     */
+    @GET
+    @Path("/makePrimary")
+    public Response redirectGet(@Context HttpServletRequest request,
+                                @QueryParam(USER_IDENTIFIER) String userIdentifier,
+                                @QueryParam(OAUTH_TOKEN) String accessToken) {
+        log.info("Processing request to make " + userIdentifier + " primary user");
+        try {
+            OAuthAuthzRequest oAuthRequest = new OAuthAuthzRequest(request);
+            if (!oAuthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE).equals(ResponseType.TOKEN.toString())) {
+                log.severe("Response type requested is unsupported: " + oAuthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE));
+                throw createOAuthProblemException(UNSUPPORTED_RESPONSE_TYPE, oAuthRequest.getRedirectURI());
+            }
+            if (userIdentifier == null || userIdentifier.length() == 0) {
+                log.warning("Invalid userIdentifier supplied");
+                throw createOAuthProblemException(INVALID_USER_IDENTIFIER, oAuthRequest.getRedirectURI());
+            }
+            TokenGrant tokenGrant = getTokenGrantFromAccessToken(request, accessToken, oAuthRequest.getRedirectURI());
+            return makeUserPrimary(request, userIdentifier, oAuthRequest, tokenGrant);
+        } catch (OAuthProblemException e) {
+            return handleOAuthProblemException(e);
+        } catch (OAuthSystemException e) {
+            return handleOAuthSystemException(e);
+        }
+    }
+
+    private Response handleOAuthSystemException(OAuthSystemException e) {
+        log.severe("OAuthSystemException thrown: " + e.getMessage());
+        return Response.serverError().build();
+    }
+
+    private Response makeUserPrimary(HttpServletRequest request, String userIdentifier,
+                                     OAuthAuthzRequest oAuthRequest, TokenGrant currentGrant) {
+        checkUserMemberOfAuthorisedUserGroup(request, userIdentifier);
+        User newPrimaryUser = authService.getUser(userIdentifier).get();
+        UserGroup userGroup = newPrimaryUser.getUserGroup();
+        userGroup.setPrimaryUser(newPrimaryUser);
+        authService.updateUserGroup(userGroup);
+        try {
+            Optional<ClientApplication> clientFound = authService.getClient(oAuthRequest.getClientId());
+            if (!clientFound.isPresent()) {
+                log.warning("Client not found");
+                throw createOAuthProblemException(SYSTEM_ERROR, oAuthRequest.getRedirectURI());
+            }
+            Set<Scope> grantScopes = null;
+            if (oAuthRequest.getScopes() != null && (!oAuthRequest.getScopes().isEmpty())) {
+                grantScopes = checkScopes(authService, oAuthRequest.getScopes(), newPrimaryUser.getUserScopes());
+            }
+            // Generate new token grant response
+            Response response = createTokenGrantResponseForUser(oAuthRequest.getRedirectURI(), clientFound.get(),
+                    grantScopes, newPrimaryUser);
+
+            if (response.getStatus() == HttpServletResponse.SC_FOUND) {
+                // Make original TokenGrant non-current
+                makeGrantNonCurrent(authService, currentGrant);
+            }
+            log.info("Sending token response to " + oAuthRequest.getRedirectURI());
+            return response;
+        } catch (OAuthProblemException e) {
+            return handleOAuthProblemException(e);
+        }
+    }
+
+    private Response handleOAuthProblemException(OAuthProblemException e) {
+        log.warning("OAuthProblemException thrown: " + e.getMessage() + " " + e.getDescription());
+
+        final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_NOT_FOUND);
+        String redirectUri = e.getRedirectUri();
+
+        if (OAuthUtils.isEmpty(redirectUri)) {
+            throw new WebApplicationException(
+                    responseBuilder.entity(OAUTH_CALLBACK_URL_REQUIRED).build());
+        }
+        return responseBuilder.entity(e.getError()).location(URI.create(redirectUri)).build();
+    }
 
     /**
      * This endpoint provides information about authenticated users. If a userIdentifier is provided and the
      * user represented by that identifier is part of the authorised user group, information will be provided
      * on that user. Otherwise, information will be returned on the primary user from the authorised user group.
      *
-     * @param request           The servlet request
-     * @param userIdentifier    Identifier of the user to return information about
-     * @return                  User information in JSON format
+     * @param request        The servlet request
+     * @param userIdentifier Identifier of the user to return information about
+     * @return User information in JSON format
      */
     @GET
     @Path("/query")
@@ -290,21 +390,25 @@ public class UserWebService {
         if (userIdentifier == null) {
             identifierToQuery = userPrincipal.getName();
         } else {
-            Optional<User> primaryUser = authService.getUser(request.getUserPrincipal().getName());
-            if ((! primaryUser.isPresent() || (! authService.isUserInGroup(userIdentifier, primaryUser.get().getUserGroup())))) {
-                log.warning("Could not process query on user " + userIdentifier + "; user unauthorised or system error");
-                throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                        .entity(UNAUTHORISED_QUERY_ERROR + " " + userIdentifier).build());
-            }
+            checkUserMemberOfAuthorisedUserGroup(request, userIdentifier);
             identifierToQuery = userIdentifier;
         }
         Optional<UserInfo> userInfoFound = authService.getUserInfo(identifierToQuery);
-        if (! userInfoFound.isPresent()) {
+        if (!userInfoFound.isPresent()) {
             log.warning("User query failed; could not find user info for " + identifierToQuery);
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
                     .entity(USER_QUERY_ERROR).build());
         }
         log.info("Returning user info for " + identifierToQuery);
         return userInfoFound.get();
+    }
+
+    private void checkUserMemberOfAuthorisedUserGroup(HttpServletRequest request, String userIdentifier) {
+        Optional<User> primaryUser = authService.getUser(request.getUserPrincipal().getName());
+        if ((!primaryUser.isPresent() || (!authService.isUserInGroup(userIdentifier, primaryUser.get().getUserGroup())))) {
+            log.warning("Could not process request related to user " + userIdentifier + "; user unauthorised or system error");
+            throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
+                    .entity(UNAUTHORISED_QUERY_ERROR + " " + userIdentifier).build());
+        }
     }
 }

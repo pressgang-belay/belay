@@ -24,6 +24,7 @@ insert into ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values
 insert into ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-5, 'https://localhost:8443/OAuthProvider/rest/people/[0-9]+', 'DELETE')
 insert into ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-6, 'https://localhost:8443/OAuthProvider/rest/auth/user/associate', 'GET')
 insert into ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-7, 'https://localhost:8443/OAuthProvider/rest/auth/user/query', 'GET')
+insert into ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-8, 'https://localhost:8443/OAuthProvider/rest/auth/user/makePrimary', 'GET')
 
 insert into SCOPE (SCOPE_ID, SCOPE_NAME) values (-1, 'default')
 
@@ -31,6 +32,7 @@ insert into SCOPE_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -1)
 insert into SCOPE_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -2)
 insert into SCOPE_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -6)
 insert into SCOPE_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -7)
+insert into SCOPE_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -8)
 
 insert into USER_SCOPE (USER_ID, SCOPE_ID) values (-1, -1)
 

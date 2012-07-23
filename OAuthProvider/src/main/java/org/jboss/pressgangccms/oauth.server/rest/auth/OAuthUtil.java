@@ -13,6 +13,7 @@ import org.jboss.pressgangccms.oauth.server.service.AuthService;
 import org.jboss.pressgangccms.oauth.server.service.TokenIssuerService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -67,10 +68,14 @@ public class OAuthUtil {
 
     static void makeGrantsNonCurrent(AuthService authService, Set<TokenGrant> grants) {
         for (TokenGrant grant : grants) {
-            if (grant.getGrantCurrent()) {
-                grant.setGrantCurrent(false);
-                authService.updateGrant(grant);
-            }
+            makeGrantNonCurrent(authService, grant);
+        }
+    }
+
+    static void makeGrantNonCurrent(AuthService authService, TokenGrant grant) {
+        if (grant.getGrantCurrent()) {
+            grant.setGrantCurrent(false);
+            authService.updateGrant(grant);
         }
     }
 
@@ -107,6 +112,14 @@ public class OAuthUtil {
         log.info(attributeName + " is: " + attribute);
         request.getSession().removeAttribute(attributeKey);
         return attribute;
+    }
+
+    static OAuthProblemException createOAuthProblemException(String error, String redirectUri) {
+        OAuthProblemException e = OAuthProblemException.error(error);
+        if (redirectUri != null) {
+            e.setRedirectUri(redirectUri);
+        }
+        return e;
     }
 
     public static String trimAccessToken(String accessToken) {

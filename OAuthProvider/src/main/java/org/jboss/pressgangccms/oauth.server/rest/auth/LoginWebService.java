@@ -54,8 +54,7 @@ public class LoginWebService {
     private TokenIssuerService tokenIssuerService;
 
     @GET
-    public Response login(@Context HttpServletRequest request) throws IOException, URISyntaxException,
-            OAuthSystemException {
+    public Response login(@Context HttpServletRequest request) throws IOException, OAuthSystemException {
         log.info("Processing login request");
 
         try {
@@ -76,7 +75,7 @@ public class LoginWebService {
                 throw new WebApplicationException(
                         responseBuilder.entity(OAUTH_CALLBACK_URL_REQUIRED).build());
             }
-            return responseBuilder.entity(e.getError()).location(new URI(redirectUri)).build();
+            return responseBuilder.entity(e.getError()).location(URI.create(redirectUri)).build();
         }
     }
 
@@ -191,7 +190,7 @@ public class LoginWebService {
         }
     }
 
-    private String checkOpenIdProvider(HttpServletRequest request, OAuthIdRequest oauthRequest)
+    private String checkOpenIdProvider(HttpServletRequest request, OAuthIdRequest oAuthRequest)
             throws UnsupportedEncodingException, OAuthProblemException {
         String providerUrl = request.getParameter(OPENID_PROVIDER);
         String decodedProviderUrl = URLDecoder.decode(providerUrl, UTF_ENCODING);
@@ -200,7 +199,7 @@ public class LoginWebService {
             request.getSession().setAttribute(OPENID_PROVIDER, decodedProviderUrl);
         } else {
             OAuthProblemException e = OAuthProblemException.error(INVALID_PROVIDER);
-            e.setRedirectUri(oauthRequest.getRedirectURI());
+            e.setRedirectUri(oAuthRequest.getRedirectURI());
             throw e;
         }
         return providerUrl;

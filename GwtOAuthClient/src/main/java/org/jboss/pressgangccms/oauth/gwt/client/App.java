@@ -16,6 +16,8 @@ import org.jboss.pressgangccms.oauth.gwt.client.oauth.Authoriser;
 import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthHandler;
 import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthRequest;
 
+import java.net.URLEncoder;
+
 public class App implements EntryPoint {
 
     // Use the implementation of Auth intended to be used in the GWT client app.
@@ -26,12 +28,15 @@ public class App implements EntryPoint {
     private static final String PERSON_1_URL = "https://localhost:8443/OAuthProvider/rest/people/1";
     private static final String SKYNET_USER_QUERY_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/query";
     private static final String SKYNET_ASSOCIATE_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/associate";
+    private static final String SKYNET_MAKE_PRIMARY_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/makePrimary";
     private static final String SKYNET_LOGIN_URL = "https://localhost:8443/OAuthProvider/rest/auth/login";
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuthProvider/rest/auth/token";
     private static final String SKYNET_CLIENT_SECRET = "none";
     // This app's personal client ID assigned by the Skynet OAuth server
     private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
+    private final String GOOGLE_USER_ID = "https://www.google.com/accounts/o8/id?id=AItOawmOODmBoSGeBzdngbGS1ltF0Caegz6ajVE";
     private final String PROVIDER_PARAM_STRING = "?provider=";
+    private final String USER_ID_PARAM_STRING = "?userId=";
     private final String TOKEN_PARAM_STRING = "&oauth_token=";
     private static String currentToken;
 
@@ -42,6 +47,7 @@ public class App implements EntryPoint {
         addGetPeople();
         addGetPerson();
         addAssociateUser();
+        makeGoogleUserPrimary();
         getUserInfo();
         addClearTokens();
         addRefresh();
@@ -128,6 +134,31 @@ public class App implements EntryPoint {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_ASSOCIATE_URL + PROVIDER_PARAM_STRING
                         + GOOGLE_PROVIDER_URL + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
+                AUTH_HANDLER.login(request, new Callback<String, Throwable>() {
+                    @Override
+                    public void onFailure(Throwable reason) {
+                        Window.alert("Error:\n" + reason.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        currentToken = result;
+                        Window.alert("Result: " + result);
+                    }
+                });
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
+    private void makeGoogleUserPrimary() {
+        Button button = new Button("Make Google user primary");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_MAKE_PRIMARY_URL
+                        + USER_ID_PARAM_STRING + AUTH_HANDLER.encodeUrl(GOOGLE_USER_ID) + TOKEN_PARAM_STRING + currentToken,
+                        SKYNET_TOKEN_URL, SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
                 AUTH_HANDLER.login(request, new Callback<String, Throwable>() {
                     @Override
                     public void onFailure(Throwable reason) {

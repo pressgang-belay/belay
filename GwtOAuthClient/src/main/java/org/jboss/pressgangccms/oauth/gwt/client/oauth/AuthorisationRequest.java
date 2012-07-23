@@ -43,7 +43,7 @@ public class AuthorisationRequest {
     /**
      * Ensure request will go to OAuth provider, regardless of whether or not a valid
      * token for this request exists. Defaults to false if not set and resets to default
-     * after a successful login.
+     * after a login attempt, regardless of the outcome.
      */
     public AuthorisationRequest forceNewRequest(boolean forceNewRequest) {
         this.forceNewRequest = forceNewRequest;

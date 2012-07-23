@@ -64,6 +64,10 @@ public class OAuthHandler {
         AUTH.clearAllTokens();
     }
 
+    public String encodeUrl(String url) {
+        return AUTH.encodeUrl(url);
+    }
+
     //TODO remove; this is for testing only
     public void doRefresh(final AuthorisationRequest authorisationRequest, final Callback<String, Throwable> callback) {
         AUTH.doRefresh(authorisationRequest, AUTH.getToken(authorisationRequest), callback);
