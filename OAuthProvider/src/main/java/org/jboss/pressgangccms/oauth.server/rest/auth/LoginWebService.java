@@ -91,8 +91,8 @@ public class LoginWebService {
 
         try {
             if (identifier == null) {
-                log.warning("No user identifier received");
-                throw OAuthProblemException.error(INVALID_USER_IDENTIFIER);
+                log.warning("No identity identifier received");
+                throw OAuthProblemException.error(INVALID_IDENTIFIER);
             }
 
             log.info("User has been authenticated as: " + identifier);
@@ -103,21 +103,21 @@ public class LoginWebService {
                 throw OAuthProblemException.error(INVALID_CALLBACK_URI);
             }
 
-            // Check if this is a known user or new user
-            Optional<User> userFound = authService.getUser(identifier);
-            User user;
+            // Check if this is a known identity or new identity
+            Optional<Identity> identityFound = authService.getIdentity(identifier);
+            Identity identity;
 
-            if (userFound.isPresent()) {
-                user = userFound.get();
-                updateUser(providerUrl, user, request);
+            if (identityFound.isPresent()) {
+                identity = identityFound.get();
+                updateIdentity(providerUrl, identity, request);
             } else {
-                user = addNewUser(identifier, providerUrl, request);
+                identity = addNewIdentity(identifier, providerUrl, request);
             }
 
-            // Check if this is part of a user association request
-            if (clientId.equals(OAUTH_PROVIDER_ID) && redirectUri.equals(ASSOCIATE_USER_ENDPOINT)) {
+            // Check if this is part of a identity association request
+            if (clientId.equals(OAUTH_PROVIDER_ID) && redirectUri.equals(ASSOCIATE_IDENTITY_ENDPOINT)) {
                 request.getSession().setAttribute(OPENID_IDENTIFIER, identifier);
-                StringBuilder uriBuilder = new StringBuilder(ASSOCIATE_USER_ENDPOINT);
+                StringBuilder uriBuilder = new StringBuilder(ASSOCIATE_IDENTITY_ENDPOINT);
                 String accessToken = (String)request.getSession().getAttribute(OAuth.OAUTH_TOKEN);
                 if (accessToken != null) {
                     log.info("Setting OAuth token for redirect");
@@ -132,14 +132,14 @@ public class LoginWebService {
                 return Response.seeOther(URI.create(uriBuilder.toString())).build();
             }
 
-            // Check if user already has current grant/s; if so, make them invalid
-            Set<TokenGrant> grants = user.getTokenGrants();
+            // Check if identity already has current grant/s; if so, make them invalid
+            Set<TokenGrant> grants = identity.getTokenGrants();
             if (grants != null) {
                 makeGrantsNonCurrent(authService, grants);
             }
 
             OAuthTokenResponseBuilder oAuthTokenResponseBuilder =
-                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, user), HttpServletResponse.SC_FOUND);
+                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, identity), HttpServletResponse.SC_FOUND);
             OAuthResponse response = oAuthTokenResponseBuilder.location(redirectUri).buildQueryMessage();
             return Response.status(response.getResponseStatus()).location(new URI(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
@@ -213,54 +213,54 @@ public class LoginWebService {
         }
     }
 
-    private User addNewUser(String identifier, String providerUrl, HttpServletRequest request) {
-        log.info("Creating new user");
-        User newUser = new User();
-        UserGroup newUserGroup = authService.createEmptyUserGroup();
-        newUser.setUserIdentifier(identifier);
-        newUser.setUserScopes(newHashSet(authService.getDefaultScope()));
+    private Identity addNewIdentity(String identifier, String providerUrl, HttpServletRequest request) {
+        log.info("Creating new identity and associated user");
+        Identity newIdentity = new Identity();
+        User newUser = authService.createUnassociatedUser();
+        newIdentity.setIdentifier(identifier);
+        newIdentity.setIdentityScopes(newHashSet(authService.getDefaultScope()));
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(providerUrl);
-        newUser.setOpenIdProvider(providerFound.get());
-        newUser.setUserGroup(newUserGroup);
+        newIdentity.setOpenIdProvider(providerFound.get());
+        newIdentity.setUser(newUser);
         // Set extra attributes if available
-        setExtraUserAttributes(request, newUser);
-        authService.addUser(newUser);
-        newUserGroup.setPrimaryUser(newUser);
-        authService.updateUserGroup(newUserGroup);
-        return newUser;
+        setExtraIdentityAttributes(request, newIdentity);
+        authService.addIdentity(newIdentity);
+        newUser.setPrimaryIdentity(newIdentity);
+        authService.updateUser(newUser);
+        return newIdentity;
     }
 
-    private void updateUser(String providerUrl, User user, HttpServletRequest request) {
-        // Update any changed user details
-        log.info("Updating existing user");
-        if (user.getOpenIdProvider() != authService.getOpenIdProvider(providerUrl).get()
+    private void updateIdentity(String providerUrl, Identity identity, HttpServletRequest request) {
+        // Update any changed identity details
+        log.info("Updating existing identity");
+        if (identity.getOpenIdProvider() != authService.getOpenIdProvider(providerUrl).get()
                 && authService.getOpenIdProvider(providerUrl) != null) {
-            user.setOpenIdProvider(authService.getOpenIdProvider(providerUrl).get());
+            identity.setOpenIdProvider(authService.getOpenIdProvider(providerUrl).get());
         }
-        setExtraUserAttributes(request, user);
-        authService.updateUser(user);
+        setExtraIdentityAttributes(request, identity);
+        authService.updateIdentity(identity);
     }
 
-    private void setExtraUserAttributes(HttpServletRequest request, User user) {
+    private void setExtraIdentityAttributes(HttpServletRequest request, Identity identity) {
         String firstName = (String) request.getAttribute(OPENID_FIRSTNAME);
-        if (firstName != null) user.setFirstName(firstName);
+        if (firstName != null) identity.setFirstName(firstName);
         String lastName = (String) request.getAttribute(OPENID_LASTNAME);
-        if (lastName != null) user.setLastName(lastName);
+        if (lastName != null) identity.setLastName(lastName);
         String email = (String) request.getAttribute(OPENID_EMAIL);
-        if (email != null) user.setEmail(email);
+        if (email != null) identity.setEmail(email);
         String language = (String) request.getAttribute(OPENID_LANGUAGE);
-        if (language != null) user.setLanguage(language);
+        if (language != null) identity.setLanguage(language);
         String country = (String) request.getAttribute(OPENID_COUNTRY);
-        if (country != null) user.setCountry(country);
+        if (country != null) identity.setCountry(country);
     }
 
-    private TokenGrant createTokenGrant(String clientId, Set<String> scopes, User user)
+    private TokenGrant createTokenGrant(String clientId, Set<String> scopes, Identity identity)
             throws OAuthProblemException, OAuthSystemException {
-        TokenGrant tokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService, user,
+        TokenGrant tokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService, identity,
                 authService.getClient(clientId).get());
         // If specific grant scopes requested, check these are valid and add to token grant
         if (scopes != null) {
-            Set<Scope> grantScopes = checkScopes(authService, scopes, user.getUserScopes());
+            Set<Scope> grantScopes = checkScopes(authService, scopes, identity.getIdentityScopes());
             tokenGrant.setGrantScopes(grantScopes);
         }
         authService.addGrant(tokenGrant);

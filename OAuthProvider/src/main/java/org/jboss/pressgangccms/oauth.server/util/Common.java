@@ -16,9 +16,9 @@ public class Common {
     public static final String OPENID_LANGUAGE = "openid.ax.language";
     public static final String OPENID_COUNTRY = "openid.ax.country";
     public static final String APPLICATION_XRDS_XML = "application/xrds+xml";
-    public static final String NEW_ASSOC_PRIMARY = "newAssociationPrimary";
-    public static final String USER_IDENTIFIER = "userId";
-    public static final String FIRST_USER_ID = "firstUserIdentifier";
+    public static final String NEW_IDENTITY_PRIMARY = "newIdentityPrimary";
+    public static final String IDENTIFIER = "id";
+    public static final String FIRST_IDENTIFIER = "firstIdentifier";
     public static final String QUERY_STRING_MARKER = "?";
     public static final String PARAMETER_SEPARATOR = "&";
     public static final String KEY_VALUE_SEPARATOR = "=";
@@ -26,7 +26,7 @@ public class Common {
     // Errors
     public static final String OAUTH_CALLBACK_URL_REQUIRED = "OAuth callback URL needs to be provided by client";
     public static final String SYSTEM_ERROR = "System error";
-    public static final String INVALID_USER_IDENTIFIER = "Invalid user identifier";
+    public static final String INVALID_IDENTIFIER = "Invalid identifier";
     public static final String INVALID_CALLBACK_URI = "Invalid callback URI";
     public static final String INVALID_SCOPE = "Invalid scope requested";
     public static final String INVALID_PROVIDER = "Invalid OpenId provider";
@@ -37,16 +37,16 @@ public class Common {
     public static final String INVALID_RESPONSE_TYPE = "Unsupported or invalid response_type parameter value";
     public static final String MISSING_RESPONSE_TYPE = "Missing response_type parameter value";
     public static final String REALM_ENDPOINT_ERROR = "Could not perform realm endpoint discovery on Relying Party";
-    public static final String USERS_ASSOCIATED_ERROR = "Users already associated";
-    public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query user";
-    public static final String USER_QUERY_ERROR = "Could not obtain user information";
+    public static final String IDENTITIES_ASSOCIATED_ERROR = "Identities already associated";
+    public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query identity";
+    public static final String IDENTITY_QUERY_ERROR = "Could not obtain identity information";
 
     // General
     public static final String ONE_HOUR = "3600";
     public static final String UTF_ENCODING = "UTF-8";
     public static final String OPENID_REALM = "https://localhost:8443/OAuthProvider/rest/auth/";
     public static final String LOGIN_ENDPOINT = "/auth/login";
-    public static final String ASSOCIATE_USER_ENDPOINT = "/auth/user/associate";
+    public static final String ASSOCIATE_IDENTITY_ENDPOINT = "/auth/identity/associate";
     public static final String OPENID_RETURN_URL = "https://localhost:8443/OAuthProvider/rest" + LOGIN_ENDPOINT;
     public static final String OAUTH_PROVIDER_ID = "OAuthProvider";
     public static final String STORED_OAUTH_REDIRECT_URI = "storedOAuthRedirectUri";

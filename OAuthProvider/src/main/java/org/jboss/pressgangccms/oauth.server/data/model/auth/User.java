@@ -3,39 +3,27 @@ package org.jboss.pressgangccms.oauth.server.data.model.auth;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Persistence logic for authenticated users.
+ * Persistence logic for a group of Users that all represent the same end user.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="OPENID_USER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_IDENTIFIER" }))
+@Table(name="OPENID_USER", uniqueConstraints = {@UniqueConstraint(columnNames = { "OPENID_IDENTITY_IDENTITY_ID" }),
+                                                @UniqueConstraint(columnNames = { "USERNAME" })})
 public class User implements Serializable {
-
-    private static final long serialVersionUID = -2816937391756095960L;
+    private static final long serialVersionUID = 6622976631392573530L;
 
     private BigInteger userId;
-    private String userIdentifier;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String language;
-    private String country;
-    private OpenIdProvider openIdProvider;
-    private UserGroup userGroup;
-    private Set<TokenGrant> tokenGrants = new HashSet<TokenGrant>();
-    private Set<Scope> userScopes = new HashSet<Scope>();
+    private String username;
+    private Identity primaryIdentity;
+    private Set<Identity> userIdentities;
 
     public User() {
     }
@@ -47,111 +35,37 @@ public class User implements Serializable {
         return userId;
     }
 
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "USER_IDENTIFIER")
-    public String getUserIdentifier() {
-        return userIdentifier;
+    @Column(name = "USERNAME")
+    public String getUsername() {
+        return username;
     }
 
-    @Pattern(regexp = "[A-Za-z'-]*", message = "must contain only letters, hyphens or apostrophes")
-    @Column(name = "USER_FIRST_NAME")
-    public String getFirstName() {
-        return firstName;
+    // @NotNull
+    @OneToOne
+    @JoinColumn(name = "OPENID_IDENTITY_IDENTITY_ID")
+    public Identity getPrimaryIdentity() {
+        return primaryIdentity;
     }
 
-    @Pattern(regexp = "[A-Za-z'-]*", message = "must contain only letters, hyphens or apostrophes")
-    @Column(name = "USER_LAST_NAME")
-    public String getLastName() {
-        return lastName;
-    }
-
-    @Email
-    @Column(name = "USER_EMAIL")
-    public String getEmail() {
-        return email;
-    }
-
-    @Column(name = "USER_LANGUAGE")
-    public String getLanguage() {
-        return language;
-    }
-
-    @Column(name = "USER_COUNTRY")
-    public String getCountry() {
-        return country;
-    }
-
-    //@NotNull
-    @ManyToOne
-    @JoinTable(name="USER_OPENID_PROVIDER", joinColumns = { @JoinColumn(name = "USER_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "PROVIDER_ID") })
-    public OpenIdProvider getOpenIdProvider() {
-        return openIdProvider;
-    }
-
-    //@NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinTable(name="USER_USER_GROUP", joinColumns = { @JoinColumn(name = "USER_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "USER_GROUP_ID") })
-    public UserGroup getUserGroup() {
-        return userGroup;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantUser")
-    public Set<TokenGrant> getTokenGrants() {
-        return tokenGrants;
-    }
-
-    @ManyToMany
-    @JoinTable(name = "USER_SCOPE", joinColumns = { @JoinColumn(name = "USER_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
-    public Set<Scope> getUserScopes() {
-        return userScopes;
+    @OneToMany(mappedBy = "user")
+    public Set<Identity> getUserIdentities() {
+        return userIdentities;
     }
 
     public void setUserId(BigInteger userId) {
         this.userId = userId;
     }
 
-    public void setUserIdentifier(String userIdentifier) {
-        this.userIdentifier = userIdentifier;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setPrimaryIdentity(Identity primaryIdentity) {
+        this.primaryIdentity = primaryIdentity;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setOpenIdProvider(OpenIdProvider openIdProvider) {
-        this.openIdProvider = openIdProvider;
-    }
-
-    public void setUserGroup(UserGroup userGroup) {
-        this.userGroup = userGroup;
-    }
-
-    public void setTokenGrants(Set<TokenGrant> tokenGrants) {
-        this.tokenGrants = tokenGrants;
-    }
-
-    public void setUserScopes(Set<Scope> userScopes) {
-        this.userScopes = userScopes;
+    public void setUserIdentities(Set<Identity> userIdentities) {
+        this.userIdentities = userIdentities;
     }
 
     @Override
@@ -162,41 +76,22 @@ public class User implements Serializable {
         User that = (User) o;
 
         return new EqualsBuilder()
-                .append(userIdentifier, that.getUserIdentifier())
-                .append(firstName, that.getFirstName())
-                .append(lastName, that.getLastName())
-                .append(email, that.getEmail())
-                .append(country, that.getCountry())
-                .append(language, that.getLanguage())
-                .append(openIdProvider, that.getOpenIdProvider())
+                .append(primaryIdentity, that.getPrimaryIdentity())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(userIdentifier)
-                .append(firstName)
-                .append(lastName)
-                .append(email)
-                .append(country)
-                .append(language)
-                .append(openIdProvider)
+                .append(primaryIdentity)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("userIdentifier", userIdentifier)
-                .append("firstName", firstName)
-                .append("lastName", lastName)
-                .append("email", email)
-                .append("country", country)
-                .append("language", language)
-                .append("openIdProvider", openIdProvider)
-                .append("userGroup", userGroup)
-                .append("tokenGrants", tokenGrants)
-                .append("userScopes", userScopes)
+        return new ToStringBuilder(this).append("primaryIdentity", primaryIdentity)
+                .append("username", username)
+                .append("userIdentities", userIdentities)
                 .toString();
     }
 }

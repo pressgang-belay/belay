@@ -29,7 +29,7 @@ public class TokenGrant implements Serializable {
     private String accessTokenExpiry; // In seconds, from time granted
     private Date grantTimeStamp;
     private ClientApplication grantClient;
-    private User grantUser;
+    private Identity grantIdentity;
     private Boolean grantCurrent;
     private Set<Scope> grantScopes = new HashSet<Scope>();
 
@@ -76,9 +76,9 @@ public class TokenGrant implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "OPENID_USER_USER_ID")
-    public User getGrantUser() {
-        return grantUser;
+    @JoinColumn(name = "OPENID_IDENTITY_IDENTITY_ID")
+    public Identity getGrantIdentity() {
+        return grantIdentity;
     }
 
     @NotNull
@@ -117,8 +117,8 @@ public class TokenGrant implements Serializable {
         this.grantClient = grantClient;
     }
 
-    public void setGrantUser(User grantUser) {
-        this.grantUser = grantUser;
+    public void setGrantIdentity(Identity grantIdentity) {
+        this.grantIdentity = grantIdentity;
     }
 
     public void setGrantCurrent(Boolean grantCurrent) {
@@ -142,7 +142,7 @@ public class TokenGrant implements Serializable {
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())
                 .append(grantTimeStamp, that.getGrantTimeStamp())
                 .append(grantClient, that.getGrantClient())
-                .append(grantUser, that.getGrantUser())
+                .append(grantIdentity, that.getGrantIdentity())
                 .append(grantCurrent, that.getGrantCurrent())
                 .isEquals();
     }
@@ -155,7 +155,7 @@ public class TokenGrant implements Serializable {
                 .append(accessTokenExpiry)
                 .append(grantTimeStamp)
                 .append(grantClient)
-                .append(grantUser)
+                .append(grantIdentity)
                 .append(grantCurrent)
                 .toHashCode();
     }
@@ -167,7 +167,7 @@ public class TokenGrant implements Serializable {
                 .append("accessTokenExpiry", accessTokenExpiry)
                 .append("grantTimeStamp", grantTimeStamp)
                 .append("grantClient", grantClient)
-                .append("grantUser", grantUser)
+                .append("grantIdentity", grantIdentity)
                 .append("grantCurrent", grantCurrent)
                 .append("grantScopes", grantScopes)
                 .toString();

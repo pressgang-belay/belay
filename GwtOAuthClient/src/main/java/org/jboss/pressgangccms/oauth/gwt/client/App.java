@@ -16,8 +16,6 @@ import org.jboss.pressgangccms.oauth.gwt.client.oauth.Authoriser;
 import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthHandler;
 import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthRequest;
 
-import java.net.URLEncoder;
-
 public class App implements EntryPoint {
 
     // Use the implementation of Auth intended to be used in the GWT client app.
@@ -26,9 +24,9 @@ public class App implements EntryPoint {
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String PEOPLE_URL = "https://localhost:8443/OAuthProvider/rest/people";
     private static final String PERSON_1_URL = "https://localhost:8443/OAuthProvider/rest/people/1";
-    private static final String SKYNET_USER_QUERY_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/query";
-    private static final String SKYNET_ASSOCIATE_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/associate";
-    private static final String SKYNET_MAKE_PRIMARY_URL = "https://localhost:8443/OAuthProvider/rest/auth/user/makePrimary";
+    private static final String SKYNET_USER_QUERY_URL = "https://localhost:8443/OAuthProvider/rest/auth/identity/query";
+    private static final String SKYNET_ASSOCIATE_URL = "https://localhost:8443/OAuthProvider/rest/auth/identity/associate";
+    private static final String SKYNET_MAKE_PRIMARY_URL = "https://localhost:8443/OAuthProvider/rest/auth/identity/makePrimary";
     private static final String SKYNET_LOGIN_URL = "https://localhost:8443/OAuthProvider/rest/auth/login";
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuthProvider/rest/auth/token";
     private static final String SKYNET_CLIENT_SECRET = "none";
@@ -36,7 +34,7 @@ public class App implements EntryPoint {
     private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
     private final String GOOGLE_USER_ID = "https://www.google.com/accounts/o8/id?id=AItOawmOODmBoSGeBzdngbGS1ltF0Caegz6ajVE";
     private final String PROVIDER_PARAM_STRING = "?provider=";
-    private final String USER_ID_PARAM_STRING = "?userId=";
+    private final String USER_ID_PARAM_STRING = "?id=";
     private final String TOKEN_PARAM_STRING = "&oauth_token=";
     private static String currentToken;
 
@@ -46,9 +44,9 @@ public class App implements EntryPoint {
         addGoogleLogin();
         addGetPeople();
         addGetPerson();
-        addAssociateUser();
-        makeGoogleUserPrimary();
-        getUserInfo();
+        addAssociateIdentity();
+        makeGoogleIdentityPrimary();
+        getIdentityInfo();
         addClearTokens();
         addRefresh();
     }
@@ -126,8 +124,8 @@ public class App implements EntryPoint {
         RootPanel.get().add(button);
     }
 
-    private void addAssociateUser() {
-        Button button = new Button("Associate Google user");
+    private void addAssociateIdentity() {
+        Button button = new Button("Associate Google identity");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -151,8 +149,8 @@ public class App implements EntryPoint {
         RootPanel.get().add(button);
     }
 
-    private void makeGoogleUserPrimary() {
-        Button button = new Button("Make Google user primary");
+    private void makeGoogleIdentityPrimary() {
+        Button button = new Button("Make Google identity primary");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -176,8 +174,8 @@ public class App implements EntryPoint {
         RootPanel.get().add(button);
     }
 
-    private void getUserInfo() {
-        Button button = new Button("GET user info");
+    private void getIdentityInfo() {
+        Button button = new Button("GET identity info");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

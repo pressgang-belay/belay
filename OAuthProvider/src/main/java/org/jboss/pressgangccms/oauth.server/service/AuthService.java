@@ -3,7 +3,7 @@ package org.jboss.pressgangccms.oauth.server.service;
 import com.google.appengine.repackaged.com.google.common.base.Optional;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgangccms.oauth.server.data.dao.*;
-import org.jboss.pressgangccms.oauth.server.data.domain.UserInfo;
+import org.jboss.pressgangccms.oauth.server.data.domain.IdentityInfo;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
 
 import javax.ejb.Stateful;
@@ -14,8 +14,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.servlet.http.HttpServletRequest;
 import java.util.logging.Logger;
-
-import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 
 /**
  * Service class wraps calls to data repositories and persistence logic.
@@ -44,10 +42,10 @@ public class AuthService {
     private TokenGrantRepository tokenGrantRepository;
 
     @Inject
-    private UserRepository userRepository;
+    private IdentityRepository identityRepository;
 
     @Inject
-    private UserGroupRepository userGroupRepository;
+    private UserRepository userRepository;
 
     @Inject
     private EndpointRepository endpointRepository;
@@ -56,10 +54,10 @@ public class AuthService {
     private Event<TokenGrant> tokenGrantEventSrc;
 
     @Inject
-    private Event<User> userEventSrc;
+    private Event<Identity> userEventSrc;
 
     @Inject
-    private Event<UserGroup> userGroupEventSrc;
+    private Event<User> userGroupEventSrc;
 
     public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) throws OAuthSystemException {
         return tokenGrantRepository.getTokenGrantFromAccessToken(accessToken);
@@ -69,18 +67,18 @@ public class AuthService {
         return tokenGrantRepository.getTokenGrantFromRefreshToken(refreshToken);
     }
 
-    public Optional<User> getUser(String identifier) {
-        return userRepository.getUserFromIdentifier(identifier);
+    public Optional<Identity> getIdentity(String identifier) {
+        return identityRepository.getIdentityFromIdentifier(identifier);
     }
 
-    public Optional<UserInfo> getUserInfo(String identifier) {
-        return userRepository.getUserInfoFromIdentifier(identifier);
+    public Optional<IdentityInfo> getUserInfo(String identifier) {
+        return identityRepository.getUserInfoFromIdentifier(identifier);
     }
 
-    public boolean isUserInGroup(String userIdentifier, UserGroup userGroup) {
-        Optional<User> userFound = getUser(userIdentifier);
-        if ((! userFound.isPresent()) || userGroup == null) return false;
-        return userGroupRepository.isUserInGroup(userFound.get(), userGroup);
+    public boolean isIdentityAssociatedWithUser(String identifier, User user) {
+        Optional<Identity> identityFound = getIdentity(identifier);
+        if ((! identityFound.isPresent()) || user == null) return false;
+        return userRepository.isIdentityAssociatedWithUser(identityFound.get(), user);
     }
 
     public Scope getDefaultScope() {
@@ -104,35 +102,35 @@ public class AuthService {
     }
 
     //TODO move these methods to repositories
-    public void addUser(User user) {
-        log.info("Registering " + user.getUserIdentifier());
+    public void addIdentity(Identity identity) {
+        log.info("Registering " + identity.getIdentifier());
+        em.persist(identity);
+        userEventSrc.fire(identity);
+    }
+
+    public void updateIdentity(Identity identity) {
+        log.info("Updating " + identity.getIdentifier());
+        em.merge(identity);
+        userEventSrc.fire(identity);
+    }
+
+    public User createUnassociatedUser() {
+        log.info("Creating new user");
+        User user = new User();
         em.persist(user);
-        userEventSrc.fire(user);
+        userGroupEventSrc.fire(user);
+        return user;
     }
 
     public void updateUser(User user) {
-        log.info("Updating " + user.getUserIdentifier());
+        log.info("Updating user");
         em.merge(user);
-        userEventSrc.fire(user);
+        userGroupEventSrc.fire(user);
     }
 
-    public UserGroup createEmptyUserGroup() {
-        log.info("Creating new user group");
-        UserGroup userGroup = new UserGroup();
-        em.persist(userGroup);
-        userGroupEventSrc.fire(userGroup);
-        return userGroup;
-    }
-
-    public void updateUserGroup(UserGroup userGroup) {
-        log.info("Updating user group");
-        em.merge(userGroup);
-        userGroupEventSrc.fire(userGroup);
-    }
-
-    public void deleteUserGroup(UserGroup userGroup) {
-        log.info("Deleting user group");
-        em.remove(em.merge(userGroup));
+    public void deleteUser(User user) {
+        log.info("Deleting user");
+        em.remove(em.merge(user));
     }
 
     public void addGrant(TokenGrant tokenGrant) {

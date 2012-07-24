@@ -4,16 +4,14 @@ import com.google.appengine.repackaged.com.google.common.base.Optional;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
-import org.apache.http.HttpRequest;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.ClientApplication;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Scope;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.TokenGrant;
-import org.jboss.pressgangccms.oauth.server.data.model.auth.User;
+import org.jboss.pressgangccms.oauth.server.data.model.auth.Identity;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
 import org.jboss.pressgangccms.oauth.server.service.TokenIssuerService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -30,9 +28,9 @@ import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 public class OAuthUtil {
 
     static TokenGrant createTokenGrantWithDefaults(TokenIssuerService tokenIssuerService, AuthService authService,
-                                                   User user, ClientApplication client) throws OAuthSystemException {
+                                                   Identity identity, ClientApplication client) throws OAuthSystemException {
         TokenGrant tokenGrant = new TokenGrant();
-        tokenGrant.setGrantUser(user);
+        tokenGrant.setGrantIdentity(identity);
         tokenGrant.setGrantClient(client);
         tokenGrant.setGrantScopes(newHashSet(authService.getDefaultScope()));
         tokenGrant.setAccessToken(tokenIssuerService.accessToken());

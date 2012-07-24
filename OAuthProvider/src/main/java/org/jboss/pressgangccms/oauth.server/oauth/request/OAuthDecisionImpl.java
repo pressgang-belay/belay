@@ -9,7 +9,6 @@ import org.apache.amber.oauth2.rsfilter.OAuthDecision;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Endpoint;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Scope;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.TokenGrant;
-import org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
 import org.joda.time.DateTime;
 
@@ -21,7 +20,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.trimAccessToken;
-import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 import static org.jboss.pressgangccms.oauth.server.util.Common.SYSTEM_ERROR;
 
 /**
@@ -56,7 +54,7 @@ public class OAuthDecisionImpl implements OAuthDecision {
             log.info("Found match for token " + token);
             TokenGrant tokenGrant = tokenGrantFound.get();
             this.oAuthClient = new OAuthClientImpl(tokenGrant.getGrantClient().getClientIdentifier());
-            this.principal = new OAuthPrincipal(tokenGrant.getGrantUser().getUserIdentifier());
+            this.principal = new OAuthPrincipal(tokenGrant.getGrantIdentity().getIdentifier());
             setAuthorisation(tokenGrant, request);
         } else {
             log.info("Invalid token " + token);

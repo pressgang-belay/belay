@@ -24,8 +24,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Date;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
@@ -121,12 +119,12 @@ public class TokenWebService {
             throws OAuthSystemException {
         TokenGrant oldTokenGrant = authService.getTokenGrantByRefreshToken(oauthRequest
                                     .getParam(OAuth.OAUTH_REFRESH_TOKEN)).get();
-        // Make sure no token grants held by the user are marked as current before issuing new one
-        makeGrantsNonCurrent(authService, oldTokenGrant.getGrantUser().getTokenGrants());
+        // Make sure no token grants held by the identity are marked as current before issuing new one
+        makeGrantsNonCurrent(authService, oldTokenGrant.getGrantIdentity().getTokenGrants());
 
         // Issue new grant
         TokenGrant newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
-                oldTokenGrant.getGrantUser(), oldTokenGrant.getGrantClient());
+                oldTokenGrant.getGrantIdentity(), oldTokenGrant.getGrantClient());
         newTokenGrant.setGrantScopes(newHashSet(oldTokenGrant.getGrantScopes()));
         authService.addGrant(newTokenGrant);
         return newTokenGrant;

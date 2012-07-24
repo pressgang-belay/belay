@@ -1,7 +1,5 @@
 package org.jboss.pressgangccms.oauth.server.oauth.request;
 
-import org.jboss.pressgangccms.oauth.server.data.model.auth.User;
-
 import java.security.Principal;
 
 /**

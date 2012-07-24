@@ -10,7 +10,7 @@ import org.apache.amber.oauth2.common.message.types.ParameterStyle;
 import org.apache.amber.oauth2.common.message.types.ResponseType;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
 import org.apache.amber.oauth2.rs.request.OAuthAccessResourceRequest;
-import org.jboss.pressgangccms.oauth.server.data.domain.UserInfo;
+import org.jboss.pressgangccms.oauth.server.data.domain.IdentityInfo;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
 import org.jboss.pressgangccms.oauth.server.oauth.login.OAuthIdRequest;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
@@ -39,15 +39,14 @@ import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
- * Provides user services for client applications, such as associating another user
- * registration with the currently authenticated user and obtaining user information.
- * These services must be protected by the OAuth filter.
+ * Provides identity services for client applications, such as associating another identity with the currently
+ * authenticated user and obtaining identity information. These services must be protected by the OAuth filter.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-@Path("/auth/user")
+@Path("/auth/identity")
 @RequestScoped
-public class UserWebService {
+public class IdentityWebService {
 
     @Inject
     private Logger log;
@@ -59,16 +58,19 @@ public class UserWebService {
     private TokenIssuerService tokenIssuerService;
 
     /**
-     * This endpoint allows client applications to associate a second user registration with the currently
-     * authenticated user. The user will need to login to second account to authenticate. Set newIsPrimary
-     * to true if the second user registration should become the primary user of the associated registrations.
-     * In this case, user scopes should be supplied or the new TokenGrant returns will have the default scope only.
-     * If this is false, whichever user is currently the primary from the user or group of associated users
-     * currently authenticated will be the primary of the expanded association group.
+     * This endpoint allows client applications to associate a second identity with the currently
+     * authenticated user. The user will need to log in to the second identity to authenticate.
+     * If this second identity belongs to a user that has multiple associated identities already,
+     * all the identities will end up associated with the one user.
+     *
+     * Set newIsPrimary to true if the second identity should become the user's primary identity.
+     * In this case, identity scopes should be requested or the new token info returned will have the
+     * default scope only. If this is false, whichever identity is currently the authenticated user's
+     * primary identity will remain the primary identity of the resulting user.
      *
      * @param request      The servlet request
-     * @param newIsPrimary True if the new user being associated should be the primary user, default false
-     * @param provider     OpenID provider for the second registration
+     * @param newIsPrimary True if the new identity being associated should be the primary identity, default false
+     * @param provider     OpenID provider for the second identity
      * @param redirectUri  OAuth redirect URI
      * @param accessToken  OAuth access token, if this request is being made using the OAuth query-string style
      * @return OAuth response containing access token, refresh token and expiry parameters, or an error
@@ -77,14 +79,14 @@ public class UserWebService {
     @GET
     @Path("/associate")
     public Response associateUser(@Context HttpServletRequest request,
-                                  @QueryParam(NEW_ASSOC_PRIMARY) Boolean newIsPrimary,
+                                  @QueryParam(NEW_IDENTITY_PRIMARY) Boolean newIsPrimary,
                                   @QueryParam(OPENID_PROVIDER) String provider,
                                   @QueryParam(OAUTH_REDIRECT_URI) String redirectUri,
                                   @QueryParam(OAUTH_TOKEN) String accessToken) throws URISyntaxException {
-        log.info("Processing user association request");
-        String secondUserId = getStringAttributeFromSessionAndRemove(request, log, OPENID_IDENTIFIER,
-                "Second user identifier");
-        boolean isFirstRequest = secondUserId == null;
+        log.info("Processing identity association request");
+        String secondId = getStringAttributeFromSessionAndRemove(request, log, OPENID_IDENTIFIER,
+                "Second identifier");
+        boolean isFirstRequest = secondId == null;
         Principal userPrincipal = request.getUserPrincipal();
         String oAuthRedirectUri = null;
         OAuthIdRequest oAuthRequest = null;
@@ -128,11 +130,11 @@ public class UserWebService {
         }
 
         if (isFirstRequest) {
-            log.info("First user is: " + userPrincipal.getName() + ". Redirecting to login");
+            log.info("First identifier is: " + userPrincipal.getName() + ". Redirecting to login");
 
             // Store initial request details in session
-            request.getSession().setAttribute(FIRST_USER_ID, userPrincipal.getName());
-            request.getSession().setAttribute(NEW_ASSOC_PRIMARY, newIsPrimary == null ? false : newIsPrimary);
+            request.getSession().setAttribute(FIRST_IDENTIFIER, userPrincipal.getName());
+            request.getSession().setAttribute(NEW_IDENTITY_PRIMARY, newIsPrimary == null ? false : newIsPrimary);
             request.getSession().setAttribute(STORED_OAUTH_REDIRECT_URI, redirectUri);
             request.getSession().setAttribute(STORED_OAUTH_CLIENT_ID, oAuthRequest.getClientId());
             request.getSession().setAttribute(OAUTH_TOKEN, accessToken);
@@ -142,86 +144,87 @@ public class UserWebService {
 
             return Response.temporaryRedirect(URI.create(createNewRedirectUri(provider))).build();
         } else {
-            log.info("Identifier to associate: " + secondUserId);
-            String firstUserId = getStringAttributeFromSessionAndRemove(request, log, FIRST_USER_ID,
-                    "First user identifier");
-            Boolean secondUserIsPrimary = getBooleanAttributeFromSessionAndRemove(request, log, NEW_ASSOC_PRIMARY,
-                    "Second user is primary flag");
+            log.info("Identifier to associate: " + secondId);
+            String firstId = getStringAttributeFromSessionAndRemove(request, log, FIRST_IDENTIFIER,
+                    "First identifier");
+            Boolean secondIdentityIsPrimary = getBooleanAttributeFromSessionAndRemove(request, log, NEW_IDENTITY_PRIMARY,
+                    "Second identity is primary flag");
             String clientId = getStringAttributeFromSessionAndRemove(request, log, STORED_OAUTH_CLIENT_ID,
                     "OAuth client id");
             Optional<ClientApplication> clientFound = authService.getClient(clientId);
             Set<String> scopesRequested = getStringSetAttributeFromSessionAndRemove(request, log,
                     OAuth.OAUTH_SCOPE, "Scopes requested");
 
-            if (firstUserId == null || secondUserIsPrimary == null || clientId == null || (!clientFound.isPresent())) {
-                log.severe("User association session attribute null or invalid");
+            if (firstId == null || secondIdentityIsPrimary == null || clientId == null || (!clientFound.isPresent())) {
+                log.severe("Identity association session attribute null or invalid");
                 return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(SYSTEM_ERROR)
                         .location(URI.create(oAuthRedirectUri)).build();
             }
 
             // Get users for identifiers
-            Optional<User> firstUserFound = authService.getUser(firstUserId);
-            Optional<User> secondUserFound = authService.getUser(secondUserId);
+            Optional<Identity> firstIdentityFound = authService.getIdentity(firstId);
+            Optional<Identity> secondIdentityFound = authService.getIdentity(secondId);
 
-            if ((!firstUserFound.isPresent()) || (!secondUserFound.isPresent())) {
+            if ((!firstIdentityFound.isPresent()) || (!secondIdentityFound.isPresent())) {
                 return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(SYSTEM_ERROR)
                         .location(URI.create(oAuthRedirectUri)).build();
             }
-            User firstUser = firstUserFound.get();
-            User secondUser = secondUserFound.get();
+            Identity firstIdentity = firstIdentityFound.get();
+            Identity secondIdentity = secondIdentityFound.get();
 
-            // Find user groups
-            UserGroup firstUserGroup = firstUser.getUserGroup();
-            UserGroup secondUserGroup = secondUser.getUserGroup();
-            UserGroup finalGroup;
+            // Find users
+            User firstUser = firstIdentity.getUser();
+            User secondUser = secondIdentity.getUser();
+            User finalUser;
 
             // Check users not already associated
-            if (firstUserGroup.equals(secondUserGroup)) {
-                return Response.status(HttpServletResponse.SC_NOT_FOUND).entity(USERS_ASSOCIATED_ERROR)
+            if (firstUser.equals(secondUser)) {
+                return Response.status(HttpServletResponse.SC_NOT_FOUND).entity(IDENTITIES_ASSOCIATED_ERROR)
                         .location(URI.create(oAuthRedirectUri)).build();
             }
 
-            // Merge user groups
-            if (secondUserIsPrimary) {
-                secondUserGroup.setPrimaryUser(secondUser);
-                for (User user : firstUserGroup.getGroupUsers()) {
-                    user.setUserGroup(secondUserGroup);
-                    authService.updateUser(user);
+            // Merge users
+            if (secondIdentityIsPrimary) {
+                secondUser.setPrimaryIdentity(secondIdentity);
+                for (Identity identity : firstUser.getUserIdentities()) {
+                    identity.setUser(secondUser);
+                    authService.updateIdentity(identity);
                 }
-                authService.updateUserGroup(secondUserGroup);
-                authService.deleteUserGroup(firstUserGroup);
-                finalGroup = secondUserGroup;
+                authService.updateUser(secondUser);
+                authService.deleteUser(firstUser);
+                finalUser = secondUser;
             } else {
-                for (User user : secondUserGroup.getGroupUsers()) {
-                    user.setUserGroup(firstUserGroup);
-                    authService.updateUser(user);
+                for (Identity identity : secondUser.getUserIdentities()) {
+                    identity.setUser(firstUser);
+                    authService.updateIdentity(identity);
                 }
-                authService.deleteUserGroup(secondUserGroup);
-                finalGroup = firstUserGroup;
+                authService.deleteUser(secondUser);
+                finalUser = firstUser;
             }
 
             // Grant token to primary user of resulting group
-            User primaryUser = finalGroup.getPrimaryUser();
+            Identity primaryIdentity = finalUser.getPrimaryIdentity();
 
             // Use scopes from previous TokenGrant if first user group was the primary, or the requested scopes if not
             Set<Scope> grantScopes = null;
 
-            if (secondUserIsPrimary) {
+            if (secondIdentityIsPrimary) {
                 if (scopesRequested != null) {
                     try {
-                        grantScopes = checkScopes(authService, scopesRequested, secondUser.getUserScopes());
+                        grantScopes = checkScopes(authService, scopesRequested, secondIdentity.getIdentityScopes());
                     } catch (OAuthProblemException e) {
                         log.warning("OAuthProblemException thrown: " + e.getError());
                         return Response.status(Response.Status.NOT_FOUND)
                                 .entity(e.getError()).location(new URI(oAuthRedirectUri)).build();
                     }
                 } else {
-                    log.warning("User has default scope after association request as no scopes requested");
+                    log.warning("Identity has default scope after association request as no scopes requested");
                 }
             } else {
                 grantScopes = newHashSet(requestTokenGrant.getGrantScopes());
             }
-            Response response = createTokenGrantResponseForUser(oAuthRedirectUri, clientFound.get(), grantScopes, primaryUser);
+            Response response = createTokenGrantResponseForIdentity(oAuthRedirectUri, clientFound.get(), grantScopes,
+                    primaryIdentity);
 
             if (response.getStatus() == HttpServletResponse.SC_FOUND) {
                 // Make original TokenGrant non-current
@@ -232,12 +235,12 @@ public class UserWebService {
         }
     }
 
-    private Response createTokenGrantResponseForUser(String oAuthRedirectUri, ClientApplication client, Set<Scope> grantScopes,
-                                                     User user) {
+    private Response createTokenGrantResponseForIdentity(String oAuthRedirectUri, ClientApplication client, Set<Scope> grantScopes,
+                                                         Identity identity) {
         TokenGrant newTokenGrant;
         try {
             newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
-                    user, client);
+                    identity, client);
             if (grantScopes != null) {
                 newTokenGrant.setGrantScopes(grantScopes);
             }
@@ -276,43 +279,43 @@ public class UserWebService {
                 .append(OAuth.OAUTH_CLIENT_ID).append(KEY_VALUE_SEPARATOR)
                 .append(OAUTH_PROVIDER_ID).append(PARAMETER_SEPARATOR)
                 .append(OAUTH_REDIRECT_URI).append(KEY_VALUE_SEPARATOR)
-                .append(ASSOCIATE_USER_ENDPOINT).append(PARAMETER_SEPARATOR)
+                .append(ASSOCIATE_IDENTITY_ENDPOINT).append(PARAMETER_SEPARATOR)
                 .append(OAuth.OAUTH_RESPONSE_TYPE).append(KEY_VALUE_SEPARATOR)
                 .append(ResponseType.TOKEN)
                 .toString();
     }
 
     /**
-     * This endpoint allows a user from the currently authorised user group to be set as the primary user of the
-     * group. If the request is successful, a new token response will be generated for the resulting primary user,
-     * with the standard access token, refresh token and access token expiry time parameters. A new token response
-     * will be generated even if the user identified was already the primary user of the group. The standard OAuth
-     * parameters must be supplied as part of the request: redirect_uri, client_id and response_type. If an OAuth
-     * parameter is missing or invalid, or the userIdentifier is invalid or not part of the current user group, an
-     * error response will be returned.
+     * This endpoint allows an identity of the currently authorised user to be set as the user's primary identity
+     * If the request is successful, a new token response will be generated for the resulting primary identity, with
+     * the standard access token, refresh token and access token expiry time parameters. A new token response will be
+     * generated even if the identity was already the user's primary identity. The standard OAuth parameters must be
+     * supplied as part of the request: redirect_uri, client_id and response_type. If an OAuth parameter is missing or
+     * invalid, or the identifier is invalid or not associated with the authorised user, an error response will be
+     * returned.
      *
      * @param request           The servlet request
-     * @param userIdentifier    The identifier of the user to set as primary
-     * @return                  A token response for the new primary user
+     * @param identifier        The identifier of the identity to set as primary
+     * @return                  A token response for the resulting primary identity
      */
     @GET
     @Path("/makePrimary")
     public Response redirectGet(@Context HttpServletRequest request,
-                                @QueryParam(USER_IDENTIFIER) String userIdentifier,
+                                @QueryParam(IDENTIFIER) String identifier,
                                 @QueryParam(OAUTH_TOKEN) String accessToken) {
-        log.info("Processing request to make " + userIdentifier + " primary user");
+        log.info("Processing request to make " + identifier + " primary identity");
         try {
             OAuthAuthzRequest oAuthRequest = new OAuthAuthzRequest(request);
             if (!oAuthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE).equals(ResponseType.TOKEN.toString())) {
                 log.severe("Response type requested is unsupported: " + oAuthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE));
                 throw createOAuthProblemException(UNSUPPORTED_RESPONSE_TYPE, oAuthRequest.getRedirectURI());
             }
-            if (userIdentifier == null || userIdentifier.length() == 0) {
-                log.warning("Invalid userIdentifier supplied");
-                throw createOAuthProblemException(INVALID_USER_IDENTIFIER, oAuthRequest.getRedirectURI());
+            if (identifier == null || identifier.length() == 0) {
+                log.warning("Invalid identifier supplied");
+                throw createOAuthProblemException(INVALID_IDENTIFIER, oAuthRequest.getRedirectURI());
             }
             TokenGrant tokenGrant = getTokenGrantFromAccessToken(request, accessToken, oAuthRequest.getRedirectURI());
-            return makeUserPrimary(request, userIdentifier, oAuthRequest, tokenGrant);
+            return makeIdentityPrimary(request, identifier, oAuthRequest, tokenGrant);
         } catch (OAuthProblemException e) {
             return handleOAuthProblemException(e);
         } catch (OAuthSystemException e) {
@@ -325,13 +328,13 @@ public class UserWebService {
         return Response.serverError().build();
     }
 
-    private Response makeUserPrimary(HttpServletRequest request, String userIdentifier,
-                                     OAuthAuthzRequest oAuthRequest, TokenGrant currentGrant) {
-        checkUserMemberOfAuthorisedUserGroup(request, userIdentifier);
-        User newPrimaryUser = authService.getUser(userIdentifier).get();
-        UserGroup userGroup = newPrimaryUser.getUserGroup();
-        userGroup.setPrimaryUser(newPrimaryUser);
-        authService.updateUserGroup(userGroup);
+    private Response makeIdentityPrimary(HttpServletRequest request, String identifier,
+                                         OAuthAuthzRequest oAuthRequest, TokenGrant currentGrant) {
+        checkIdentityAssociatedWithAuthorisedUser(request, identifier);
+        Identity newPrimaryIdentity = authService.getIdentity(identifier).get();
+        User user = newPrimaryIdentity.getUser();
+        user.setPrimaryIdentity(newPrimaryIdentity);
+        authService.updateUser(user);
         try {
             Optional<ClientApplication> clientFound = authService.getClient(oAuthRequest.getClientId());
             if (!clientFound.isPresent()) {
@@ -340,11 +343,11 @@ public class UserWebService {
             }
             Set<Scope> grantScopes = null;
             if (oAuthRequest.getScopes() != null && (!oAuthRequest.getScopes().isEmpty())) {
-                grantScopes = checkScopes(authService, oAuthRequest.getScopes(), newPrimaryUser.getUserScopes());
+                grantScopes = checkScopes(authService, oAuthRequest.getScopes(), newPrimaryIdentity.getIdentityScopes());
             }
             // Generate new token grant response
-            Response response = createTokenGrantResponseForUser(oAuthRequest.getRedirectURI(), clientFound.get(),
-                    grantScopes, newPrimaryUser);
+            Response response = createTokenGrantResponseForIdentity(oAuthRequest.getRedirectURI(), clientFound.get(),
+                    grantScopes, newPrimaryIdentity);
 
             if (response.getStatus() == HttpServletResponse.SC_FOUND) {
                 // Make original TokenGrant non-current
@@ -371,44 +374,46 @@ public class UserWebService {
     }
 
     /**
-     * This endpoint provides information about authenticated users. If a userIdentifier is provided and the
-     * user represented by that identifier is part of the authorised user group, information will be provided
-     * on that user. Otherwise, information will be returned on the primary user from the authorised user group.
+     * This endpoint provides information about identities associated with the authorised user. If an identifier is
+     * provided and the identity represented by that identifier is associated with the authorised user, information
+     * will be provided about that identity. Otherwise, information will be returned on the primary identity associated
+     * with the authorised user.
      *
      * @param request        The servlet request
-     * @param userIdentifier Identifier of the user to return information about
-     * @return User information in JSON format
+     * @param identifier     Identifier of the identity to return information about
+     * @return               Identity information in JSON format
      */
     @GET
     @Path("/query")
     @Produces(MediaType.APPLICATION_JSON)
-    public UserInfo getPrimaryUserInfo(@Context HttpServletRequest request,
-                                       @QueryParam(USER_IDENTIFIER) String userIdentifier) {
+    public IdentityInfo getPrimaryUserInfo(@Context HttpServletRequest request,
+                                       @QueryParam(IDENTIFIER) String identifier) {
         Principal userPrincipal = request.getUserPrincipal();
         String identifierToQuery;
 
-        if (userIdentifier == null) {
+        if (identifier == null) {
             identifierToQuery = userPrincipal.getName();
         } else {
-            checkUserMemberOfAuthorisedUserGroup(request, userIdentifier);
-            identifierToQuery = userIdentifier;
+            checkIdentityAssociatedWithAuthorisedUser(request, identifier);
+            identifierToQuery = identifier;
         }
-        Optional<UserInfo> userInfoFound = authService.getUserInfo(identifierToQuery);
-        if (!userInfoFound.isPresent()) {
-            log.warning("User query failed; could not find user info for " + identifierToQuery);
+        Optional<IdentityInfo> identityInfoFound = authService.getUserInfo(identifierToQuery);
+        if (!identityInfoFound.isPresent()) {
+            log.warning("Identity query failed; could not find identity info for " + identifierToQuery);
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .entity(USER_QUERY_ERROR).build());
+                    .entity(IDENTITY_QUERY_ERROR).build());
         }
-        log.info("Returning user info for " + identifierToQuery);
-        return userInfoFound.get();
+        log.info("Returning identity info for " + identifierToQuery);
+        return identityInfoFound.get();
     }
 
-    private void checkUserMemberOfAuthorisedUserGroup(HttpServletRequest request, String userIdentifier) {
-        Optional<User> primaryUser = authService.getUser(request.getUserPrincipal().getName());
-        if ((!primaryUser.isPresent() || (!authService.isUserInGroup(userIdentifier, primaryUser.get().getUserGroup())))) {
-            log.warning("Could not process request related to user " + userIdentifier + "; user unauthorised or system error");
+    private void checkIdentityAssociatedWithAuthorisedUser(HttpServletRequest request, String identifier) {
+        Optional<Identity> primaryIdentity = authService.getIdentity(request.getUserPrincipal().getName());
+        if ((!primaryIdentity.isPresent() || (!authService.isIdentityAssociatedWithUser(identifier,
+                primaryIdentity.get().getUser())))) {
+            log.warning("Could not process request related to identity " + identifier + "; user unauthorised or system error");
             throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(UNAUTHORISED_QUERY_ERROR + " " + userIdentifier).build());
+                    .entity(UNAUTHORISED_QUERY_ERROR + " " + identifier).build());
         }
     }
 }

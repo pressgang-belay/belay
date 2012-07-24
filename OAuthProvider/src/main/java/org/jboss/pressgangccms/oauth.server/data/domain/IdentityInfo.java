@@ -8,43 +8,43 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * Non-persistent user domain class.
+ * Non-persistent identity domain class.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
 @XmlRootElement
-public class UserInfo implements Serializable {
+public class IdentityInfo implements Serializable {
     private static final long serialVersionUID = 5933390681273206069L;
 
-    String userIdentifier;
+    String identifier;
     String firstName;
     String lastName;
     String email;
     String language;
     String country;
     String openIdProviderUrl;
-    Boolean primaryUser;
-    Set<String> userGroupIdentifiers;
-    Set<String> userScopes;
+    Boolean primaryIdentity;
+    Set<String> userIdentifiers;
+    Set<String> identityScopes;
 
-    UserInfo() {
+    IdentityInfo() {
     }
 
-    private UserInfo(UserInfoBuilder builder) {
-        this.userIdentifier = builder.userIdentifier;
+    private IdentityInfo(IdentityInfoBuilder builder) {
+        this.identifier = builder.identifier;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.email = builder.email;
         this.language = builder.language;
         this.country = builder.country;
         this.openIdProviderUrl = builder.openIdProviderUrl;
-        this.primaryUser = builder.primaryUser;
-        this.userGroupIdentifiers = builder.userGroupIdentifiers;
-        this.userScopes = builder.userScopes;
+        this.primaryIdentity = builder.primaryIdentity;
+        this.userIdentifiers = builder.userIdentifiers;
+        this.identityScopes = builder.identityScopes;
     }
 
-    public String getUserIdentifier() {
-        return userIdentifier;
+    public String getIdentifier() {
+        return identifier;
     }
 
     public String getFirstName() {
@@ -71,16 +71,16 @@ public class UserInfo implements Serializable {
         return openIdProviderUrl;
     }
 
-    public Boolean getPrimaryUser() {
-        return primaryUser;
+    public Boolean getPrimaryIdentity() {
+        return primaryIdentity;
     }
 
-    public Set<String> getUserGroupIdentifiers() {
-        return userGroupIdentifiers;
+    public Set<String> getUserIdentifiers() {
+        return userIdentifiers;
     }
 
-    public Set<String> getUserScopes() {
-        return userScopes;
+    public Set<String> getIdentityScopes() {
+        return identityScopes;
     }
 
     public void setFirstName(String firstName) {
@@ -107,120 +107,120 @@ public class UserInfo implements Serializable {
         this.openIdProviderUrl = openIdProviderUrl;
     }
 
-    public void setPrimaryUser(Boolean primaryUser) {
-        this.primaryUser = primaryUser;
+    public void setPrimaryIdentity(Boolean primaryIdentity) {
+        this.primaryIdentity = primaryIdentity;
     }
 
-    public void setUserGroupIdentifiers(Set<String> userGroupIdentifiers) {
-        this.userGroupIdentifiers = userGroupIdentifiers;
+    public void setUserIdentifiers(Set<String> userIdentifiers) {
+        this.userIdentifiers = userIdentifiers;
     }
 
-    public void setUserScopes(Set<String> userScopes) {
-        this.userScopes = userScopes;
+    public void setIdentityScopes(Set<String> identityScopes) {
+        this.identityScopes = identityScopes;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserInfo)) return false;
+        if (!(o instanceof IdentityInfo)) return false;
 
-        UserInfo that = (UserInfo) o;
+        IdentityInfo that = (IdentityInfo) o;
 
-        return userIdentifier.equals(((UserInfo) o).getUserIdentifier());
+        return identifier.equals(((IdentityInfo) o).getIdentifier());
     }
 
     @Override
     public int hashCode() {
-        return userIdentifier.hashCode();
+        return identifier.hashCode();
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("userIdentifier", userIdentifier)
+        return new ToStringBuilder(this).append("identifier", identifier)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
                 .append("email", email)
                 .append("language", language)
                 .append("country", country)
                 .append("openIdProviderUrl", openIdProviderUrl)
-                .append("isPrimaryUser", primaryUser)
-                .append("userGroupIdentifiers", userGroupIdentifiers)
-                .append("userScopes", userScopes)
+                .append("isPrimaryIdentity", primaryIdentity)
+                .append("userIdentifiers", userIdentifiers)
+                .append("identityScopes", identityScopes)
                 .toString();
     }
 
-    public static class UserInfoBuilder implements Builder<UserInfo> {
-        private String userIdentifier;
+    public static class IdentityInfoBuilder implements Builder<IdentityInfo> {
+        private String identifier;
         private String firstName;
         private String lastName;
         private String email;
         private String language;
         private String country;
         private String openIdProviderUrl;
-        private Boolean primaryUser;
-        private Set<String> userGroupIdentifiers;
-        private Set<String> userScopes;
+        private Boolean primaryIdentity;
+        private Set<String> userIdentifiers;
+        private Set<String> identityScopes;
 
-        UserInfoBuilder() {
+        IdentityInfoBuilder() {
         }
 
-        public static UserInfoBuilder userInfoBuilder(String userIdentifier) {
-            UserInfoBuilder builder = new UserInfoBuilder();
-            builder.userIdentifier = userIdentifier;
+        public static IdentityInfoBuilder identityInfoBuilder(String userIdentifier) {
+            IdentityInfoBuilder builder = new IdentityInfoBuilder();
+            builder.identifier = userIdentifier;
             return builder;
         }
 
-        public UserInfoBuilder setFirstName(String firstName) {
+        public IdentityInfoBuilder setFirstName(String firstName) {
             this.firstName = firstName;
             return this;
         }
 
-        public UserInfoBuilder setLastName(String lastName) {
+        public IdentityInfoBuilder setLastName(String lastName) {
             this.lastName = lastName;
             return this;
         }
 
-        public UserInfoBuilder setEmail(String email) {
+        public IdentityInfoBuilder setEmail(String email) {
             this.email = email;
             return this;
         }
 
-        public UserInfoBuilder setLanguage(String language) {
+        public IdentityInfoBuilder setLanguage(String language) {
             this.language = language;
             return this;
         }
 
-        public UserInfoBuilder setCountry(String country) {
+        public IdentityInfoBuilder setCountry(String country) {
             this.country = country;
             return this;
         }
 
-        public UserInfoBuilder setOpenIdProviderUrl(String openIdProviderUrl) {
+        public IdentityInfoBuilder setOpenIdProviderUrl(String openIdProviderUrl) {
             this.openIdProviderUrl = openIdProviderUrl;
             return this;
         }
 
-        public UserInfoBuilder setPrimaryUser(Boolean isPrimaryUser) {
-            this.primaryUser = isPrimaryUser;
+        public IdentityInfoBuilder setPrimaryIdentity(Boolean isPrimaryUser) {
+            this.primaryIdentity = isPrimaryUser;
             return this;
         }
 
-        public UserInfoBuilder setUserGroupIdentifiers(Set<String> userGroupIdentifiers) {
-            this.userGroupIdentifiers = userGroupIdentifiers;
+        public IdentityInfoBuilder setUserIdentifiers(Set<String> userIdentifiers) {
+            this.userIdentifiers = userIdentifiers;
             return this;
         }
 
-        public UserInfoBuilder setUserScopes(Set<String> userScopes) {
-            this.userScopes = userScopes;
+        public IdentityInfoBuilder setIdentityScopes(Set<String> identityScopes) {
+            this.identityScopes = identityScopes;
             return this;
         }
 
         @Override
-        public UserInfo build() {
-            if (userIdentifier == null) {
-                throw new IllegalArgumentException("User identifier cannot be null");
+        public IdentityInfo build() {
+            if (identifier == null) {
+                throw new IllegalArgumentException("Identity identifier cannot be null");
             }
-            return new UserInfo(this);
+            return new IdentityInfo(this);
         }
     }
 }
