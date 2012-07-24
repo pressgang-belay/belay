@@ -18,7 +18,6 @@ import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthRequest;
 
 public class App implements EntryPoint {
 
-    // Use the implementation of Auth intended to be used in the GWT client app.
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
     private static final String GOOGLE_PROVIDER_URL = "gmail.com";
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
@@ -30,7 +29,6 @@ public class App implements EntryPoint {
     private static final String SKYNET_LOGIN_URL = "https://localhost:8443/OAuthProvider/rest/auth/login";
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuthProvider/rest/auth/token";
     private static final String SKYNET_CLIENT_SECRET = "none";
-    // This app's personal client ID assigned by the Skynet OAuth server
     private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
     private final String GOOGLE_USER_ID = "https://www.google.com/accounts/o8/id?id=AItOawmOODmBoSGeBzdngbGS1ltF0Caegz6ajVE";
     private final String PROVIDER_PARAM_STRING = "?provider=";
@@ -87,17 +85,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), new RequestCallback() {
-                    @Override
-                    public void onResponseReceived(Request request, Response response) {
-                        Window.alert("Result: " + response.getText());
-                    }
-
-                    @Override
-                    public void onError(Request request, Throwable exception) {
-                        Window.alert("Error:\n" + exception.getMessage());
-                    }
-                });
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), getStandardRequestCallback());
             }
         });
         RootPanel.get().add(button);
@@ -108,17 +96,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PERSON_1_URL), new RequestCallback() {
-                    @Override
-                    public void onResponseReceived(Request request, Response response) {
-                        Window.alert("Result: " + response.getText());
-                    }
-
-                    @Override
-                    public void onError(Request request, Throwable exception) {
-                        Window.alert("Error:\n" + exception.getMessage());
-                    }
-                });
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PERSON_1_URL), getStandardRequestCallback());
             }
         });
         RootPanel.get().add(button);
@@ -132,18 +110,7 @@ public class App implements EntryPoint {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_ASSOCIATE_URL + PROVIDER_PARAM_STRING
                         + GOOGLE_PROVIDER_URL + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
-                AUTH_HANDLER.login(request, new Callback<String, Throwable>() {
-                    @Override
-                    public void onFailure(Throwable reason) {
-                        Window.alert("Error:\n" + reason.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        currentToken = result;
-                        Window.alert("Result: " + result);
-                    }
-                });
+                AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -157,18 +124,7 @@ public class App implements EntryPoint {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_MAKE_PRIMARY_URL
                         + USER_ID_PARAM_STRING + AUTH_HANDLER.encodeUrl(GOOGLE_USER_ID) + TOKEN_PARAM_STRING + currentToken,
                         SKYNET_TOKEN_URL, SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
-                AUTH_HANDLER.login(request, new Callback<String, Throwable>() {
-                    @Override
-                    public void onFailure(Throwable reason) {
-                        Window.alert("Error:\n" + reason.getMessage());
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        currentToken = result;
-                        Window.alert("Result: " + result);
-                    }
-                });
+                AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -179,17 +135,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, SKYNET_USER_QUERY_URL), new RequestCallback() {
-                    @Override
-                    public void onResponseReceived(Request request, Response response) {
-                        Window.alert("Result: " + response.getText());
-                    }
-
-                    @Override
-                    public void onError(Request request, Throwable exception) {
-                        Window.alert("Error:\n" + exception.getMessage());
-                    }
-                });
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, SKYNET_USER_QUERY_URL), getStandardRequestCallback());
             }
         });
         RootPanel.get().add(button);
@@ -210,8 +156,8 @@ public class App implements EntryPoint {
     }
 
     // Clears all tokens stored in the browser by this library. Subsequent calls
-// to authorise() will result in the popup being shown, though it may immediately
-// disappear if the token has not expired.
+    // to authorise() will result in the popup being shown, though it may immediately
+    // disappear if the token has not expired.
     private void addClearTokens() {
         Button button = new Button("Clear stored tokens");
         button.addClickHandler(new ClickHandler() {
@@ -222,6 +168,20 @@ public class App implements EntryPoint {
             }
         });
         RootPanel.get().add(button);
+    }
+
+    private RequestCallback getStandardRequestCallback() {
+        return new RequestCallback() {
+            @Override
+            public void onResponseReceived(Request request, Response response) {
+                Window.alert("Result: " + response.getText());
+            }
+
+            @Override
+            public void onError(Request request, Throwable exception) {
+                Window.alert("Error:\n" + exception.getMessage());
+            }
+        };
     }
 
     private static Callback<String, Throwable> getStandardCallback() {
