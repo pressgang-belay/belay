@@ -4,7 +4,6 @@ import com.google.appengine.repackaged.com.google.common.base.Optional;
 import org.apache.amber.oauth2.as.request.OAuthTokenRequest;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
-import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
@@ -28,8 +27,10 @@ import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.createTokenGrantWithDefaults;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.makeGrantsNonCurrent;
+import static org.apache.amber.oauth2.common.OAuth.OAUTH_REFRESH_TOKEN;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_GRANT;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
@@ -63,65 +64,37 @@ public class TokenWebService {
             // Check that client_id is registered
             if (! isClientIdKnown(oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID))) {
                 log.warning("client_id could not be found");
-                OAuthResponse response =
-                        OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_FOUND)
-                                .setError(OAuthError.TokenResponse.INVALID_CLIENT)
-                                .setErrorDescription(INVALID_CLIENT)
-                                .buildJSONMessage();
-                return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+                return buildResponse(buildOAuthJsonErrorResponse(INVALID_CLIENT, INVALID_CLIENT_APPLICATION));
             }
             // Process refresh token request
             else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
                     .equals(GrantType.REFRESH_TOKEN.toString())) {
-                if (isRefreshTokenValid(oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN),
+                if (isRefreshTokenValid(oauthRequest.getParam(OAUTH_REFRESH_TOKEN),
                         oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID),
                         oauthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET))) {
                     TokenGrant tokenGrant = createTokenGrant(oauthRequest);
                     OAuthTokenResponseBuilder oAuthTokenResponseBuilder
-                            = OAuthUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK);
-                    OAuthResponse response = oAuthTokenResponseBuilder.buildJSONMessage();
-                    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+                            = addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK);
+                    return buildResponse(oAuthTokenResponseBuilder.buildJSONMessage());
                 } else {
-                    log.warning("Invalid refresh token: " + oauthRequest.getParam(OAuth.OAUTH_REFRESH_TOKEN));
-                    OAuthResponse response = OAuthASResponse
-                            .errorResponse(HttpServletResponse.SC_NOT_FOUND)
-                            .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                            .setErrorDescription(INVALID_REFRESH_TOKEN)
-                            .buildJSONMessage();
-                    return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+                    log.warning("Invalid refresh token: " + oauthRequest.getParam(OAUTH_REFRESH_TOKEN));
+                    return buildResponse(buildOAuthJsonErrorResponse(INVALID_GRANT, INVALID_REFRESH_TOKEN));
                 }
             }
-
             // Anything else is invalid
-            OAuthResponse response = OAuthASResponse
-                    .errorResponse(HttpServletResponse.SC_NOT_FOUND)
-                    .setError(OAuthError.TokenResponse.INVALID_GRANT)
-                    .setErrorDescription(INVALID_GRANT_TYPE)
-                    .buildJSONMessage();
-            return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
+            return buildResponse(buildOAuthJsonErrorResponse(INVALID_GRANT, INVALID_GRANT_TYPE));
         } catch (OAuthProblemException e) {
             log.warning("OAuthProblemException: " + e.getMessage());
-            OAuthResponse res = OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_FOUND).error(e)
-                    .buildJSONMessage();
-            return Response.status(res.getResponseStatus()).entity(res.getBody()).build();
+            return buildResponse(buildOAuthJsonErrorResponse(e.getMessage(), e.getDescription()));
         }
-    }
-
-    private boolean isRefreshTokenValid(String refreshToken, String clientId, String clientSecret) throws OAuthSystemException {
-        Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByRefreshToken(refreshToken);
-        return tokenGrantFound.isPresent()
-                && tokenGrantFound.get().getGrantCurrent()
-                && tokenGrantFound.get().getGrantClient().getClientIdentifier().equals(clientId)
-                && tokenGrantFound.get().getGrantClient().getClientSecret().equals(clientSecret);
     }
 
     private TokenGrant createTokenGrant(OAuthTokenRequest oauthRequest)
             throws OAuthSystemException {
         TokenGrant oldTokenGrant = authService.getTokenGrantByRefreshToken(oauthRequest
-                                    .getParam(OAuth.OAUTH_REFRESH_TOKEN)).get();
+                                    .getParam(OAUTH_REFRESH_TOKEN)).get();
         // Make sure no token grants held by the identity are marked as current before issuing new one
         makeGrantsNonCurrent(authService, oldTokenGrant.getGrantIdentity().getTokenGrants());
-
         // Issue new grant
         TokenGrant newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
                 oldTokenGrant.getGrantIdentity(), oldTokenGrant.getGrantClient());
@@ -130,7 +103,27 @@ public class TokenWebService {
         return newTokenGrant;
     }
 
+    private boolean isRefreshTokenValid(String refreshToken, String clientId, String clientSecret)
+            throws OAuthSystemException {
+        Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByRefreshToken(refreshToken);
+        return tokenGrantFound.isPresent()
+                && tokenGrantFound.get().getGrantCurrent()
+                && tokenGrantFound.get().getGrantClient().getClientIdentifier().equals(clientId)
+                && tokenGrantFound.get().getGrantClient().getClientSecret().equals(clientSecret);
+    }
+
     private boolean isClientIdKnown(String clientIdentifier) {
         return authService.getClient(clientIdentifier).isPresent();
+    }
+
+    private OAuthResponse buildOAuthJsonErrorResponse(String error, String description) throws OAuthSystemException {
+        return OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_FOUND)
+                .setError(error)
+                .setErrorDescription(description)
+                .buildJSONMessage();
+    }
+
+    private Response buildResponse(OAuthResponse response) {
+        return Response.status(response.getResponseStatus()).entity(response.getBody()).build();
     }
 }
