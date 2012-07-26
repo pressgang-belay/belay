@@ -21,12 +21,12 @@ import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthRequest;
 public class App implements EntryPoint {
 
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
-    private static final String PROTOCOL_STRING = "https://";
     private static final String GOOGLE_PROVIDER_URL = "gmail.com";
     private static final String YAHOO_PROVIDER_URL = "yahoo.com";
     private static final String FACEBOOK_PROVIDER_URL = "www.facebook.com";
-    private static final String MYOPENID_PROVIDER_URL = ".myopenid.com";
-    private static final String MYID_PROVIDER_URL = ".myid.net";
+    private static final String MYOPENID_PROVIDER_PREFIX = "https://";
+    private static final String MYOPENID_PROVIDER_SUFFIX = ".myopenid.com";
+    private static final String FEDORA_PROVIDER_PREFIX = "https://admin.fedoraproject.org/accounts/openid/id/";
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String PEOPLE_URL = "https://localhost:8443/OAuthProvider/rest/people";
     private static final String PERSON_1_URL = "https://localhost:8443/OAuthProvider/rest/people/1";
@@ -41,16 +41,20 @@ public class App implements EntryPoint {
     private final String PROVIDER_PARAM_STRING = "?provider=";
     private final String USER_ID_PARAM_STRING = "?id=";
     private final String TOKEN_PARAM_STRING = "&oauth_token=";
+
     private static String currentToken;
+    private final Label inputLabel = new Label("Input: ");
+    private final TextBox inputTextBox = new TextBox();
 
     public void onModuleLoad() {
         Authoriser.export();
+        addInput();
         addRedHatLogin();
         addGoogleLogin();
         addYahooLogin();
         addFacebookLogin();
         addMyOpenIdLogin();
-        addMyIdLogin();
+        addFedoraLogin();
         addGetPeople();
         addGetPerson();
         addAssociateIdentity();
@@ -58,6 +62,11 @@ public class App implements EntryPoint {
         getIdentityInfo();
         addClearTokens();
         addRefresh();
+    }
+
+    private void addInput() {
+        RootPanel.get().add(inputLabel);
+        RootPanel.get().add(inputTextBox);
     }
 
     private void addRedHatLogin() {
@@ -121,37 +130,29 @@ public class App implements EntryPoint {
 
     private void addMyOpenIdLogin() {
         Button button = new Button("Login with MyOpenID.com");
-        Label idLabel = new Label("MyOpenID identifier: ");
-        final TextBox idTextBox = new TextBox();
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + PROTOCOL_STRING + idTextBox.getText() + MYOPENID_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        + MYOPENID_PROVIDER_PREFIX + inputTextBox.getText() + MYOPENID_PROVIDER_SUFFIX, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
-        RootPanel.get().add(idLabel);
-        RootPanel.get().add(idTextBox);
         RootPanel.get().add(button);
     }
 
-    private void addMyIdLogin() {
-        Button button = new Button("Login with MyID.net");
-        Label idLabel = new Label("MyID.net identifier: ");
-        final TextBox idTextBox = new TextBox();
+    private void addFedoraLogin() {
+        Button button = new Button("Login with Fedora Account System");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + PROTOCOL_STRING + idTextBox.getText() + MYID_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        + FEDORA_PROVIDER_PREFIX + inputTextBox.getText(), SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
-        RootPanel.get().add(idLabel);
-        RootPanel.get().add(idTextBox);
         RootPanel.get().add(button);
     }
 
@@ -178,21 +179,17 @@ public class App implements EntryPoint {
     }
 
     private void addAssociateIdentity() {
-        Label providerLabel = new Label("OpenID provider URL: ");
-        final TextBox providerTextBox = new TextBox();
         Button button = new Button("Associate provider identity");
 
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_ASSOCIATE_URL + PROVIDER_PARAM_STRING
-                        + providerTextBox.getText() + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
+                        + inputTextBox.getText() + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
-        RootPanel.get().add(providerLabel);
-        RootPanel.get().add(providerTextBox);
         RootPanel.get().add(button);
     }
 

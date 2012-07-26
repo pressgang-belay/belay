@@ -148,12 +148,6 @@ public class LoginWebService {
     private void addRequiredAttributes(AuthorizationHeaderBuilder authHeaderBuilder) {
         authHeaderBuilder.requireAttribute(FULLNAME, "http://axschema.org/namePerson");
         authHeaderBuilder.requireAttribute(FULLNAME_TITLE_CASE, "http://axschema.org/namePerson");
-        authHeaderBuilder.requireAttribute(FIRSTNAME, "http://axschema.org/namePerson/first");
-        authHeaderBuilder.requireAttribute(LASTNAME, "http://axschema.org/namePerson/last");
-        // These may be worth adding, but they overwrite the standard values already set so should be based on the provider,
-        //        authHeaderBuilder.requireAttribute(LANGUAGE, "http://openid.net/schema/language/pref");
-        //        authHeaderBuilder.requireAttribute(EMAIL, "http://openid.net/schema/contact/internet/email");
-        //        authHeaderBuilder.requireAttribute(COUNTRY, "http://openid.net/schema/contact/country/home");
     }
 
     private TokenGrant createTokenGrant(String clientId, Set<String> scopes, Identity identity, String redirectUri)
@@ -188,8 +182,11 @@ public class LoginWebService {
             throw createOAuthProblemException(URL_DECODING_ERROR, oAuthRequest.getRedirectURI());
         }
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(decodedProviderUrl);
-        if ((!providerFound.isPresent()) && getUrlDomain(decodedProviderUrl).isPresent()) {
-            providerFound = authService.getOpenIdProvider(getUrlDomain(decodedProviderUrl).get());
+        if ((!providerFound.isPresent()) && getPossibleDomains(decodedProviderUrl).isPresent()) {
+            for (String domain : getPossibleDomains(decodedProviderUrl).get()) {
+                providerFound = authService.getOpenIdProvider(domain);
+                if (providerFound.isPresent()) break;
+            }
         }
         if (providerFound.isPresent()) {
             request.getSession().setAttribute(OPENID_PROVIDER, providerFound.get().getProviderUrl());
@@ -199,19 +196,15 @@ public class LoginWebService {
         return providerUrl;
     }
 
-    private Optional<String> getUrlDomain(String providerUrl) {
+    private Optional<List<String>> getPossibleDomains(String providerUrl) {
         try {
             URL url = new URL(providerUrl);
-            String providerDomain;
+            List<String> possibleDomains = Lists.newArrayList(url.getHost());
             if (url.getHost().split("\\.").length > 2) {
-                // Cut off the first part, which is generally the user identifier
-                // This code would need to change to support other OpenID URL formats
-                providerDomain = url.getHost().substring(url.getHost().indexOf('.') + 1);
-            } else {
-                providerDomain = url.getHost();
+                // Cut off the first part, which may be a user identifier
+                possibleDomains.add(url.getHost().substring(url.getHost().indexOf('.') + 1));
             }
-            log.info("Extracted provider domain: " + providerDomain);
-            return Optional.of(providerDomain);
+            return Optional.of(possibleDomains);
         } catch (MalformedURLException e) {
             // Do nothing
         }
@@ -270,9 +263,9 @@ public class LoginWebService {
     }
 
     private void setExtraIdentityAttributes(HttpServletRequest request, Identity identity) {
-        String firstName = getOpenIdAttribute(request, newArrayList(FIRSTNAME, FIRSTNAME_TITLE_CASE));
+        String firstName = getOpenIdAttribute(request, newArrayList(FIRSTNAME));
         if (firstName != null) identity.setFirstName(firstName);
-        String lastName = getOpenIdAttribute(request, newArrayList(LASTNAME, LASTNAME_TITLE_CASE));
+        String lastName = getOpenIdAttribute(request, newArrayList(LASTNAME));
         if (lastName != null) identity.setLastName(lastName);
         String fullName = getOpenIdAttribute(request, newArrayList(FULLNAME, FULLNAME_TITLE_CASE));
         if (fullName != null) identity.setFullName(fullName);
@@ -285,7 +278,7 @@ public class LoginWebService {
     }
 
     private String getOpenIdAttribute(HttpServletRequest request, List<String> openIdAttributeNames) {
-        List<String> prefixes = Lists.newArrayList(OPENID_AX_PREFIX, OPENID_AX_VALUE_PREFIX, OPENID_EXT_VALUE_PREFIX);
+        List<String> prefixes = Lists.newArrayList(OPENID_AX_PREFIX, OPENID_EXT_PREFIX);
         for (String prefix : prefixes) {
             for (String attributeName : openIdAttributeNames) {
                 if (request.getAttribute(prefix + attributeName) != null) {

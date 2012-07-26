@@ -12,12 +12,9 @@ public class Common {
     public static final String OPENID_IDENTIFIER = "openid.identifier";
     public static final String OPENID_CLAIMED_ID = "openid.claimed_id";
     public static final String OPENID_AX_PREFIX = "openid.ax.";
-    public static final String OPENID_AX_VALUE_PREFIX = "openid.ax.value.";
-    public static final String OPENID_EXT_VALUE_PREFIX = "openid.ext1.value.";
-    public static final String FIRSTNAME = "firstname";
-    public static final String FIRSTNAME_TITLE_CASE = "firstName";
-    public static final String LASTNAME = "lastname";
-    public static final String LASTNAME_TITLE_CASE = "lastName";
+    public static final String OPENID_EXT_PREFIX = "openid.ext1.";
+    public static final String FIRSTNAME = "firstName";
+    public static final String LASTNAME = "lastName";
     public static final String FULLNAME = "fullname";
     public static final String FULLNAME_TITLE_CASE = "fullName";
     public static final String EMAIL = "email";
@@ -53,7 +50,7 @@ public class Common {
     // General
     public static final String ONE_HOUR = "3600";
     public static final String UTF_ENCODING = "UTF-8";
-    public static final String OPENID_REALM = "https://localhost:8443/OAuthProvider/rest/auth/";
+    public static final String OPENID_REALM = "https://localhost:8443/OAuthProvider";
     public static final String LOGIN_ENDPOINT = "/auth/login";
     public static final String COMPLETE_ASSOCIATION_ENDPOINT = "/auth/identity/completeAssociation";
     public static final String OPENID_RETURN_URL = "https://localhost:8443/OAuthProvider/rest" + LOGIN_ENDPOINT;
