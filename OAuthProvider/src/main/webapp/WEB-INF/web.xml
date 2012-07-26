@@ -50,4 +50,8 @@
         <param-value>QUERY,HEADER</param-value>
     </context-param>
 
+    <listener>
+        <listener-class>org.jboss.pressgangccms.oauth.server.util.GuiceOverrideServletContextListener</listener-class>
+    </listener>
+
 </web-app>
