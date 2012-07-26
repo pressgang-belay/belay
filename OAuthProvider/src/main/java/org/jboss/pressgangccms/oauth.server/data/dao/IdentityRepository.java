@@ -60,6 +60,7 @@ public class IdentityRepository {
             IdentityInfo.IdentityInfoBuilder builder = identityInfoBuilder(identity.getIdentifier())
                     .setFirstName(identity.getFirstName())
                     .setLastName(identity.getLastName())
+                    .setFullName(identity.getFullName())
                     .setEmail(identity.getEmail())
                     .setCountry(identity.getCountry())
                     .setLanguage(identity.getLanguage())

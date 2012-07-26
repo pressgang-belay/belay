@@ -29,6 +29,7 @@ public class Identity implements Serializable {
     private String identifier;
     private String firstName;
     private String lastName;
+    private String fullName;
     private String email;
     private String language;
     private String country;
@@ -64,6 +65,11 @@ public class Identity implements Serializable {
     @Column(name = "IDENTITY_LAST_NAME")
     public String getLastName() {
         return lastName;
+    }
+
+    @Column(name = "IDENTITY_FULL_NAME")
+    public String getFullName() {
+        return fullName;
     }
 
     @Email
@@ -126,6 +132,10 @@ public class Identity implements Serializable {
         this.lastName = lastName;
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -165,6 +175,7 @@ public class Identity implements Serializable {
                 .append(identifier, that.getIdentifier())
                 .append(firstName, that.getFirstName())
                 .append(lastName, that.getLastName())
+                .append(fullName, that.getFullName())
                 .append(email, that.getEmail())
                 .append(country, that.getCountry())
                 .append(language, that.getLanguage())
@@ -178,6 +189,7 @@ public class Identity implements Serializable {
                 .append(identifier)
                 .append(firstName)
                 .append(lastName)
+                .append(fullName)
                 .append(email)
                 .append(country)
                 .append(language)
@@ -190,6 +202,7 @@ public class Identity implements Serializable {
         return new ToStringBuilder(this).append("identifier", identifier)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
+                .append("fullName", fullName)
                 .append("email", email)
                 .append("country", country)
                 .append("language", language)

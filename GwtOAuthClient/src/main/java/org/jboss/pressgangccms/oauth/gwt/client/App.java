@@ -10,7 +10,9 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import org.jboss.pressgangccms.oauth.gwt.client.oauth.AuthorisationRequest;
 import org.jboss.pressgangccms.oauth.gwt.client.oauth.Authoriser;
 import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthHandler;
@@ -19,7 +21,12 @@ import org.jboss.pressgangccms.oauth.gwt.client.oauth.OAuthRequest;
 public class App implements EntryPoint {
 
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
+    private static final String PROTOCOL_STRING = "https://";
     private static final String GOOGLE_PROVIDER_URL = "gmail.com";
+    private static final String YAHOO_PROVIDER_URL = "yahoo.com";
+    private static final String FACEBOOK_PROVIDER_URL = "www.facebook.com";
+    private static final String MYOPENID_PROVIDER_URL = ".myopenid.com";
+    private static final String MYID_PROVIDER_URL = ".myid.net";
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
     private static final String PEOPLE_URL = "https://localhost:8443/OAuthProvider/rest/people";
     private static final String PERSON_1_URL = "https://localhost:8443/OAuthProvider/rest/people/1";
@@ -40,6 +47,10 @@ public class App implements EntryPoint {
         Authoriser.export();
         addRedHatLogin();
         addGoogleLogin();
+        addYahooLogin();
+        addFacebookLogin();
+        addMyOpenIdLogin();
+        addMyIdLogin();
         addGetPeople();
         addGetPerson();
         addAssociateIdentity();
@@ -80,6 +91,70 @@ public class App implements EntryPoint {
         RootPanel.get().add(button);
     }
 
+    private void addYahooLogin() {
+        Button button = new Button("Login with Yahoo");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + YAHOO_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                AUTH_HANDLER.login(request, getStandardCallback());
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
+    private void addFacebookLogin() {
+        Button button = new Button("Login with Facebook");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + FACEBOOK_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                AUTH_HANDLER.login(request, getStandardCallback());
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
+    private void addMyOpenIdLogin() {
+        Button button = new Button("Login with MyOpenID.com");
+        Label idLabel = new Label("MyOpenID identifier: ");
+        final TextBox idTextBox = new TextBox();
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + PROTOCOL_STRING + idTextBox.getText() + MYOPENID_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                AUTH_HANDLER.login(request, getStandardCallback());
+            }
+        });
+        RootPanel.get().add(idLabel);
+        RootPanel.get().add(idTextBox);
+        RootPanel.get().add(button);
+    }
+
+    private void addMyIdLogin() {
+        Button button = new Button("Login with MyID.net");
+        Label idLabel = new Label("MyID.net identifier: ");
+        final TextBox idTextBox = new TextBox();
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + PROTOCOL_STRING + idTextBox.getText() + MYID_PROVIDER_URL, SKYNET_TOKEN_URL,
+                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                AUTH_HANDLER.login(request, getStandardCallback());
+            }
+        });
+        RootPanel.get().add(idLabel);
+        RootPanel.get().add(idTextBox);
+        RootPanel.get().add(button);
+    }
+
     private void addGetPeople() {
         Button button = new Button("GET all people");
         button.addClickHandler(new ClickHandler() {
@@ -103,16 +178,21 @@ public class App implements EntryPoint {
     }
 
     private void addAssociateIdentity() {
-        Button button = new Button("Associate Google identity");
+        Label providerLabel = new Label("OpenID provider URL: ");
+        final TextBox providerTextBox = new TextBox();
+        Button button = new Button("Associate provider identity");
+
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_ASSOCIATE_URL + PROVIDER_PARAM_STRING
-                        + GOOGLE_PROVIDER_URL + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
+                        + providerTextBox.getText() + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
                         SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
+        RootPanel.get().add(providerLabel);
+        RootPanel.get().add(providerTextBox);
         RootPanel.get().add(button);
     }
 

@@ -19,6 +19,7 @@ public class IdentityInfo implements Serializable {
     String identifier;
     String firstName;
     String lastName;
+    String fullName;
     String email;
     String language;
     String country;
@@ -34,6 +35,7 @@ public class IdentityInfo implements Serializable {
         this.identifier = builder.identifier;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
+        this.fullName = builder.fullName;
         this.email = builder.email;
         this.language = builder.language;
         this.country = builder.country;
@@ -53,6 +55,10 @@ public class IdentityInfo implements Serializable {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     public String getEmail() {
@@ -89,6 +95,10 @@ public class IdentityInfo implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public void setEmail(String email) {
@@ -139,6 +149,7 @@ public class IdentityInfo implements Serializable {
         return new ToStringBuilder(this).append("identifier", identifier)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
+                .append("fullName", fullName)
                 .append("email", email)
                 .append("language", language)
                 .append("country", country)
@@ -153,6 +164,7 @@ public class IdentityInfo implements Serializable {
         private String identifier;
         private String firstName;
         private String lastName;
+        private String fullName;
         private String email;
         private String language;
         private String country;
@@ -177,6 +189,11 @@ public class IdentityInfo implements Serializable {
 
         public IdentityInfoBuilder setLastName(String lastName) {
             this.lastName = lastName;
+            return this;
+        }
+
+        public IdentityInfoBuilder setFullName(String fullName) {
+            this.fullName = fullName;
             return this;
         }
 

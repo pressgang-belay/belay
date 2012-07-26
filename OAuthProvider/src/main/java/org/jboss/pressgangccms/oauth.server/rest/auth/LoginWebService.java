@@ -2,6 +2,7 @@ package org.jboss.pressgangccms.oauth.server.rest.auth;
 
 import com.google.appengine.repackaged.com.google.common.base.Optional;
 import com.google.code.openid.AuthorizationHeaderBuilder;
+import com.google.common.collect.Lists;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
@@ -21,12 +22,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
@@ -70,7 +75,9 @@ public class LoginWebService {
     public Response authorise(@Context HttpServletRequest request) {
         log.info("Processing authorisation attempt");
 
-        String identifier = (String) request.getAttribute(OPENID_IDENTIFIER);
+        String openIdClaimedId = (String) request.getAttribute(OPENID_CLAIMED_ID);
+        String openIdIdentifier = (String) request.getAttribute(OPENID_IDENTIFIER);
+        String identifier = (openIdClaimedId != null) ? openIdClaimedId : openIdIdentifier;
         String clientId = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_CLIENT_ID, "OAuth client id");
         String redirectUri = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_REDIRECT_URI, "OAuth redirect URI");
         Set<String> scopes = getStringSetAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_SCOPE, "Scopes requested");
@@ -78,7 +85,7 @@ public class LoginWebService {
 
         try {
             if (identifier == null) {
-                log.warning("No identity identifier received");
+                log.warning("No OpenID identifier received");
                 throw createOAuthProblemException(INVALID_IDENTIFIER, redirectUri);
             }
             log.info("User has been authenticated as: " + identifier);
@@ -126,13 +133,27 @@ public class LoginWebService {
     private Response.ResponseBuilder createAuthResponse(String providerUrl) {
         Response.ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
         log.info("Sending request for login authentication");
-        builder.header(AUTHENTICATE_HEADER, new AuthorizationHeaderBuilder()
+        AuthorizationHeaderBuilder authHeaderBuilder = new AuthorizationHeaderBuilder()
                 .forIdentifier(providerUrl)
                 .usingRealm(OPENID_REALM)
                 .returnTo(OPENID_RETURN_URL)
-                .includeStandardAttributes()
-                .buildHeader());
+                .includeStandardAttributes();
+        addRequiredAttributes(authHeaderBuilder);
+        String authHeader = authHeaderBuilder.buildHeader();
+        log.info("Request auth header: " + authHeader);
+        builder.header(AUTHENTICATE_HEADER, authHeader);
         return builder;
+    }
+
+    private void addRequiredAttributes(AuthorizationHeaderBuilder authHeaderBuilder) {
+        authHeaderBuilder.requireAttribute(FULLNAME, "http://axschema.org/namePerson");
+        authHeaderBuilder.requireAttribute(FULLNAME_TITLE_CASE, "http://axschema.org/namePerson");
+        authHeaderBuilder.requireAttribute(FIRSTNAME, "http://axschema.org/namePerson/first");
+        authHeaderBuilder.requireAttribute(LASTNAME, "http://axschema.org/namePerson/last");
+        // These may be worth adding, but they overwrite the standard values already set so should be based on the provider,
+        //        authHeaderBuilder.requireAttribute(LANGUAGE, "http://openid.net/schema/language/pref");
+        //        authHeaderBuilder.requireAttribute(EMAIL, "http://openid.net/schema/contact/internet/email");
+        //        authHeaderBuilder.requireAttribute(COUNTRY, "http://openid.net/schema/contact/country/home");
     }
 
     private TokenGrant createTokenGrant(String clientId, Set<String> scopes, Identity identity, String redirectUri)
@@ -167,12 +188,34 @@ public class LoginWebService {
             throw createOAuthProblemException(URL_DECODING_ERROR, oAuthRequest.getRedirectURI());
         }
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(decodedProviderUrl);
+        if ((!providerFound.isPresent()) && getUrlDomain(decodedProviderUrl).isPresent()) {
+            providerFound = authService.getOpenIdProvider(getUrlDomain(decodedProviderUrl).get());
+        }
         if (providerFound.isPresent()) {
-            request.getSession().setAttribute(OPENID_PROVIDER, decodedProviderUrl);
+            request.getSession().setAttribute(OPENID_PROVIDER, providerFound.get().getProviderUrl());
         } else {
             throw createOAuthProblemException(INVALID_PROVIDER, oAuthRequest.getRedirectURI());
         }
         return providerUrl;
+    }
+
+    private Optional<String> getUrlDomain(String providerUrl) {
+        try {
+            URL url = new URL(providerUrl);
+            String providerDomain;
+            if (url.getHost().split("\\.").length > 2) {
+                // Cut off the first part, which is generally the user identifier
+                // This code would need to change to support other OpenID URL formats
+                providerDomain = url.getHost().substring(url.getHost().indexOf('.') + 1);
+            } else {
+                providerDomain = url.getHost();
+            }
+            log.info("Extracted provider domain: " + providerDomain);
+            return Optional.of(providerDomain);
+        } catch (MalformedURLException e) {
+            // Do nothing
+        }
+        return Optional.absent();
     }
 
     private boolean isRedirectUriInvalid(String clientId, String redirectUri) {
@@ -227,16 +270,31 @@ public class LoginWebService {
     }
 
     private void setExtraIdentityAttributes(HttpServletRequest request, Identity identity) {
-        String firstName = (String) request.getAttribute(OPENID_FIRSTNAME);
+        String firstName = getOpenIdAttribute(request, newArrayList(FIRSTNAME, FIRSTNAME_TITLE_CASE));
         if (firstName != null) identity.setFirstName(firstName);
-        String lastName = (String) request.getAttribute(OPENID_LASTNAME);
+        String lastName = getOpenIdAttribute(request, newArrayList(LASTNAME, LASTNAME_TITLE_CASE));
         if (lastName != null) identity.setLastName(lastName);
-        String email = (String) request.getAttribute(OPENID_EMAIL);
+        String fullName = getOpenIdAttribute(request, newArrayList(FULLNAME, FULLNAME_TITLE_CASE));
+        if (fullName != null) identity.setFullName(fullName);
+        String email = getOpenIdAttribute(request, newArrayList(EMAIL));
         if (email != null) identity.setEmail(email);
-        String language = (String) request.getAttribute(OPENID_LANGUAGE);
+        String language = getOpenIdAttribute(request, newArrayList(LANGUAGE));
         if (language != null) identity.setLanguage(language);
-        String country = (String) request.getAttribute(OPENID_COUNTRY);
+        String country = getOpenIdAttribute(request, newArrayList(COUNTRY));
         if (country != null) identity.setCountry(country);
+    }
+
+    private String getOpenIdAttribute(HttpServletRequest request, List<String> openIdAttributeNames) {
+        List<String> prefixes = Lists.newArrayList(OPENID_AX_PREFIX, OPENID_AX_VALUE_PREFIX, OPENID_EXT_VALUE_PREFIX);
+        for (String prefix : prefixes) {
+            for (String attributeName : openIdAttributeNames) {
+                if (request.getAttribute(prefix + attributeName) != null) {
+                    log.info("Found " + prefix + attributeName + " attribute");
+                    return (String) request.getAttribute(prefix + attributeName);
+                }
+            }
+        }
+        return null;
     }
 
     private boolean clientNotFound(Optional<ClientApplication> clientFound) {
@@ -250,7 +308,7 @@ public class LoginWebService {
     private Response createAssociationRequestResponse(HttpServletRequest request, String identifier) {
         request.getSession().setAttribute(OPENID_IDENTIFIER, identifier);
         StringBuilder uriBuilder = new StringBuilder(COMPLETE_ASSOCIATION_ENDPOINT);
-        String accessToken = (String)request.getSession().getAttribute(OAuth.OAUTH_TOKEN);
+        String accessToken = (String) request.getSession().getAttribute(OAuth.OAUTH_TOKEN);
         if (accessToken != null) {
             log.info("Setting OAuth token for redirect");
             uriBuilder.append(QUERY_STRING_MARKER)
