@@ -1,4 +1,4 @@
-package org.jboss.pressgangccms.oauth.server.util;
+package org.jboss.pressgangccms.oauth.server.util.hostmeta;
 
 import com.google.code.openid.RelyingPartyFilter;
 

@@ -51,7 +51,7 @@
     </context-param>
 
     <listener>
-        <listener-class>org.jboss.pressgangccms.oauth.server.util.GuiceOverrideServletContextListener</listener-class>
+        <listener-class>org.jboss.pressgangccms.oauth.server.util.hostmeta.GuiceOverrideServletContextListener</listener-class>
     </listener>
 
 </web-app>
