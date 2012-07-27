@@ -20,7 +20,6 @@ class Common {
     static final String RESPONSE_TYPE = "response_type";
     static final String SCOPE = "scope";
     static final String REDIRECT_URI = "redirect_uri";
-    static final String PROVIDER = "provider";
     static final String REFRESH_TOKEN = "refresh_token";
     static final String ACCESS_TOKEN = "access_token";
     static final String EXPIRES_IN = "expires_in";

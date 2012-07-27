@@ -12,6 +12,7 @@ import org.apache.amber.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.jboss.pressgangccms.oauth.server.data.domain.IdentityInfo;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.*;
 import org.jboss.pressgangccms.oauth.server.oauth.login.OAuthIdRequest;
+import org.jboss.pressgangccms.oauth.server.oauth.util.OAuthUtil;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
 import org.jboss.pressgangccms.oauth.server.service.TokenIssuerService;
 
@@ -35,7 +36,7 @@ import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResp
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REDIRECT_URI;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
@@ -296,7 +297,7 @@ public class IdentityWebService {
         if (accessToken == null) {
             OAuthAccessResourceRequest oAuthRequest = new
                     OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-            accessToken = trimAccessToken(oAuthRequest.getAccessToken());
+            accessToken = OAuthUtil.trimAccessToken(oAuthRequest.getAccessToken());
         }
         Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByAccessToken(accessToken);
         if (!tokenGrantFound.isPresent()) {

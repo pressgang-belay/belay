@@ -6,9 +6,9 @@ import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.ClientApplication;
+import org.jboss.pressgangccms.oauth.server.data.model.auth.Identity;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.Scope;
 import org.jboss.pressgangccms.oauth.server.data.model.auth.TokenGrant;
-import org.jboss.pressgangccms.oauth.server.data.model.auth.Identity;
 import org.jboss.pressgangccms.oauth.server.service.AuthService;
 import org.jboss.pressgangccms.oauth.server.service.TokenIssuerService;
 
@@ -23,14 +23,13 @@ import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
-import static org.jboss.pressgangccms.oauth.server.util.Common.BEARER;
 
 /**
  * Encapsulates logic shared across auth web services.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class OAuthUtil {
+class OAuthWebServiceUtil {
 
     static TokenGrant createTokenGrantWithDefaults(TokenIssuerService tokenIssuerService, AuthService authService,
                                                    Identity identity, ClientApplication client) throws OAuthSystemException {
@@ -153,13 +152,5 @@ public class OAuthUtil {
             throw createWebApplicationException(OAUTH_CALLBACK_URL_REQUIRED, HttpServletResponse.SC_NOT_FOUND);
         }
         return responseBuilder.entity(e.getError()).location(URI.create(redirectUri)).build();
-    }
-
-    public static String trimAccessToken(String accessToken) {
-        if (accessToken.toLowerCase().startsWith(BEARER)) {
-            // Remove leading header
-            accessToken = accessToken.substring(BEARER.length()).trim();
-        }
-        return accessToken;
     }
 }

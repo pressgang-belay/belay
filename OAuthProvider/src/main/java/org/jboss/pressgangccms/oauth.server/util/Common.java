@@ -50,13 +50,15 @@ public class Common {
     // General
     public static final String ONE_HOUR = "3600";
     public static final String UTF_ENCODING = "UTF-8";
-    public static final String OPENID_REALM = "https://localhost:8443/OAuthProvider/";
+    public static final String OPENID_REALM = "https://localhost:8443/OAuthProvider/rest/auth/";
     public static final String LOGIN_ENDPOINT = "/auth/login";
     public static final String COMPLETE_ASSOCIATION_ENDPOINT = "/auth/identity/completeAssociation";
     public static final String OPENID_RETURN_URL = "https://localhost:8443/OAuthProvider/rest" + LOGIN_ENDPOINT;
     public static final String OAUTH_PROVIDER_ID = "OAuthProvider";
     public static final String STORED_OAUTH_REDIRECT_URI = "storedOAuthRedirectUri";
     public static final String STORED_OAUTH_CLIENT_ID = "storedOAuthClientId";
+    public static final String GOOGLE = "google";
+    public static final String GMAIL = "gmail";
 
     // Yadis
     public static final String NS_TAG = "xmlns";

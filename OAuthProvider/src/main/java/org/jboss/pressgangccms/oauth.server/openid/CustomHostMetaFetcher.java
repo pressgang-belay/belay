@@ -1,4 +1,4 @@
-package org.jboss.pressgangccms.oauth.server.util.hostmeta;
+package org.jboss.pressgangccms.oauth.server.openid;
 
 import com.google.code.openid.GoogleHostedHostMetaFetcher;
 import com.google.inject.Inject;
@@ -10,6 +10,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
+import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
+import static org.jboss.pressgangccms.oauth.server.util.Common.GMAIL;
+import static org.jboss.pressgangccms.oauth.server.util.Common.GOOGLE;
+
+/**
+ * This UrlHostMetaFetcher implementation uses a Google-hosted host-meta fetcher to get host-meta if the
+ * host is Gmail or Google, or a default implementation otherwise.
+ *
+ * @author kamiller@redhat.com (Katie Miller)
+ */
 public class CustomHostMetaFetcher extends UrlHostMetaFetcher {
 
     private Logger log = Logger.getLogger(CustomHostMetaFetcher.class.getName());
@@ -25,7 +35,7 @@ public class CustomHostMetaFetcher extends UrlHostMetaFetcher {
 
     @Override
     protected URI getHostMetaUriForHost(String host) throws URISyntaxException {
-        if (host.contains("gmail") || host.contains("google")) {
+        if (containsIgnoreCase(host, GMAIL) || containsIgnoreCase(host, GOOGLE)) {
             log.info("Using GoogleHostedMetaFetcher");
             return googleHostedHostMetaFetcher.getHostMetaUriForHost(host);
         } else {

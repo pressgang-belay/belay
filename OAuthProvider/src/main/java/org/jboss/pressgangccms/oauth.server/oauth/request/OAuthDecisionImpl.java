@@ -19,7 +19,7 @@ import java.security.Principal;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.trimAccessToken;
+import static org.jboss.pressgangccms.oauth.server.oauth.util.OAuthUtil.trimAccessToken;
 import static org.jboss.pressgangccms.oauth.server.util.Common.SYSTEM_ERROR;
 
 /**

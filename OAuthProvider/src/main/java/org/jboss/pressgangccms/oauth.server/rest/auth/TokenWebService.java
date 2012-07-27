@@ -30,7 +30,7 @@ import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResp
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REFRESH_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_GRANT;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
@@ -55,10 +55,11 @@ public class TokenWebService {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
-
+        //TODO logic for confidential clients
         log.info("Processing token refresh request");
 
         try {
+            //TODO add custom request type that doesn't require client secret, for public clients
             OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
 
             // Check that client_id is registered

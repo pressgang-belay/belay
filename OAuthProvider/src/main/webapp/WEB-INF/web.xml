@@ -4,6 +4,11 @@
 
     <display-name>PressgangCCMS OAuth Provider Prototype</display-name>
 
+    <!-- Used to override Guice binding in the openid-filter library -->
+    <listener>
+        <listener-class>org.jboss.pressgangccms.oauth.server.openid.GuiceOverrideServletContextListener</listener-class>
+    </listener>
+
     <!-- The OpenID Filter handles identity authentication -->
     <filter>
         <filter-name>OpenID Filter</filter-name>
@@ -49,9 +54,5 @@
         <param-name>oauth.rs.tokens</param-name>
         <param-value>QUERY,HEADER</param-value>
     </context-param>
-
-    <listener>
-        <listener-class>org.jboss.pressgangccms.oauth.server.util.hostmeta.GuiceOverrideServletContextListener</listener-class>
-    </listener>
 
 </web-app>

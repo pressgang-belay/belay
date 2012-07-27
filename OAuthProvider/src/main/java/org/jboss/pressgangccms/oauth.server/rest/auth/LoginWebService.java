@@ -33,11 +33,14 @@ import java.util.logging.Logger;
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
-import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthUtil.*;
+import static org.jboss.pressgangccms.oauth.server.rest.auth.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth.server.util.Common.*;
 
 /**
- * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint.
+ * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint. The OAuth component's function
+ * is closest to OAuth2's implicit authorisation flow, however, depending on the app settings the resource owner may
+ * not be prompted to authorise the access, as in cases where the client application, authorisation server and resource
+ * server are all operating as one application, this may be inappropriate.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -111,6 +114,10 @@ public class LoginWebService {
             if (clientId.equals(OAUTH_PROVIDER_ID) && redirectUri.equals(COMPLETE_ASSOCIATION_ENDPOINT)) {
                 return createAssociationRequestResponse(request, identifier);
             }
+
+            //TODO add logic to prompt user to accept client app request to access resource with scopes
+            // create scopes for the things in the identitywebservice
+            // add facility to add different scopes as default, depending on app's function
 
             // Check if identity already has current grant/s; if so, make them invalid
             Set<TokenGrant> grants = identity.getTokenGrants();

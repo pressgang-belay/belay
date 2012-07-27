@@ -37,7 +37,6 @@ public class App implements EntryPoint {
     private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuthProvider/rest/auth/token";
     private static final String SKYNET_CLIENT_SECRET = "none";
     private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
-    private final String GOOGLE_USER_ID = "https://www.google.com/accounts/o8/id?id=AItOawmOODmBoSGeBzdngbGS1ltF0Caegz6ajVE";
     private final String PROVIDER_PARAM_STRING = "?provider=";
     private final String USER_ID_PARAM_STRING = "?id=";
     private final String TOKEN_PARAM_STRING = "&oauth_token=";
@@ -58,7 +57,7 @@ public class App implements EntryPoint {
         addGetPeople();
         addGetPerson();
         addAssociateIdentity();
-        makeGoogleIdentityPrimary();
+        makeIdentityPrimary();
         getIdentityInfo();
         addClearTokens();
         addRefresh();
@@ -193,13 +192,13 @@ public class App implements EntryPoint {
         RootPanel.get().add(button);
     }
 
-    private void makeGoogleIdentityPrimary() {
-        Button button = new Button("Make Google identity primary");
+    private void makeIdentityPrimary() {
+        Button button = new Button("Make identity primary");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 final AuthorisationRequest request = new AuthorisationRequest(SKYNET_MAKE_PRIMARY_URL
-                        + USER_ID_PARAM_STRING + AUTH_HANDLER.encodeUrl(GOOGLE_USER_ID) + TOKEN_PARAM_STRING + currentToken,
+                        + USER_ID_PARAM_STRING + AUTH_HANDLER.encodeUrl(inputTextBox.getText()) + TOKEN_PARAM_STRING + currentToken,
                         SKYNET_TOKEN_URL, SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
