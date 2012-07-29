@@ -215,7 +215,7 @@ public abstract class Authoriser {
 
         // Get the refresh token value from the query string if it's there
         // Future versions of the Apache Amber library may include this in the URI fragment with everything else
-        // but for now this is the way it is delivered
+        // but for now this is the way it is delivered by that library so catering for this
         String refreshString = REFRESH_TOKEN + KEY_VALUE_SEPARATOR;
 
         if (queryString.startsWith(QUERY_STRING_MARKER) && queryString.contains(refreshString)) {

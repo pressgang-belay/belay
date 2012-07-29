@@ -15,7 +15,7 @@ public class AuthorisationRequest {
     private final String authUrl;
     private final String tokenUrl;
     private final String clientId;
-    private final String clientSecret;
+    private final String clientSecret;     //TODO remove this shouldn't be necessary
     private String[] scopes;
     private boolean forceNewRequest;
     private String scopeDelimiter = " ";  // Default delimiter
