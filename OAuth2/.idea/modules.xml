@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/GwtOAuth2Client/GwtOAuth2Client.iml" filepath="$PROJECT_DIR$/GwtOAuth2Client/GwtOAuth2Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OAuth2AuthServer/OAuth2AuthServer.iml" filepath="$PROJECT_DIR$/OAuth2AuthServer/OAuth2AuthServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OAuth2ResourceServerProvider/OAuth2ResourceServerProvider.iml" filepath="$PROJECT_DIR$/OAuth2ResourceServerProvider/OAuth2ResourceServerProvider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OAuth2SecuredRestApp/OAuth2SecuredRestApp.iml" filepath="$PROJECT_DIR$/OAuth2SecuredRestApp/OAuth2SecuredRestApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PressGangCCMSOAuth2.iml" filepath="$PROJECT_DIR$/PressGangCCMSOAuth2.iml" />
+    </modules>
+  </component>
+</project>
+

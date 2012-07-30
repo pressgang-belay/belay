@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.pressgangccms.oauth2</groupId>
+    <artifactId>pressgangccms-oauth2</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>PressGangCCMSOAuth2Parent</name>
+
+    <modules>
+        <module>OAuth2AuthServer</module>
+        <module>OAuth2ResourceServerProvider</module>
+        <module>GwtOAuth2Client</module>
+        <module>OAuth2SecuredRestApp</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.7</java.version>
+        <junit.version>4.10</junit.version>
+        <jboss.bom.version>1.0.0.M11</jboss.bom.version>
+        <amber.version>0.2-SNAPSHOT</amber.version>
+        <servletapi.version>2.5</servletapi.version>
+        <httpcore.version>4.1.4</httpcore.version>
+        <httpcomponents.version>4.1.1</httpcomponents.version>
+        <openid4java.version>0.9.6</openid4java.version>
+        <guice.version>2.0</guice.version>
+        <json.version>20090211</json.version>
+        <picketlink.version>2.0.0.Beta1</picketlink.version>
+        <openidfilter.version>1.0-SNAPSHOT</openidfilter.version>
+        <jodatime.version>2.0</jodatime.version>
+        <xmlbuilder.version>0.4</xmlbuilder.version>
+        <commonslang.version>2.6</commonslang.version>
+        <guava.version>13.0-rc1</guava.version>
+        <gwt.version>1.5.3</gwt.version>
+        <gwtoauth2.version>0.2-alpha</gwtoauth2.version>
+        <gwtuser.version>2.4.0</gwtuser.version>
+        <gwtplugin.version>2.4.0</gwtplugin.version>
+        <warplugin.version>2.2</warplugin.version>
+        <compilerplugin.version>2.3.1</compilerplugin.version>
+        <jbossplugin.version>7.1.1.Final</jbossplugin.version>
+        <surefireplugin.version>2.4.3</surefireplugin.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>jboss-repo</id>
+            <name>JBoss repository</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+        <repository>
+            <id>apache-snapshots-repo</id>
+            <name>Apache snapshots</name>
+            <url>http://repository.apache.org/snapshots/</url>
+        </repository>
+        <repository>
+            <id>openid-filter-repo</id>
+            <name>Repository for openid-filter</name>
+            <url>http://openid-filter.googlecode.com/svn/repo</url>
+        </repository>
+        <repository>
+            <id>third-party-apps-repo</id>
+            <name>Repository containing gwt-oauth2 library</name>
+            <url>http://ecsmaven.usersys.redhat.com/nexus/content/repositories/thirdparty</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>jboss-javaee-6.0-with-tools</artifactId>
+                <version>${jboss.bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
+                <version>${jboss.bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
