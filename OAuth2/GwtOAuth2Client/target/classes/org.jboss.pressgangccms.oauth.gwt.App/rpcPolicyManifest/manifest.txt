@@ -1,2 +1,0 @@
-# Module org.jboss.pressgangccms.oauth.gwt.App
-# RPC service class, partial path of RPC policy file
