@@ -10,6 +10,7 @@
     <name>PressGangCCMSOAuth2Parent</name>
 
     <modules>
+        <module>OAuth2Shared</module>
         <module>OAuth2AuthServer</module>
         <module>OAuth2ResourceServerProvider</module>
         <module>GwtOAuth2Client</module>
@@ -20,11 +21,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.7</java.version>
         <junit.version>4.10</junit.version>
-        <jboss.bom.version>1.0.0.M11</jboss.bom.version>
+        <jboss.bom.version>1.0.1.CR1</jboss.bom.version>
         <amber.version>0.2-SNAPSHOT</amber.version>
         <servletapi.version>2.5</servletapi.version>
-        <httpcore.version>4.1.4</httpcore.version>
-        <httpcomponents.version>4.1.1</httpcomponents.version>
+        <httpclient.version>4.2.1</httpclient.version>
         <openid4java.version>0.9.6</openid4java.version>
         <guice.version>2.0</guice.version>
         <json.version>20090211</json.version>
@@ -33,6 +33,8 @@
         <jodatime.version>2.0</jodatime.version>
         <xmlbuilder.version>0.4</xmlbuilder.version>
         <commonslang.version>2.6</commonslang.version>
+        <commonsconfiguration.version>1.8</commonsconfiguration.version>
+        <resteasy.version>2.3.4.Final</resteasy.version>
         <guava.version>13.0-rc1</guava.version>
         <gwt.version>1.5.3</gwt.version>
         <gwtoauth2.version>0.2-alpha</gwtoauth2.version>
@@ -40,8 +42,10 @@
         <gwtplugin.version>2.4.0</gwtplugin.version>
         <warplugin.version>2.2</warplugin.version>
         <compilerplugin.version>2.3.1</compilerplugin.version>
+        <jarplugin.version>2.4</jarplugin.version>
         <jbossplugin.version>7.1.1.Final</jbossplugin.version>
         <surefireplugin.version>2.4.3</surefireplugin.version>
+        <author.name>Katie Miller (kamiller@redhat.com)</author.name>
     </properties>
 
     <repositories>
@@ -85,5 +89,49 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compilerplugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${jarplugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${author.name}</Built-By>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${warplugin.version}</version>
+                    <configuration>
+                        <!-- Java EE 6 doesn't require web.xml, Maven needs to catch up! -->
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
+                        <archive>
+                            <manifestEntries>
+                                <Built-By>${author.name}</Built-By>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefireplugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>

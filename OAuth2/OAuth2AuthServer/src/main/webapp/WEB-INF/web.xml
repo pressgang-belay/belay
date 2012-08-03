@@ -1,12 +1,13 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-    <display-name>PressgangCCMS OAuth Provider Prototype</display-name>
+    <display-name>PressgangCCMS OAuth2 Auth Server</display-name>
 
     <!-- Used to override Guice binding in the openid-filter library -->
     <listener>
-        <listener-class>org.jboss.pressgangccms.oauth.authserver.openid.GuiceOverrideServletContextListener</listener-class>
+        <listener-class>org.jboss.pressgangccms.oauth2.authserver.openid.GuiceOverrideServletContextListener
+        </listener-class>
     </listener>
 
     <!-- The OpenID Filter handles identity authentication -->
@@ -21,22 +22,21 @@
         <url-pattern>/rest/auth/login</url-pattern>
     </filter-mapping>
 
-    <!-- The OAuth Filter handles authentication/authorisation for protected resources -->
-	<filter>
-		<filter-name>OAuth Filter</filter-name>
-		<filter-class>org.apache.amber.oauth2.rsfilter.OAuthFilter</filter-class>
-	</filter>
+    <!-- The OAuth Filter handles auth for identity services -->
+    <filter>
+        <filter-name>OAuth Filter</filter-name>
+        <filter-class>org.apache.amber.oauth2.rsfilter.OAuthFilter</filter-class>
+    </filter>
 
-	<!-- This defines the URLs which require OAuth authentication -->
-	<filter-mapping>
-		<filter-name>OAuth Filter</filter-name>
+    <filter-mapping>
+        <filter-name>OAuth Filter</filter-name>
         <url-pattern>/rest/auth/identity/*</url-pattern>
-	</filter-mapping>
+    </filter-mapping>
 
-	<context-param>
-		<param-name>oauth.rs.provider-class</param-name>
-		<param-value>org.jboss.pressgangccms.oauth.authserver.oauth.request.OAuthRSProviderImpl</param-value>
-	</context-param>
+    <context-param>
+        <param-name>oauth.rs.provider-class</param-name>
+        <param-value>org.jboss.pressgangccms.oauth2.resourceserver.filter.OAuth2RSProvider</param-value>
+    </context-param>
 
     <context-param>
         <param-name>oauth.provider.tokens.request</param-name>
@@ -54,4 +54,27 @@
         <param-value>QUERY,HEADER</param-value>
     </context-param>
 
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>ClientResources</web-resource-name>
+            <url-pattern>/rest/auth/info</url-pattern>
+        </web-resource-collection>
+
+        <auth-constraint>
+            <role-name>clientapp</role-name>
+        </auth-constraint>
+
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>ApplicationRealm</realm-name>
+    </login-config>
+
+    <security-role>
+        <role-name>clientapp</role-name>
+    </security-role>
 </web-app>

@@ -1,5 +1,20 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
-    <display-name>REST sample app secured by OAuth2</display-name>
+    <display-name>PressgangCCMS OAuth2-secured App Example</display-name>
+
+    <filter>
+        <filter-name>OAuth2 Filter</filter-name>
+        <filter-class>org.apache.amber.oauth2.rsfilter.OAuthFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>OAuth2 Filter</filter-name>
+        <url-pattern>/rest/people/*</url-pattern>
+    </filter-mapping>
+
+    <context-param>
+        <param-name>oauth.rs.provider-class</param-name>
+        <param-value>org.jboss.pressgangccms.oauth2.resourceserver.filter.OAuth2RSProvider</param-value>
+    </context-param>
 </web-app>

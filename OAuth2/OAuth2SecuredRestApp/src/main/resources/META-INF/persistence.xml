@@ -23,7 +23,22 @@
       <properties>
          <!-- Properties for Hibernate -->
          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+         <property name="hibernate.hbm2ddl.import_files" value="import.sql" />
          <property name="hibernate.show_sql" value="false" />
       </properties>
    </persistence-unit>
+    <persistence-unit name="oauth2-resourceserver">
+        <jta-data-source>java:jboss/datasources/OAuth2ResourceServerDS</jta-data-source>
+        <jar-file>resource-server-provider-1.0-SNAPSHOT.jar</jar-file>
+        <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSScope</class>
+        <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint</class>
+        <properties>
+            <!-- Set this so the library can access the entity manager factory for this data source -->
+            <!-- Put this value in the resourceserver.properties file with the key entityManagerFactoryJndiAddress -->
+            <property name="jboss.entity.manager.factory.jndi.name" value="java:jboss/OAuth2ResourceServerManagerFactory" />
+            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
+            <property name="hibernate.hbm2ddl.import_files" value="resourceserver-import.sql" />
+            <property name="hibernate.show_sql" value="false" />
+        </properties>
+    </persistence-unit>
 </persistence>

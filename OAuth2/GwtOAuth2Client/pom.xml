@@ -16,7 +16,7 @@
 
     <properties>
         <gwt.gen.dir>${project.build.directory}/gwt-gen</gwt.gen.dir>
-        <gwt.module.name>org.jboss.pressgangccms.oauth.gwt.App</gwt.module.name>
+        <gwt.module.name>org.jboss.pressgangccms.oauth2.gwt.App</gwt.module.name>
     </properties>
 
     <dependencies>
@@ -82,7 +82,7 @@
                             <directory>${gwt.gen.dir}</directory>
                         </resource>
                         <resource>
-                            <directory>src/main/java/org/jboss/pressgangccms/oauth/gwt/client/resources</directory>
+                            <directory>src/main/java/org/jboss/pressgangccms/oauth2/gwt/client/resources</directory>
                             <includes>
                                 <include>*.html</include>
                             </includes>
