@@ -1,1 +1,4 @@
-Prototype projects around REST interface security.
+Contains prototype projects around REST web service security.
+
+OpenId directory contains a sample OpenID server implementation.
+OAuth2 directory contains an OAuth2 authorisation server implementation, an OAuth2 resource server library and an example REST app using the resource server library. It also contains a GWT OAuth2 client library and sample app.
