@@ -175,6 +175,10 @@
                     <groupId>xalan</groupId>
                     <artifactId>xalan</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.google.code</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 

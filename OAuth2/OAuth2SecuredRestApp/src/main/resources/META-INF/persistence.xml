@@ -15,13 +15,8 @@
         http://java.sun.com/xml/ns/persistence
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
    <persistence-unit name="sample">
-      <!-- If you are running in a production environment, add a managed 
-         data source, this example data source is just for development and testing! -->
-      <!-- The datasource is deployed as WEB-INF/restsecurity-ds.xml, you
-         can find it in the source at src/main/webapp/WEB-INF/oauth2securedrestapp-ds.xml -->
       <jta-data-source>java:jboss/datasources/OAuth2SecuredRestAppDS</jta-data-source>
       <properties>
-         <!-- Properties for Hibernate -->
          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
          <property name="hibernate.hbm2ddl.import_files" value="import.sql" />
          <property name="hibernate.show_sql" value="false" />
