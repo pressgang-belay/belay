@@ -2,6 +2,7 @@ package org.jboss.pressgangccms.oauth2.authserver.rest;
 
 import com.google.common.base.Optional;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
+import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_SCOPE;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
 /**

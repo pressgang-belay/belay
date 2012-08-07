@@ -31,14 +31,11 @@ public class Common {
     // Errors
     public static final String SERVER_ERROR = "server_error";
     public static final String INVALID_IDENTIFIER = "invalid_identifier";
-    public static final String INVALID_SCOPE = "Invalid scope requested";
     public static final String INVALID_PROVIDER = "invalid_openid_provider";
-    public static final String INVALID_CLIENT_APPLICATION = "invalid_client";
-    public static final String INVALID_REFRESH_TOKEN = "invalid_token";
-    public static final String INVALID_GRANT_TYPE = "invalid_grant_type";
-    public static final String INVALID_METHOD = "invalid_method";
-    public static final String INVALID_RESPONSE_TYPE = "unsupported_response_type";
-    public static final String MISSING_RESPONSE_TYPE = "missing_response_type";
+    public static final String INVALID_CLIENT_APPLICATION = "Client application is invalid";
+    public static final String INVALID_REFRESH_TOKEN = "Refresh token is invalid";
+    public static final String INVALID_GRANT_TYPE = "Grant type is unsupported";
+    public static final String INVALID_METHOD = "Invalid HTTP method";
     public static final String REALM_ENDPOINT_ERROR = "Could not perform realm endpoint discovery on Relying Party";
     public static final String IDENTITIES_ASSOCIATED_ERROR = "Identities already associated";
     public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query identity";

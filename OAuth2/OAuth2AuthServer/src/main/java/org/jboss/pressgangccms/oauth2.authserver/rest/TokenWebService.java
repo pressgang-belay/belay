@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import org.apache.amber.oauth2.as.request.OAuthTokenRequest;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
+import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
@@ -28,8 +29,10 @@ import java.util.logging.Logger;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REFRESH_TOKEN;
+import static org.apache.amber.oauth2.common.error.OAuthError.ResourceResponse.INVALID_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_GRANT;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.UNSUPPORTED_GRANT_TYPE;
 import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
@@ -79,11 +82,11 @@ public class TokenWebService {
                     return buildResponse(oAuthTokenResponseBuilder.buildJSONMessage());
                 } else {
                     log.warning("Invalid refresh token: " + oauthRequest.getParam(OAUTH_REFRESH_TOKEN));
-                    return buildResponse(buildOAuthJsonErrorResponse(INVALID_GRANT, INVALID_REFRESH_TOKEN));
+                    return buildResponse(buildOAuthJsonErrorResponse(INVALID_TOKEN, INVALID_REFRESH_TOKEN));
                 }
             }
             // Anything else is invalid
-            return buildResponse(buildOAuthJsonErrorResponse(INVALID_GRANT, INVALID_GRANT_TYPE));
+            return buildResponse(buildOAuthJsonErrorResponse(UNSUPPORTED_GRANT_TYPE, INVALID_GRANT_TYPE));
         } catch (OAuthProblemException e) {
             log.warning("OAuthProblemException: " + e.getMessage());
             return buildResponse(buildOAuthJsonErrorResponse(e.getMessage(), e.getDescription()));

@@ -3,6 +3,7 @@ package org.jboss.pressgangccms.oauth2.authserver.rest;
 import com.google.common.base.Optional;
 import org.apache.amber.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.amber.oauth2.common.OAuth;
+import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
@@ -36,6 +37,7 @@ import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REDIRECT_URI;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
+import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.INVALID_CLIENT;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE;
 import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
@@ -138,7 +140,7 @@ public class IdentityWebService {
             throw new OAuthSystemException("Null session attribute");
         }
         if (!clientFound.isPresent()) {
-            throw OAuthWebServiceUtil.createOAuthProblemException(INVALID_CLIENT_APPLICATION, oAuthRedirectUri);
+            throw OAuthWebServiceUtil.createOAuthProblemException(INVALID_CLIENT, oAuthRedirectUri);
         }
 
         // Get users for identifiers
@@ -253,7 +255,7 @@ public class IdentityWebService {
         Optional<ClientApplication> clientFound = authService.getClient(oAuthRequest.getClientId());
         if (!clientFound.isPresent()) {
             log.warning("Client not found");
-            throw OAuthWebServiceUtil.createOAuthProblemException(INVALID_CLIENT_APPLICATION, oAuthRequest.getRedirectURI());
+            throw OAuthWebServiceUtil.createOAuthProblemException(INVALID_CLIENT, oAuthRequest.getRedirectURI());
         }
         Set<Scope> grantScopes = null;
         if (oAuthRequest.getScopes() != null && (!oAuthRequest.getScopes().isEmpty())) {

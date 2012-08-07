@@ -8,6 +8,7 @@ import org.apache.amber.oauth2.common.validators.AbstractValidator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_REQUEST;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.INVALID_METHOD;
 
 /**
@@ -30,7 +31,7 @@ public class OAuthIdRequestValidator extends AbstractValidator {
     public void validateMethod(HttpServletRequest request) throws OAuthProblemException {
         String method = request.getMethod();
         if (!method.equals(OAuth.HttpMethod.GET)) {
-            throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_REQUEST)
+            throw OAuthProblemException.error(INVALID_REQUEST)
                     .description(INVALID_METHOD);
         }
     }
