@@ -76,9 +76,11 @@ public class OAuth2RSDecision implements OAuthDecision {
     }
 
     private void checkTokenCurrentAndNotExpired(TokenGrantInfo tokenGrantInfo) throws OAuthProblemException {
+        int expirySeconds = Integer.parseInt(tokenGrantInfo.getAccessTokenExpiry());
         DateTime expiryDate = new DateTime(tokenGrantInfo.getGrantTimeStamp()).
-                plusSeconds(Integer.parseInt(tokenGrantInfo.getAccessTokenExpiry()));
-        if (expiryDate.isBeforeNow() || (! tokenGrantInfo.getGrantCurrent())) {
+                plusSeconds(Math.abs(expirySeconds));
+        // Allow tokens with expiry seconds set to 0; these are non-expiring tokens
+        if ((expirySeconds != 0 && expiryDate.isBeforeNow()) || (! tokenGrantInfo.getGrantCurrent())) {
             log.warning("Attempt to use expired or superseded token " + tokenGrantInfo.getAccessToken());
             throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
         }

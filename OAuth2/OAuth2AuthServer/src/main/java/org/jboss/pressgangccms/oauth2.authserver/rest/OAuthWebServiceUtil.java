@@ -76,7 +76,8 @@ class OAuthWebServiceUtil {
     }
 
     static void makeGrantNonCurrent(AuthService authService, TokenGrant grant) {
-        if (grant.getGrantCurrent()) {
+        // Make current grant non-current, as long as its expiry time is not set to 0 (used for non-expiring tokens)
+        if (grant.getGrantCurrent() && (! grant.getAccessTokenExpiry().equals("0"))) {
             grant.setGrantCurrent(false);
             authService.updateGrant(grant);
         }
