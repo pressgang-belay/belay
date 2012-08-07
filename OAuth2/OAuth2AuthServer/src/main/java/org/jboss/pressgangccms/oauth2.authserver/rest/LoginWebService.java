@@ -32,8 +32,10 @@ import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Lists.newArrayList;
+import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
-import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.buildBaseUrl;
+import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.*;
+import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
 /**
@@ -62,15 +64,15 @@ public class LoginWebService {
         log.info("Processing login request");
         try {
             OAuthIdRequest oauthRequest = new OAuthIdRequest(request);
+            checkOAuthClientAndRedirectUri(oauthRequest.getClientId(), oauthRequest.getRedirectURI());
             storeOAuthRequestParams(request, oauthRequest);
             String providerUrl = checkOpenIdProvider(request, oauthRequest);
-            checkOAuthClient(oauthRequest);
             Response.ResponseBuilder builder = createAuthResponse(request, providerUrl);
             return builder.build();
         } catch (OAuthProblemException e) {
-            return OAuthWebServiceUtil.handleOAuthProblemException(log, e);
+            return handleOAuthProblemException(log, e);
         } catch (OAuthSystemException e) {
-            return OAuthWebServiceUtil.handleOAuthSystemException(log, e, null, null, SYSTEM_ERROR);
+            return handleOAuthSystemException(log, e, null, null);
         }
     }
 
@@ -81,23 +83,20 @@ public class LoginWebService {
         String openIdClaimedId = (String) request.getAttribute(OPENID_CLAIMED_ID);
         String openIdIdentifier = (String) request.getAttribute(OPENID_IDENTIFIER);
         String identifier = (openIdClaimedId != null) ? openIdClaimedId : openIdIdentifier;
-        String clientId = OAuthWebServiceUtil.getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_CLIENT_ID, "OAuth client id");
-        String redirectUri = OAuthWebServiceUtil.getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_REDIRECT_URI, "OAuth redirect URI");
-        Set<String> scopes = OAuthWebServiceUtil.getStringSetAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_SCOPE, "Scopes requested");
-        String providerUrl = OAuthWebServiceUtil.getStringAttributeFromSessionAndRemove(request, log, OPENID_PROVIDER, "OpenId provider");
+        String clientId = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_CLIENT_ID, "OAuth client id");
+        String redirectUri = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_REDIRECT_URI, "OAuth redirect URI");
+        Set<String> scopes = getStringSetAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_SCOPE, "Scopes requested");
+        String providerUrl = getStringAttributeFromSessionAndRemove(request, log, OPENID_PROVIDER, "OpenId provider");
 
         try {
+            // Check client and redirect URI match expectations
+            checkOAuthClientAndRedirectUri(clientId, redirectUri);
+
             if (identifier == null) {
                 log.warning("No OpenID identifier received");
-                throw OAuthWebServiceUtil.createOAuthProblemException(INVALID_IDENTIFIER, redirectUri);
+                throw createOAuthProblemException(INVALID_IDENTIFIER, redirectUri);
             }
             log.info("User has been authenticated as: " + identifier);
-
-            // Check redirect URI matches expectation
-            if (isRedirectUriInvalid(clientId, redirectUri)) {
-                log.warning("Invalid callback URI: " + redirectUri);
-                throw OAuthWebServiceUtil.createOAuthProblemException(INVALID_CALLBACK_URI, redirectUri);
-            }
 
             // Check if this is a known identity or new identity
             Optional<Identity> identityFound = authService.getIdentity(identifier);
@@ -123,18 +122,17 @@ public class LoginWebService {
             // Check if identity already has current grant/s; if so, make them invalid
             Set<TokenGrant> grants = identity.getTokenGrants();
             if (grants != null) {
-                OAuthWebServiceUtil.makeGrantsNonCurrent(authService, grants);
+                makeGrantsNonCurrent(authService, grants);
             }
 
             OAuthTokenResponseBuilder oAuthTokenResponseBuilder =
-                    OAuthWebServiceUtil.addTokenGrantResponseParams(createTokenGrant(clientId, scopes, identity, redirectUri),
-                            HttpServletResponse.SC_FOUND);
+                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, identity, redirectUri), SC_FOUND);
             OAuthResponse response = oAuthTokenResponseBuilder.location(redirectUri).buildQueryMessage();
             return Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
-            return OAuthWebServiceUtil.handleOAuthProblemException(log, e);
+            return handleOAuthProblemException(log, e);
         } catch (OAuthSystemException e) {
-            return OAuthWebServiceUtil.handleOAuthSystemException(log, e, redirectUri, HttpServletResponse.SC_NOT_FOUND, SYSTEM_ERROR);
+            return handleOAuthSystemException(log, e, redirectUri, SERVER_ERROR);
         }
     }
 
@@ -172,16 +170,28 @@ public class LoginWebService {
         return tokenGrant;
     }
 
-    private void checkOAuthClient(OAuthIdRequest oauthRequest) throws OAuthProblemException {
-        String clientId = oauthRequest.getClientId();
+    private void checkOAuthClientAndRedirectUri(String clientId, String redirectUri) throws OAuthProblemException {
         Optional<ClientApplication> clientFound = authService.getClient(clientId);
-        if (clientNotFound(clientFound)) {
-            throw OAuthWebServiceUtil.createOAuthProblemException(INVALID_CLIENT_APPLICATION, oauthRequest.getRedirectURI());
+        String error;
+        try {
+            if (! clientFound.isPresent()) {
+                log.warning("Invalid OAuth2 client in login request");
+                error = INVALID_CLIENT;
+            } else if (! clientRedirectUriMatches(URLDecoder.decode(redirectUri, UTF_ENCODING), clientFound.get())) {
+                log.warning("Invalid OAuth2 redirect URI in login request");
+                error = REDIRECT_URI_MISMATCH;
+            } else {
+                return;
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.severe("Error during URL decoding: " + e);
+            error = URL_DECODING_ERROR;
         }
+        throw OAuthWebServiceUtil.createOAuthProblemException(error, null);
     }
 
     private String checkOpenIdProvider(HttpServletRequest request, OAuthIdRequest oAuthRequest)
-            throws OAuthProblemException, OAuthSystemException {
+            throws OAuthProblemException {
         String providerUrl = request.getParameter(OPENID_PROVIDER);
         String decodedProviderUrl;
         try {
@@ -218,21 +228,6 @@ public class LoginWebService {
             // Do nothing
         }
         return Optional.absent();
-    }
-
-    private boolean isRedirectUriInvalid(String clientId, String redirectUri) {
-        log.info("Checking redirect URI: " + redirectUri);
-        try {
-            Optional<ClientApplication> clientFound = authService.getClient(clientId);
-            if ((clientNotFound(clientFound))
-                    || clientRedirectUriDoesNotMatch(URLDecoder.decode(redirectUri, UTF_ENCODING), clientFound)) {
-                return true;
-            }
-        } catch (UnsupportedEncodingException e) {
-            log.severe("Redirect URI decoding failed");
-            return true;
-        }
-        return false;
     }
 
     private void storeOAuthRequestParams(HttpServletRequest request, OAuthIdRequest oAuthRequest) {
@@ -299,12 +294,8 @@ public class LoginWebService {
         return null;
     }
 
-    private boolean clientNotFound(Optional<ClientApplication> clientFound) {
-        return !clientFound.isPresent();
-    }
-
-    private boolean clientRedirectUriDoesNotMatch(String decodedRedirectUri, Optional<ClientApplication> clientFound) {
-        return !clientFound.get().getClientRedirectUri().equals(decodedRedirectUri);
+    private boolean clientRedirectUriMatches(String decodedRedirectUri, ClientApplication client) {
+        return client.getClientRedirectUri().equals(decodedRedirectUri);
     }
 
     private Response createAssociationRequestResponse(HttpServletRequest request, String identifier) {

@@ -83,10 +83,9 @@ class OAuthWebServiceUtil {
         }
     }
 
-    static OAuthASResponse.OAuthTokenResponseBuilder addTokenGrantResponseParams(TokenGrant tokenGrant,
-            int statusCode) {
+    static OAuthASResponse.OAuthTokenResponseBuilder addTokenGrantResponseParams(TokenGrant tokenGrant, int status) {
         OAuthASResponse.OAuthTokenResponseBuilder builder = OAuthASResponse
-                .tokenResponse(statusCode);
+                .tokenResponse(status);
         builder.setAccessToken(tokenGrant.getAccessToken());
         builder.setRefreshToken(tokenGrant.getRefreshToken());
         builder.setExpiresIn(tokenGrant.getAccessTokenExpiry());
@@ -133,11 +132,10 @@ class OAuthWebServiceUtil {
         return new WebApplicationException(responseBuilder.entity(error).build());
     }
 
-    static Response handleOAuthSystemException(Logger log, OAuthSystemException e, String redirectUri, Integer status,
-                                               String error) {
+    static Response handleOAuthSystemException(Logger log, OAuthSystemException e, String redirectUri, String error) {
         log.severe("OAuthSystemException thrown: " + e.getMessage());
-        Response.ResponseBuilder responseBuilder = (status == null) ? Response.serverError() : Response.status(status);
-        responseBuilder.entity((error != null) ? error : SYSTEM_ERROR);
+        Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_FOUND);
+        responseBuilder.entity((error != null) ? error : e.getMessage());
         if (! OAuthUtils.isEmpty(redirectUri)) {
             return responseBuilder.location(URI.create(redirectUri)).build();
         } else {
@@ -147,10 +145,10 @@ class OAuthWebServiceUtil {
 
     static Response handleOAuthProblemException(Logger log, OAuthProblemException e) {
         log.warning("OAuthProblemException thrown: " + e.getMessage() + " " + e.getDescription());
-        final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_NOT_FOUND);
+        final Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_FOUND);
         String redirectUri = e.getRedirectUri();
         if (OAuthUtils.isEmpty(redirectUri)) {
-            throw createWebApplicationException(OAUTH_CALLBACK_URL_REQUIRED, HttpServletResponse.SC_NOT_FOUND);
+            throw createWebApplicationException(e.getError(), HttpServletResponse.SC_NOT_FOUND);
         }
         return responseBuilder.entity(e.getError()).location(URI.create(redirectUri)).build();
     }

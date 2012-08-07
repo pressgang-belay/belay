@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Common.SERVER_ERROR;
 import static org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo.TokenGrantInfoBuilder.tokenGrantInfoBuilder;
 
 /**
@@ -122,7 +123,7 @@ public class TokenGrantDao {
             } else {
                 log.severe("Multiple(" + currentGrants + ") TokenGrants with same "
                         + tokenType + " token current");
-                throw new OAuthSystemException(Common.SYSTEM_ERROR);
+                throw new OAuthSystemException(SERVER_ERROR);
             }
         }
     }

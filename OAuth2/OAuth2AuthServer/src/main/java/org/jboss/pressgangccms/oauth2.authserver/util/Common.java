@@ -29,23 +29,21 @@ public class Common {
     public static final String KEY_VALUE_SEPARATOR = "=";
 
     // Errors
-    public static final String OAUTH_CALLBACK_URL_REQUIRED = "OAuth callback URL needs to be provided by client";
-    public static final String SYSTEM_ERROR = "System error";
-    public static final String INVALID_IDENTIFIER = "Invalid identifier";
-    public static final String INVALID_CALLBACK_URI = "Invalid callback URI";
+    public static final String SERVER_ERROR = "server_error";
+    public static final String INVALID_IDENTIFIER = "invalid_identifier";
     public static final String INVALID_SCOPE = "Invalid scope requested";
-    public static final String INVALID_PROVIDER = "Invalid OpenId provider";
-    public static final String INVALID_CLIENT_APPLICATION = "Invalid client application";
-    public static final String INVALID_REFRESH_TOKEN = "Invalid refresh token";
-    public static final String INVALID_GRANT_TYPE = "Cannot process request with this grant_type";
-    public static final String INVALID_METHOD = "Method not set to GET";
-    public static final String INVALID_RESPONSE_TYPE = "Unsupported or invalid response_type parameter value";
-    public static final String MISSING_RESPONSE_TYPE = "Missing response_type parameter value";
+    public static final String INVALID_PROVIDER = "invalid_openid_provider";
+    public static final String INVALID_CLIENT_APPLICATION = "invalid_client";
+    public static final String INVALID_REFRESH_TOKEN = "invalid_token";
+    public static final String INVALID_GRANT_TYPE = "invalid_grant_type";
+    public static final String INVALID_METHOD = "invalid_method";
+    public static final String INVALID_RESPONSE_TYPE = "unsupported_response_type";
+    public static final String MISSING_RESPONSE_TYPE = "missing_response_type";
     public static final String REALM_ENDPOINT_ERROR = "Could not perform realm endpoint discovery on Relying Party";
     public static final String IDENTITIES_ASSOCIATED_ERROR = "Identities already associated";
     public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query identity";
     public static final String IDENTITY_QUERY_ERROR = "Could not obtain identity information";
-    public static final String URL_DECODING_ERROR = "URL decoding error";
+    public static final String URL_DECODING_ERROR = "url_decoding_error";
 
     // General
     public static final String ONE_HOUR = "3600";

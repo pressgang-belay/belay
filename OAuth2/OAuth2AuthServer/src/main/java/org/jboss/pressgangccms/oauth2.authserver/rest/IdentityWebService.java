@@ -30,12 +30,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static javax.servlet.http.HttpServletResponse.SC_ACCEPTED;
+import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REDIRECT_URI;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE;
-import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.trimAccessToken;
+import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
 /**
@@ -105,7 +107,7 @@ public class IdentityWebService {
         } catch (OAuthProblemException e) {
             return OAuthWebServiceUtil.handleOAuthProblemException(log, e);
         } catch (OAuthSystemException e) {
-            return OAuthWebServiceUtil.handleOAuthSystemException(log, e, oAuthRedirectUri, SC_INTERNAL_SERVER_ERROR, SYSTEM_ERROR);
+            return handleOAuthSystemException(log, e, oAuthRedirectUri, SERVER_ERROR);
         }
     }
 
@@ -236,7 +238,7 @@ public class IdentityWebService {
         } catch (OAuthProblemException e) {
             return OAuthWebServiceUtil.handleOAuthProblemException(log, e);
         } catch (OAuthSystemException e) {
-            return OAuthWebServiceUtil.handleOAuthSystemException(log, e, null, null, SYSTEM_ERROR);
+            return handleOAuthSystemException(log, e, null, SERVER_ERROR);
         }
     }
 
@@ -273,20 +275,19 @@ public class IdentityWebService {
                                                          Set<Scope> grantScopes, Identity identity) {
         TokenGrant newTokenGrant;
         try {
-            newTokenGrant = OAuthWebServiceUtil.createTokenGrantWithDefaults(tokenIssuerService, authService,
+            newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
                     identity, client);
             if (grantScopes != null) {
                 newTokenGrant.setGrantScopes(grantScopes);
             }
             authService.addGrant(newTokenGrant);
             OAuthTokenResponseBuilder oAuthTokenResponseBuilder
-                    = OAuthWebServiceUtil.addTokenGrantResponseParams(newTokenGrant, HttpServletResponse.SC_FOUND);
+                    = addTokenGrantResponseParams(newTokenGrant, SC_FOUND);
             OAuthResponse response = oAuthTokenResponseBuilder.location(oAuthRedirectUri).buildQueryMessage();
             return Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
         } catch (OAuthSystemException e) {
             log.severe("Could not create new token grant: " + e.getMessage());
-            return OAuthWebServiceUtil.handleOAuthSystemException(log, e, oAuthRedirectUri, SC_INTERNAL_SERVER_ERROR,
-                    SYSTEM_ERROR);
+            return handleOAuthSystemException(log, e, oAuthRedirectUri, SERVER_ERROR);
         }
     }
 
@@ -301,7 +302,7 @@ public class IdentityWebService {
         Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByAccessToken(accessToken);
         if (!tokenGrantFound.isPresent()) {
             log.severe("Token grant could not be found");
-            throw OAuthWebServiceUtil.createOAuthProblemException(SYSTEM_ERROR, redirectUri);
+            throw OAuthWebServiceUtil.createOAuthProblemException(SERVER_ERROR, redirectUri);
         }
         return tokenGrantFound.get();
     }
