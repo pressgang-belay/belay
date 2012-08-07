@@ -1,6 +1,6 @@
 
 insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, CLIENT_SECRET) values (-1, 'OAuth2AuthServer', 'OAuth2AuthServer', '/auth/identity/completeAssociation', 'none')
-insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, CLIENT_SECRET) values (-2, 'affbf16ab449cfa1e16392f705f9460', 'GwtOAuth2Client', 'https://localhost:8443/GwtOAuth2Client/org.jboss.pressgangccms.oauth2.gwt.App/oAuthWindow.html', 'none')
+insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, CLIENT_SECRET) values (-2, 'pressgangccms_id', 'GwtOAuth2Client', 'https://localhost:8443/GwtOAuth2Client/org.jboss.pressgangccms.oauth2.gwt.App/oAuthWindow.html', 'none')
 
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-1, 'Google', 'gmail.com')
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-2, 'Red Hat Kerberos', 'https://localhost:8443/OpenIdProvider/')

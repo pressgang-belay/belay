@@ -30,7 +30,7 @@
         <properties>
             <!-- Set this so the library can access the entity manager factory for this data source -->
             <!-- Put this value in the resourceserver.properties file with the key entityManagerFactoryJndiAddress -->
-            <property name="jboss.entity.manager.factory.jndi.name" value="java:jboss/OAuth2ResourceServerManagerFactory" />
+            <property name="jboss.entity.manager.factory.jndi.name" value="java:app/OAuth2ResourceServerManagerFactory" />
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
             <property name="hibernate.hbm2ddl.import_files" value="resourceserver-import.sql" />
             <property name="hibernate.show_sql" value="false" />

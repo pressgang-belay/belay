@@ -28,15 +28,17 @@ public class App implements EntryPoint {
     private static final String MYOPENID_PROVIDER_SUFFIX = ".myopenid.com";
     private static final String FEDORA_PROVIDER_PREFIX = "https://admin.fedoraproject.org/accounts/openid/id/";
     private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
-    private static final String PEOPLE_URL = "https://localhost:8443/OAuth2SecuredRestApp/rest/people";
-    private static final String PERSON_1_URL = "https://localhost:8443/OAuth2SecuredRestApp/rest/people/1";
-    private static final String SKYNET_USER_QUERY_URL = "https://localhost:8443/OAuth2AuthServer/rest/auth/identity/query";
-    private static final String SKYNET_ASSOCIATE_URL = "https://localhost:8443/OAuth2AuthServer/rest/auth/identity/associate";
-    private static final String SKYNET_MAKE_PRIMARY_URL = "https://localhost:8443/OAuth2AuthServer/rest/auth/identity/makePrimary";
-    private static final String SKYNET_LOGIN_URL = "https://localhost:8443/OAuth2AuthServer/rest/auth/login";
-    private static final String SKYNET_TOKEN_URL = "https://localhost:8443/OAuth2AuthServer/rest/auth/token";
-    private static final String SKYNET_CLIENT_SECRET = "none";
-    private static final String SKYNET_CLIENT_ID = "affbf16ab449cfa1e16392f705f9460";
+    private static final String SAMPLE_REST_APP_URL = "https://localhost:8443/OAuth2SecuredRestApp";
+    private static final String PEOPLE_URL = SAMPLE_REST_APP_URL + "/rest/people";
+    private static final String PERSON_1_URL = SAMPLE_REST_APP_URL + "/rest/people/1";
+    private static final String PRESSGANGCCMS_AUTH_SERVER_URL = "https://localhost:8443/OAuth2AuthServer";
+    private static final String PRESSGANGCCMS_USER_QUERY_URL = PRESSGANGCCMS_AUTH_SERVER_URL + "/rest/auth/identity/query";
+    private static final String PRESSGANGCCMS_ASSOCIATE_URL = PRESSGANGCCMS_AUTH_SERVER_URL + "/rest/auth/identity/associate";
+    private static final String PRESSGANGCCMS_MAKE_PRIMARY_URL = PRESSGANGCCMS_AUTH_SERVER_URL + "/rest/auth/identity/makePrimary";
+    private static final String PRESSGANGCCMS_LOGIN_URL = PRESSGANGCCMS_AUTH_SERVER_URL + "/rest/auth/login";
+    private static final String PRESSGANGCCMS_TOKEN_URL = PRESSGANGCCMS_AUTH_SERVER_URL + "/rest/auth/token";
+    private static final String PRESSGANGCCMS_CLIENT_SECRET = "none";
+    private static final String PRESSGANGCCMS_CLIENT_ID = "pressgangccms_id";
     private final String PROVIDER_PARAM_STRING = "?provider=";
     private final String USER_ID_PARAM_STRING = "?id=";
     private final String TOKEN_PARAM_STRING = "&oauth_token=";
@@ -76,9 +78,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + RED_HAT_PROVIDER_URL, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + RED_HAT_PROVIDER_URL, PRESSGANGCCMS_TOKEN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -90,9 +92,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + GOOGLE_PROVIDER_URL, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + GOOGLE_PROVIDER_URL, PRESSGANGCCMS_TOKEN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -104,9 +106,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + YAHOO_PROVIDER_URL, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + YAHOO_PROVIDER_URL, PRESSGANGCCMS_TOKEN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -119,9 +121,9 @@ public class App implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 Window.alert("Not yet implemented!");
-//                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-//                        + FACEBOOK_PROVIDER_URL, SKYNET_TOKEN_URL,
-//                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+//                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
+//                        + FACEBOOK_PROVIDER_URL, PRESSGANGCCMS_TOKEN_URL,
+//                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
 //                AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -133,9 +135,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + MYOPENID_PROVIDER_PREFIX + inputTextBox.getText() + MYOPENID_PROVIDER_SUFFIX, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + MYOPENID_PROVIDER_PREFIX + inputTextBox.getText() + MYOPENID_PROVIDER_SUFFIX, PRESSGANGCCMS_TOKEN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -147,9 +149,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + FEDORA_PROVIDER_PREFIX + inputTextBox.getText(), SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + FEDORA_PROVIDER_PREFIX + inputTextBox.getText(), PRESSGANGCCMS_TOKEN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -184,9 +186,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_ASSOCIATE_URL + PROVIDER_PARAM_STRING
-                        + inputTextBox.getText() + TOKEN_PARAM_STRING + currentToken, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_ASSOCIATE_URL + PROVIDER_PARAM_STRING
+                        + inputTextBox.getText() + TOKEN_PARAM_STRING + currentToken, PRESSGANGCCMS_TOKEN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET).forceNewRequest(true);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -198,9 +200,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_MAKE_PRIMARY_URL
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_MAKE_PRIMARY_URL
                         + USER_ID_PARAM_STRING + AUTH_HANDLER.encodeUrl(inputTextBox.getText()) + TOKEN_PARAM_STRING + currentToken,
-                        SKYNET_TOKEN_URL, SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET).forceNewRequest(true);
+                        PRESSGANGCCMS_TOKEN_URL, PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET).forceNewRequest(true);
                 AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
@@ -212,7 +214,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, SKYNET_USER_QUERY_URL), getStandardRequestCallback());
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PRESSGANGCCMS_USER_QUERY_URL), getStandardRequestCallback());
             }
         });
         RootPanel.get().add(button);
@@ -223,9 +225,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(SKYNET_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + RED_HAT_PROVIDER_URL, SKYNET_TOKEN_URL,
-                        SKYNET_CLIENT_ID, SKYNET_CLIENT_SECRET);
+                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
+                        + RED_HAT_PROVIDER_URL, PRESSGANGCCMS_TOKEN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
                 AUTH_HANDLER.doRefresh(request, getStandardCallback());
             }
         });

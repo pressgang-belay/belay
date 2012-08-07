@@ -4,6 +4,7 @@
 
 <web-app>
     <display-name>PressgangCCMS OpenId Provider Prototype</display-name>
+
     <security-constraint>
         <display-name>Secure Page</display-name>
         <web-resource-collection>

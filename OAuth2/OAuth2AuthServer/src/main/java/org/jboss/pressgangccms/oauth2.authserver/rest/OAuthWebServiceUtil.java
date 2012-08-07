@@ -161,4 +161,8 @@ class OAuthWebServiceUtil {
         }
         return accessToken;
     }
+
+    static String buildBaseUrl(HttpServletRequest request) {
+        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+    }
 }

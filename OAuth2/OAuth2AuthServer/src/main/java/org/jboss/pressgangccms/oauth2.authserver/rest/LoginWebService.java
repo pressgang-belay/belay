@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
+import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.buildBaseUrl;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
 /**
@@ -64,7 +65,7 @@ public class LoginWebService {
             storeOAuthRequestParams(request, oauthRequest);
             String providerUrl = checkOpenIdProvider(request, oauthRequest);
             checkOAuthClient(oauthRequest);
-            Response.ResponseBuilder builder = createAuthResponse(providerUrl);
+            Response.ResponseBuilder builder = createAuthResponse(request, providerUrl);
             return builder.build();
         } catch (OAuthProblemException e) {
             return OAuthWebServiceUtil.handleOAuthProblemException(log, e);
@@ -137,13 +138,14 @@ public class LoginWebService {
         }
     }
 
-    private Response.ResponseBuilder createAuthResponse(String providerUrl) {
+    private Response.ResponseBuilder createAuthResponse(HttpServletRequest request, String providerUrl) {
         Response.ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
         log.info("Sending request for login authentication");
+        String baseUrl = buildBaseUrl(request);
         AuthorizationHeaderBuilder authHeaderBuilder = new AuthorizationHeaderBuilder()
                 .forIdentifier(providerUrl)
-                .usingRealm(OPENID_REALM)
-                .returnTo(OPENID_RETURN_URL)
+                .usingRealm(baseUrl + OPENID_REALM)
+                .returnTo(baseUrl + OPENID_RETURN_URI)
                 .includeStandardAttributes();
         addRequiredAttributes(authHeaderBuilder);
         String authHeader = authHeaderBuilder.buildHeader();

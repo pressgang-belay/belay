@@ -50,18 +50,12 @@ import static org.jboss.pressgangccms.openid.provider.OpenIdProviderManager.Open
 @RequestScoped
 public class OpenIdProvider {
 
-    private final String SECURE_PAGE_URL = "https://localhost:8443/OpenIdProvider/securepage.jsp";
+    private final String SECURE_PAGE_URL = "/OpenIdProvider/securepage.jsp";
 
     @Inject
     private Logger log;
 
-    private OpenIdProviderManager providerManager = createProviderManager();
-
-    private OpenIdProviderManager createProviderManager() {
-        OpenIdProviderManager manager = new OpenIdProviderManager();
-        manager.setEndPoint(PROVIDER_ENDPOINT);
-        return manager;
-    }
+    private OpenIdProviderManager providerManager = new OpenIdProviderManager();
 
     @Produces({ APPLICATION_XRDS_XML, TEXT_PLAIN })
     @GET
@@ -81,7 +75,7 @@ public class OpenIdProvider {
                                     .up()
                                     .e(TYPE_TAG).t(OPENID_AX_EXT)
                                     .up()
-                                    .e(URI_TAG).t(providerManager.getEndPoint())
+                                    .e(URI_TAG).t(createBaseUrl(request) + PROVIDER_ENDPOINT)
                                     .up()
                                 .up()
                             .up()
@@ -100,6 +94,10 @@ public class OpenIdProvider {
     @POST
     public Response processRequest(@Context HttpServletRequest request) throws IOException {
         log.info("Processing OpenId request");
+
+        if (providerManager.getEndPoint() == null) {
+            providerManager.setEndPoint(createBaseUrl(request) + PROVIDER_ENDPOINT);
+        }
 
         Response.ResponseBuilder builder;
         HttpSession session = request.getSession();
@@ -152,7 +150,7 @@ public class OpenIdProvider {
                     ((session.getAttribute(AUTHENTICATED_APPROVED)) == Boolean.FALSE)) {
                 log.info("User not yet authenticated");
                 session.setAttribute(PARAM_LIST, requestParameters);
-                URI redirectUri = URI.create(this.SECURE_PAGE_URL);
+                URI redirectUri = URI.create(createBaseUrl(request) + this.SECURE_PAGE_URL);
                 log.info("Redirecting to secure page: " + redirectUri);
                 builder = Response.seeOther(redirectUri);
                 return builder.build();

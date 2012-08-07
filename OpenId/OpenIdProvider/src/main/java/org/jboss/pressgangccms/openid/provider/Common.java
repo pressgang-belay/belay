@@ -1,7 +1,9 @@
 package org.jboss.pressgangccms.openid.provider;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
- * Values common across classes.
+ * Values/methods common across classes.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -55,5 +57,10 @@ class Common {
     static final String QUERY_STRING_MARKER = "?";
     static final String KEY_VALUE_SEPARATOR = "=";
 
-    static final String PROVIDER_ENDPOINT = "https://localhost:8443/OpenIdProvider/openid/provider";
+    static final String PROVIDER_ENDPOINT = "/OpenIdProvider/openid/provider";
+
+    // Methods
+    public static String createBaseUrl(HttpServletRequest request) {
+        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+    }
 }
