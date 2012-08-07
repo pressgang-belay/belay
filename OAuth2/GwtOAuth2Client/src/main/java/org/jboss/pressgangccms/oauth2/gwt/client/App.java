@@ -9,10 +9,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.pressgangccms.oauth2.gwt.client.oauth.AuthorisationRequest;
 import org.jboss.pressgangccms.oauth2.gwt.client.oauth.Authoriser;
 import org.jboss.pressgangccms.oauth2.gwt.client.oauth.OAuthHandler;
@@ -63,6 +60,7 @@ public class App implements EntryPoint {
         getIdentityInfo();
         addRefresh();
         addClearTokens();
+        addRequiredTable();
     }
 
     private void addInput() {
@@ -131,7 +129,7 @@ public class App implements EntryPoint {
     }
 
     private void addMyOpenIdLogin() {
-        Button button = new Button("Login with MyOpenID.com");
+        Button button = new Button("Login with MyOpenID.com*");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -145,7 +143,7 @@ public class App implements EntryPoint {
     }
 
     private void addFedoraLogin() {
-        Button button = new Button("Login with Fedora Account System");
+        Button button = new Button("Login with Fedora Account System*");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -181,7 +179,7 @@ public class App implements EntryPoint {
     }
 
     private void addAssociateIdentity() {
-        Button button = new Button("Associate provider identity");
+        Button button = new Button("Associate provider identity*");
 
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -196,7 +194,7 @@ public class App implements EntryPoint {
     }
 
     private void makeIdentityPrimary() {
-        Button button = new Button("Make identity primary");
+        Button button = new Button("Make identity primary*");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -232,6 +230,23 @@ public class App implements EntryPoint {
             }
         });
         RootPanel.get().add(button);
+    }
+
+    private void addRequiredTable() {
+        Label label = new Label("*Requires input");
+        HTMLTable table = new Grid(5, 2);
+        table.setText(0, 0, "**Button**");
+        table.setText(0, 1, "**Value required**");
+        table.setText(1, 0, "Login with MyOpenID.com");
+        table.setText(1, 1, "Username from OpenID identifier ie: {username}.myopenid.com");
+        table.setText(2, 0, "Login with Fedora Account System");
+        table.setText(2, 1, "Username from OpenID identifier ie: https://admin.fedoraproject.org/accounts/openid/id/{username}");
+        table.setText(3, 0, "Associate provider identity");
+        table.setText(3, 1, "URL/domain of OpenID provider to associate ie: gmail.com");
+        table.setText(4, 0, "Make identity primary");
+        table.setText(4, 1, "OpenID identifier to make primary ie: https://admin.fedoraproject.org/accounts/openid/id/johnsmith");
+        RootPanel.get().add(label);
+        RootPanel.get().add(table);
     }
 
     // Clears all tokens stored in the browser by this library. Subsequent calls
