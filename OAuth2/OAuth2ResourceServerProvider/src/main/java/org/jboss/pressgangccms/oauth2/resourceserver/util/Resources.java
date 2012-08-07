@@ -28,6 +28,7 @@ public class Resources {
     private Logger log = Logger.getLogger(Resources.class.getName());
     private static String entityManagerFactoryJndiAddress;
     private static EntityManagerFactory emf;
+    private static EntityManager em;
 
     @PostConstruct
     private void initialise() {
@@ -47,7 +48,9 @@ public class Resources {
         } catch (NamingException e) {
             log.severe("Could not perform JNDI lookup for resource server entity manager factory: " + e);
         }
-        EntityManager em = emf.createEntityManager();
+        if (em == null) {
+            em = emf.createEntityManager();
+        }
         if (em != null) {
             log.fine("Returning entity manager");
             return em;

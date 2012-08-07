@@ -2,7 +2,6 @@ package org.jboss.pressgangccms.oauth2.authserver.request;
 
 import org.apache.amber.oauth2.as.request.OAuthRequest;
 import org.apache.amber.oauth2.common.OAuth;
-import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.types.ResponseType;
@@ -12,8 +11,6 @@ import org.apache.amber.oauth2.common.validators.OAuthValidator;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.INVALID_RESPONSE_TYPE;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.MISSING_RESPONSE_TYPE;
 
 /**
  * Custom OAuth request type for combined use of OpenID and OAuth.
