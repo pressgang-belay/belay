@@ -10,7 +10,9 @@ import org.jboss.pressgangccms.oauth2.resourceserver.data.dao.OAuth2RSEndpointDa
 import org.jboss.pressgangccms.oauth2.resourceserver.data.dao.OAuth2RSScopeDao;
 import org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint;
 import org.jboss.pressgangccms.oauth2.resourceserver.util.ResourceServer;
+import org.jboss.pressgangccms.oauth2.shared.data.model.AccessTokenExpiryInfo;
 import org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo;
+import org.jboss.pressgangccms.oauth2.shared.rest.TokenExpiryExtensionEndpoint;
 import org.jboss.pressgangccms.oauth2.shared.rest.TokenGrantInfoEndpoint;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ProxyFactory;
@@ -27,7 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static org.jboss.pressgangccms.oauth2.resourceserver.util.Common.PROPERTIES_FILEPATH;
+import static org.jboss.pressgangccms.oauth2.resourceserver.util.Common.*;
 
 /**
  * Service class wraps calls to DAOs and web services for auth information.
@@ -69,26 +71,44 @@ public class OAuth2RSAuthService {
         return endpointDao.findEndpointMatchingRequest(request);
     }
 
+    public Set<OAuth2RSEndpoint> getEndpointsForScopeName(String scopeName) {
+        return scopeDao.findEndpointsForScopeName(scopeName);
+    }
+
     public Optional<TokenGrantInfo> getTokenGrantInfoForAccessToken(final String accessToken) {
         log.info("Requesting token grant info from OAuth2 auth server");
-        RegisterBuiltin.register(ResteasyProviderFactory.getInstance());  //TODO move this as only needs to be done once
-        if (authServerUsername == null || authServerPassword == null || authServerInfoUrl == null) {
-            log.severe("Resource server properties have not been set in the resourceserver.properties file");
-            return Optional.absent();
-        }
-        AbstractHttpClient httpClient = new DefaultHttpClient();
-        Credentials credentials = new UsernamePasswordCredentials(authServerUsername, authServerPassword);
-        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
-        ClientExecutor clientExecutor = new ApacheHttpClient4Executor(httpClient);
-        TokenGrantInfoEndpoint client = ProxyFactory.create(TokenGrantInfoEndpoint.class, authServerInfoUrl, clientExecutor);
-        TokenGrantInfo info = client.getTokenGrantInfoForAccessToken(accessToken);
-        if (info != null) {
-            return Optional.of(info);
+        checkProperties();
+        TokenGrantInfoEndpoint client = ProxyFactory.create(TokenGrantInfoEndpoint.class, authServerInfoUrl, getClientExecutor());
+        TokenGrantInfo grantInfo = client.getTokenGrantInfoForAccessToken(accessToken);
+        if (grantInfo != null) {
+            return Optional.of(grantInfo);
         }
         return Optional.absent();
     }
 
-    public Set<OAuth2RSEndpoint> getEndpointsForScopeName(String scopeName) {
-        return scopeDao.findEndpointsForScopeName(scopeName);
+    public Optional<AccessTokenExpiryInfo> extendAccessTokenExpiry(final String accessToken) {
+        log.info("Requesting OAuth2 auth server extend access token expiry");
+        checkProperties();
+        TokenExpiryExtensionEndpoint client = ProxyFactory.create(TokenExpiryExtensionEndpoint.class,
+                authServerInfoUrl, getClientExecutor());
+        AccessTokenExpiryInfo expiryInfo = client.extendAccessTokenExpiry(accessToken);
+        if (expiryInfo != null) {
+            return Optional.of(expiryInfo);
+        }
+        return Optional.absent();
+    }
+
+    private void checkProperties() {
+        if (authServerUsername == null || authServerPassword == null || authServerInfoUrl == null) {
+            log.severe("Resource server properties have not been set in the resourceserver.properties file");
+            throw new RuntimeException("Error: Resource server properties have not been set");
+        }
+    }
+
+    private ClientExecutor getClientExecutor() {
+        AbstractHttpClient httpClient = new DefaultHttpClient();
+        Credentials credentials = new UsernamePasswordCredentials(authServerUsername, authServerPassword);
+        httpClient.getCredentialsProvider().setCredentials(AuthScope.ANY, credentials);
+        return new ApacheHttpClient4Executor(httpClient);
     }
 }

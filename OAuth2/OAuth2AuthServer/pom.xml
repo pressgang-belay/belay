@@ -110,20 +110,20 @@
         <!-- OAuth2 TODO remove unnecessary dependencies  -->
         <dependency>
             <groupId>org.apache.amber</groupId>
-            <artifactId>oauth2-authzserver</artifactId>
+            <artifactId>amber-oauth2-authzserver</artifactId>
             <version>${amber.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.amber</groupId>
-            <artifactId>oauth2-resourceserver</artifactId>
+            <artifactId>amber-oauth2-resourceserver</artifactId>
             <version>${amber.version}</version>
         </dependency>
 
         <!-- For testing only; remove in prod code -->
         <dependency>
             <groupId>org.apache.amber</groupId>
-            <artifactId>oauth2-client</artifactId>
+            <artifactId>amber-oauth2-client</artifactId>
             <version>${amber.version}</version>
         </dependency>
 
@@ -186,6 +186,12 @@
             <groupId>com.jamesmurty.utils</groupId>
             <artifactId>java-xmlbuilder</artifactId>
             <version>${xmlbuilder.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${jodatime.version}</version>
         </dependency>
     </dependencies>
 

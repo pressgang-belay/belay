@@ -2,7 +2,7 @@ package org.jboss.pressgangccms.oauth2.resourceserver.util;
 
 /**
  * Common values.
- * //TODO share common strings across modules
+ * //TODO share common strings across modules?
  */
 public class Common {
     public static final String BEARER = "bearer";

@@ -1,14 +1,13 @@
 package org.jboss.pressgangccms.oauth2.gwt.client.oauth;
 
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.*;
+import com.google.gwt.user.client.Window;
 
 import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.*;
 
 /**
  * Wraps standard GWT RequestBuilder for the creation of authorised requests.
- * Intended for use with OAuthHandler.
+ * Designed for use with OAuthHandler.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -55,9 +54,21 @@ public class OAuthRequest {
         return builder.getRequestData();
     }
 
-    void sendRequest(String token, final RequestCallback callback) throws RequestException {
+    void sendRequest(final String token, final RequestCallback callback, final OAuthHandler handler,
+                     final AuthorisationRequest authorisation)
+            throws RequestException {
         setOAuthHeader(token);
-        builder.sendRequest(builder.getRequestData(), callback);
+        builder.sendRequest(builder.getRequestData(), new RequestCallback() {
+            @Override
+            public void onResponseReceived(Request request, Response response) {
+                handler.processOAuthRequestResponse(request, response, callback, authorisation);
+            }
+
+            @Override
+            public void onError(Request request, Throwable exception) {
+                callback.onError(request, exception);
+            }
+        });
     }
 
     private void setOAuthHeader(String token) {
@@ -65,8 +76,8 @@ public class OAuthRequest {
     }
 
     private String buildOAuthRequestString(String token) {
-        return new StringBuilder(AUTH_SCHEME).append(SPACE)
-                .append(BEARER).append(SPACE)
+        return new StringBuilder(OAUTH_HEADER_NAME)
+                .append(SPACE)
                 .append(token)
                 .toString();
     }

@@ -50,7 +50,6 @@ public class TokenGrant implements Serializable {
         return accessToken;
     }
 
-    @NotNull
     @Column(name = "REFRESH_TOKEN")
     public String getRefreshToken() {
         return refreshToken;

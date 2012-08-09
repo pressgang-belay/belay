@@ -5,7 +5,7 @@
 
     <filter>
         <filter-name>OAuth2 Filter</filter-name>
-        <filter-class>org.apache.amber.oauth2.rsfilter.OAuthFilter</filter-class>
+        <filter-class>org.jboss.pressgangccms.oauth2.resourceserver.filter.OAuth2RSFilter</filter-class>
     </filter>
 
     <filter-mapping>

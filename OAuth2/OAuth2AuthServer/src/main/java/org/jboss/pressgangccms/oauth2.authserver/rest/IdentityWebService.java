@@ -31,14 +31,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static javax.servlet.http.HttpServletResponse.SC_ACCEPTED;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REDIRECT_URI;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
-import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.INVALID_CLIENT;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
@@ -164,7 +162,7 @@ public class IdentityWebService {
         Set<Scope> grantScopes = getGrantScopes(requestTokenGrant, secondIdentityIsPrimary, scopesRequested,
                 secondIdentityFound.get(), oAuthRedirectUri);
         Response response = createTokenGrantResponseForIdentity(oAuthRedirectUri, clientFound.get(), grantScopes,
-                primaryIdentity);
+                primaryIdentity, (requestTokenGrant.getRefreshToken() != null));
 
         if (response.getStatus() == HttpServletResponse.SC_FOUND) {
             // Make original TokenGrant non-current
@@ -264,7 +262,7 @@ public class IdentityWebService {
         }
         // Generate new token grant response
         Response response = createTokenGrantResponseForIdentity(oAuthRequest.getRedirectURI(), clientFound.get(),
-                grantScopes, newPrimaryIdentity);
+                grantScopes, newPrimaryIdentity, (currentGrant.getRefreshToken() != null));
         if (response.getStatus() == HttpServletResponse.SC_FOUND) {
             // Make original TokenGrant non-current
             OAuthWebServiceUtil.makeGrantNonCurrent(authService, currentGrant);
@@ -274,11 +272,12 @@ public class IdentityWebService {
     }
 
     private Response createTokenGrantResponseForIdentity(String oAuthRedirectUri, ClientApplication client,
-                                                         Set<Scope> grantScopes, Identity identity) {
+                                                         Set<Scope> grantScopes, Identity identity,
+                                                         boolean issueRefreshToken) {
         TokenGrant newTokenGrant;
         try {
             newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
-                    identity, client);
+                    identity, client, issueRefreshToken);
             if (grantScopes != null) {
                 newTokenGrant.setGrantScopes(grantScopes);
             }

@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.lang.Boolean;import java.lang.Object;import java.lang.Override;import java.lang.String;import java.util.Set;
 
 /**
- * Non-persistent class encapsulating identity information.
+ * Shared domain class encapsulating identity information.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -168,7 +168,7 @@ public class IdentityInfo implements Serializable {
         private String language;
         private String country;
         private String openIdProviderUrl;
-        private Boolean primaryIdentity;
+        private boolean primaryIdentity;
         private Set<String> userIdentifiers;
         private Set<String> identityScopes;
 
@@ -216,7 +216,7 @@ public class IdentityInfo implements Serializable {
             return this;
         }
 
-        public IdentityInfoBuilder setPrimaryIdentity(Boolean isPrimaryUser) {
+        public IdentityInfoBuilder setPrimaryIdentity(boolean isPrimaryUser) {
             this.primaryIdentity = isPrimaryUser;
             return this;
         }

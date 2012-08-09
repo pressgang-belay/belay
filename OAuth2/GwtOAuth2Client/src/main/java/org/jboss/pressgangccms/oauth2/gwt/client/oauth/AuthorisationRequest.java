@@ -13,9 +13,7 @@ import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.*;
  */
 public class AuthorisationRequest {
     private final String authUrl;
-    private final String tokenUrl;
     private final String clientId;
-    private final String clientSecret;     //TODO remove this shouldn't be necessary
     private String[] scopes;
     private boolean forceNewRequest;
     private String scopeDelimiter = " ";  // Default delimiter
@@ -24,11 +22,9 @@ public class AuthorisationRequest {
      * @param authUrl  URL of the OAuth 2.0 provider server
      * @param clientId Your application's unique client ID
      */
-    public AuthorisationRequest(String authUrl, String tokenUrl, String clientId, String clientSecret) {
+    public AuthorisationRequest(String authUrl, String clientId) {
         this.authUrl = authUrl;
-        this.tokenUrl = tokenUrl;
         this.clientId = clientId;
-        this.clientSecret = clientSecret;
         this.forceNewRequest = false;
     }
 
@@ -48,18 +44,6 @@ public class AuthorisationRequest {
     public AuthorisationRequest forceNewRequest(boolean forceNewRequest) {
         this.forceNewRequest = forceNewRequest;
         return this;
-    }
-
-    public String getTokenUrl() {
-        return tokenUrl;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
     }
 
     public boolean isForceNewRequest() {

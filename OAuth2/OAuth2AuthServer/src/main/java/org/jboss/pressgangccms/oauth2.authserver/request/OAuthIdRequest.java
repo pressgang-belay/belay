@@ -24,18 +24,18 @@ public class OAuthIdRequest extends OAuthRequest {
     }
 
     @Override
-    protected OAuthValidator initValidator() throws OAuthProblemException, OAuthSystemException {
+    protected OAuthValidator<HttpServletRequest> initValidator() throws OAuthProblemException, OAuthSystemException {
         // End user authorisation validators
         validators.put(ResponseType.TOKEN.toString(), OAuthIdRequestValidator.class);
         String requestTypeValue = getParam(OAuth.OAUTH_RESPONSE_TYPE);
         if (OAuthUtils.isEmpty(requestTypeValue)) {
             throw OAuthUtils.handleOAuthProblemException(UNSUPPORTED_RESPONSE_TYPE);
         }
-        Class clazz = validators.get(requestTypeValue);
+        Class<? extends OAuthValidator<HttpServletRequest>> clazz = validators.get(requestTypeValue);
         if (clazz == null) {
             throw OAuthUtils.handleOAuthProblemException(UNSUPPORTED_RESPONSE_TYPE);
         }
-        return (OAuthValidator)OAuthUtils.instantiateClass(clazz);
+        return OAuthUtils.instantiateClass(clazz);
     }
 
     public String getState() {

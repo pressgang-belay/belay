@@ -15,7 +15,6 @@ import org.jboss.pressgangccms.oauth2.authserver.service.TokenIssuerService;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -34,15 +33,19 @@ import static com.google.appengine.repackaged.com.google.common.collect.Sets.new
 import static com.google.common.collect.Lists.newArrayList;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
-import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.*;
+import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
 /**
- * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint. The OAuth component's function
+ * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint. The endpoint's functionality
  * is closest to OAuth2's implicit authorisation flow, however, depending on the app settings the resource owner may
  * not be prompted to authorise the access, as in cases where the client application, authorisation server and resource
- * server are all operating as one application, this may be inappropriate.
+ * server are all operating as one application, this may be inappropriate. This endpoint is for use by public clients.
+ * It will not return a refresh token.
+ *
+ * //TODO add Authorisation Code flow for confidential clients
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -126,7 +129,7 @@ public class LoginWebService {
             }
 
             OAuthTokenResponseBuilder oAuthTokenResponseBuilder =
-                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, identity, redirectUri), SC_FOUND);
+                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, identity, redirectUri, false), SC_FOUND);
             OAuthResponse response = oAuthTokenResponseBuilder.location(redirectUri).buildQueryMessage();
             return Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
@@ -157,10 +160,11 @@ public class LoginWebService {
         authHeaderBuilder.requireAttribute(FULLNAME_TITLE_CASE, "http://axschema.org/namePerson");
     }
 
-    private TokenGrant createTokenGrant(String clientId, Set<String> scopes, Identity identity, String redirectUri)
+    private TokenGrant createTokenGrant(String clientId, Set<String> scopes, Identity identity, String redirectUri,
+                                        boolean issueRefreshToken)
             throws OAuthProblemException, OAuthSystemException {
         TokenGrant tokenGrant = OAuthWebServiceUtil.createTokenGrantWithDefaults(tokenIssuerService, authService, identity,
-                authService.getClient(clientId).get());
+                authService.getClient(clientId).get(), issueRefreshToken);
         // If specific grant scopes requested, check these are valid and add to token grant
         if (scopes != null) {
             Set<Scope> grantScopes = OAuthWebServiceUtil.checkScopes(authService, scopes, identity.getIdentityScopes(), redirectUri);
@@ -179,7 +183,7 @@ public class LoginWebService {
                 error = INVALID_CLIENT;
             } else if (! clientRedirectUriMatches(URLDecoder.decode(redirectUri, UTF_ENCODING), clientFound.get())) {
                 log.warning("Invalid OAuth2 redirect URI in login request");
-                error = REDIRECT_URI_MISMATCH;
+                error = INVALID_REDIRECT_URI;
             } else {
                 return;
             }

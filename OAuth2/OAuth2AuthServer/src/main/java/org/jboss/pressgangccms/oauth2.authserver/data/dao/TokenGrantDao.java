@@ -80,6 +80,7 @@ public class TokenGrantDao {
             TokenGrant tokenGrant = tokenGrantFound.get();
             TokenGrantInfo.TokenGrantInfoBuilder builder = tokenGrantInfoBuilder(tokenGrant.getAccessToken())
                     .setAccessTokenExpiry(tokenGrant.getAccessTokenExpiry())
+                    .setHasRefreshToken(tokenGrant.getRefreshToken() != null)
                     .setGrantIdentityIdentifier(tokenGrant.getGrantIdentity().getIdentifier())
                     .setGrantClientIdentifier(tokenGrant.getGrantClient().getClientIdentifier())
                     .setGrantCurrent(tokenGrant.getGrantCurrent())

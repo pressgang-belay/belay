@@ -4,8 +4,6 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.http.client.*;
-import com.google.gwt.json.client.*;
 
 import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.*;
 
@@ -54,9 +52,6 @@ public abstract class Authoriser {
      * existing token will be passed to the callback -- provided the request flag
      * is not set to force a call to the OAuth provider.
      *
-     * If a refresh token is available, this will be used to obtain a new access
-     * token.
-     *
      * Otherwise, a popup window will be displayed which may prompt the user to
      * login and/or grant access. If the user has already granted access the popup
      * will close and the token will be passed to the callback. If access
@@ -72,11 +67,11 @@ public abstract class Authoriser {
 
         // Try to look up the token we have stored.
         final TokenInfo info = getToken(request);
-        if (request.isForceNewRequest() || info == null || info.expires == null || info.refreshToken == null) {
+        if (request.isForceNewRequest() || info == null || info.expires == null || expiringInOneOrExpired(info)) {
             // Reset forceAuthRequest flag
             lastAuthRequest.forceNewRequest(false);
-            // A new request has been forced, token wasn't found or doesn't have an expiration, or there is
-            // no refresh token to use to get a new one. Request a new access token.
+            // A new request has been forced, token wasn't found or doesn't have an expiration, or is expired or
+            // about to expire. Request a new access token.
             String authUrl = new StringBuilder(request.toLoginUrl(urlCodex))
                     .append(PARAMETER_SEPARATOR)
                     .append(REDIRECT_URI)
@@ -84,9 +79,6 @@ public abstract class Authoriser {
                     .append(urlCodex.encode(oAuthWindowUrl))
                     .toString();
             doAuthLogin(authUrl, callback);
-        } else if (expiringInFiveOrExpired(info)) {
-            // Token needs to be refreshed
-            doRefresh(request, info, callback);
         } else {
             // Token was found and is good, immediately execute the callback with the
             // access token.
@@ -100,11 +92,11 @@ public abstract class Authoriser {
     }
 
     /**
-     * Returns whether or not the token will be expiring within the next five
-     * minutes or has already expired.
+     * Returns whether or not the token will be expiring within the next minute
+     * or has already expired.
      */
-    boolean expiringInFiveOrExpired(TokenInfo info) {
-        return Double.valueOf(info.expires) < (clock.now() + FIVE_MINUTES);
+    boolean expiringInOneOrExpired(TokenInfo info) {
+        return Double.valueOf(info.expires) < (clock.now() + ONE_MINUTE);
     }
 
     /**
@@ -113,83 +105,9 @@ public abstract class Authoriser {
      */
     abstract void doAuthLogin(String authUrl, Callback<String, Throwable> callback);
 
-    /**
-     * Refresh the OAuth 2.0 token for this application.
-     */
-    void doRefresh(final AuthorisationRequest authorisationRequest, TokenInfo tokenInfo,
-                   final Callback<String, Throwable> callback) {
-        RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, authorisationRequest.getTokenUrl());
-        builder.setHeader(CONTENT_TYPE, FORM_URLENCODED);
-        try {
-            builder.sendRequest(buildOAuthRefreshTokenString(authorisationRequest, tokenInfo.refreshToken),
-                    new RequestCallback() {
-                @Override
-                public void onResponseReceived(Request request, Response response) {
-                    if (SC_OK == response.getStatusCode()) {
-                        String responseJson = response.getText();
-                        try {
-                            // Parse the response text into JSON
-                            JSONValue jsonValue = JSONParser.parseStrict(responseJson);
-                            JSONObject jsonObject = jsonValue.isObject();
-
-                            if (jsonObject != null) {
-                                TokenInfo newInfo = extractTokenInfo(jsonObject);
-                                setToken(authorisationRequest, newInfo);
-                                callback.onSuccess(newInfo.accessToken);
-                            } else {
-                                throw new JSONException();
-                            }
-                        } catch (Throwable t) {
-                            callback.onFailure(t);
-                        }
-                    } else {
-                        // TODO create exception class/es for these failures
-                        callback.onFailure(new RuntimeException("Could not obtain login authorisation. Response status: "
-                                + response.getStatusCode()));
-                    }
-                }
-
-                @Override
-                public void onError(Request request, Throwable exception) {
-                    callback.onFailure(exception);
-                }
-            });
-        } catch (RequestException e) {
-            callback.onFailure(e);
-        }
-    }
 
     public String encodeUrl(String url) {
         return urlCodex.encode(url);
-    }
-
-    private TokenInfo extractTokenInfo(JSONObject jsonObject) {
-        TokenInfo newInfo = new TokenInfo();
-        JSONValue jsonValue;
-        JSONString accessToken, refreshToken, expires;
-
-        if ((jsonValue = jsonObject.get(ACCESS_TOKEN)) != null
-                && (accessToken = jsonValue.isString()) != null
-                && (jsonValue = jsonObject.get(REFRESH_TOKEN)) != null
-                && (refreshToken = jsonValue.isString()) != null
-                && (jsonValue = jsonObject.get(EXPIRES_IN)) != null
-                && (expires = jsonValue.isString()) != null
-                ) {
-            newInfo.accessToken = accessToken.stringValue();
-            newInfo.refreshToken = refreshToken.stringValue();
-            newInfo.expires = convertExpiresInFromSeconds(expires.stringValue());
-            return newInfo;
-        } else {
-            throw new JSONException("Could not parse authorisation credentials from response");
-        }
-    }
-
-    private String buildOAuthRefreshTokenString(AuthorisationRequest request, String refreshToken) {
-        return new StringBuilder(GRANT_TYPE).append(KEY_VALUE_SEPARATOR).append(REFRESH_TOKEN).append(PARAMETER_SEPARATOR)
-                .append(CLIENT_ID).append(KEY_VALUE_SEPARATOR).append(request.getClientId()).append(PARAMETER_SEPARATOR)
-                .append(REFRESH_TOKEN).append(KEY_VALUE_SEPARATOR).append(refreshToken).append(PARAMETER_SEPARATOR)
-                .append(CLIENT_SECRET).append(KEY_VALUE_SEPARATOR).append(request.getClientSecret())
-                .toString();
     }
 
     /**
@@ -212,23 +130,6 @@ public abstract class Authoriser {
         String error = null;
         String errorDesc = "";
         String errorUri = "";
-
-        // Get the refresh token value from the query string if it's there
-        // Future versions of the Apache Amber library may include this in the URI fragment with everything else
-        // but for now this is the way it is delivered by that library so catering for this
-        String refreshString = REFRESH_TOKEN + KEY_VALUE_SEPARATOR;
-
-        if (queryString.startsWith(QUERY_STRING_MARKER) && queryString.contains(refreshString)) {
-            int tokenStartIndex = queryString.indexOf(refreshString) + refreshString.length();
-            int tokenEndIndex = Math.min(queryString.indexOf(FRAGMENT_MARKER, tokenStartIndex),
-                    queryString.indexOf(QUERY_STRING_MARKER, tokenStartIndex));
-            if (tokenEndIndex < 0) {
-                tokenEndIndex = queryString.length();
-            }
-            if (tokenStartIndex >= 0 && tokenEndIndex >= 0) {
-                info.refreshToken = queryString.substring(tokenStartIndex, tokenEndIndex);
-            }
-        }
 
         // Iterate over keys and values in the string hash value to find relevant
         // information like the access token or an error message. The string will be
@@ -253,8 +154,6 @@ public abstract class Authoriser {
             // Store relevant values to be used later.
             if (key.equals(ACCESS_TOKEN)) {
                 info.accessToken = val;
-            } else if (key.equals(REFRESH_TOKEN)) {
-                info.refreshToken = val;
             } else if (key.equals(EXPIRES_IN)) {
                 // expires_in is seconds, convert to milliseconds and add to now
                 info.expires = convertExpiresInFromSeconds(val);
@@ -270,8 +169,8 @@ public abstract class Authoriser {
         if (error != null) {
             lastCallback.onFailure(
                     new RuntimeException("Error from provider: " + error + errorDesc + errorUri));
-        } else if (info.accessToken == null || info.refreshToken == null) {
-            lastCallback.onFailure(new RuntimeException("Could not find access_token and/or refresh_token in hash "
+        } else if (info.accessToken == null) {
+            lastCallback.onFailure(new RuntimeException("Could not find token in hash "
                     + hash));
         } else {
             setToken(lastAuthRequest, info);
@@ -337,19 +236,17 @@ public abstract class Authoriser {
      */
     static class TokenInfo {
         String accessToken;
-        String refreshToken;
         String expires;
 
         String asString() {
-            return accessToken + SEPARATOR + refreshToken + SEPARATOR + (expires == null ? "" : expires);
+            return accessToken + SEPARATOR + (expires == null ? "" : expires);
         }
 
         static TokenInfo fromString(String val) {
             String[] parts = val.split(SEPARATOR);
             TokenInfo info = new TokenInfo();
             info.accessToken = parts[0];
-            info.refreshToken = parts[1];
-            info.expires = parts.length > 2 ? parts[2] : null;
+            info.expires = parts.length > 1 ? parts[1] : null;
             return info;
         }
     }
@@ -405,7 +302,7 @@ public abstract class Authoriser {
     }
 
     private static AuthorisationRequest fromJso(AuthRequestJso jso) {
-        return new AuthorisationRequest(jso.getAuthUrl(), jso.getTokenUrl(), jso.getClientId(), jso.getClientSecret())
+        return new AuthorisationRequest(jso.getAuthUrl(), jso.getClientId())
                 .withScopes(jso.getScopes())
                 .withScopeDelimiter(jso.getScopeDelimiter());
     }
@@ -419,16 +316,8 @@ public abstract class Authoriser {
             return this.authUrl;
         }-*/;
 
-        private final native String getTokenUrl() /*-{
-            return this.tokenUrl;
-        }-*/;
-
         private final native String getClientId() /*-{
             return this.clientId;
-        }-*/;
-
-        private final native String getClientSecret() /*-{
-            return this.clientSecret;
         }-*/;
 
         private final native JsArrayString getScopesNative() /*-{

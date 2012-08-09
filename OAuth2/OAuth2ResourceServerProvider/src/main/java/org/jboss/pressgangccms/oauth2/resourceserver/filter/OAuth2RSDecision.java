@@ -1,20 +1,25 @@
 package org.jboss.pressgangccms.oauth2.resourceserver.filter;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
+import org.apache.amber.oauth2.common.utils.OAuthUtils;
 import org.apache.amber.oauth2.rsfilter.OAuthClient;
 import org.apache.amber.oauth2.rsfilter.OAuthDecision;
 import org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint;
-import org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint;
 import org.jboss.pressgangccms.oauth2.resourceserver.service.OAuth2RSAuthService;
+import org.jboss.pressgangccms.oauth2.shared.data.model.AccessTokenExpiryInfo;
 import org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo;
 import org.joda.time.DateTime;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -22,7 +27,7 @@ import static org.jboss.pressgangccms.oauth2.resourceserver.util.Common.BEARER;
 import static org.jboss.pressgangccms.oauth2.resourceserver.util.Common.SYSTEM_ERROR;
 
 /**
- * Contains the core logic for decision made by OAuthFilter.
+ * Contains the core logic for decisions made by OAuthFilter.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -36,7 +41,8 @@ public class OAuth2RSDecision implements OAuthDecision {
 
     private static final String AUTH_SERVICE_JNDI_ADDRESS = "java:module/OAuth2RSAuthService";
 
-    public OAuth2RSDecision(String realm, String token, HttpServletRequest request) throws OAuthProblemException {
+    public OAuth2RSDecision(String realm, String token, HttpServletRequest request, HttpServletResponse response)
+            throws OAuthProblemException {
         token = trimAccessToken(token);
         log.info("Processing decision on access token " + token);
         Optional<TokenGrantInfo> tokenGrantInfoFound;
@@ -52,7 +58,7 @@ public class OAuth2RSDecision implements OAuthDecision {
             TokenGrantInfo tokenGrantInfo = tokenGrantInfoFound.get();
             this.oAuthClient = new OAuth2RSClient(tokenGrantInfo.getGrantClientIdentifier());
             this.principal = new OAuth2RSPrincipal(tokenGrantInfo.getGrantIdentityIdentifier());
-            setAuthorisation(tokenGrantInfo, request);
+            setAuthorisation(tokenGrantInfo, request, response);
         } else {
             log.info("Invalid token " + token);
             this.isAuthorized = false;
@@ -62,13 +68,30 @@ public class OAuth2RSDecision implements OAuthDecision {
         }
     }
 
-    private void setAuthorisation(TokenGrantInfo tokenGrantInfo, HttpServletRequest request) throws OAuthProblemException {
+    private void setAuthorisation(TokenGrantInfo tokenGrantInfo, HttpServletRequest request, HttpServletResponse response)
+            throws OAuthProblemException {
         isAuthorized = false;
         checkTokenCurrentAndNotExpired(tokenGrantInfo);
         OAuth2RSEndpoint requestEndpoint = findEndpointForRequest(request);
         if (grantScopeMatchesRequest(tokenGrantInfo, requestEndpoint)) {
             log.info("Verified token " + tokenGrantInfo.getAccessToken());
             isAuthorized = true;
+            // TODO add check that non-expiring tokens are being used with particular, approved clients
+            // If client has no refresh token and token does expire, push out expiry time
+            if ((! tokenGrantInfo.getHasRefreshToken())
+                    && (! tokenGrantInfo.getAccessTokenExpiry().equals("0"))
+                    && response != null) {
+                // TODO Perhaps we should only request an extension when token is within certain period of expiring
+                log.info("Requesting token expiry time be extended");
+                Optional<AccessTokenExpiryInfo> newExpiryInfo = authService.extendAccessTokenExpiry(tokenGrantInfo.getAccessToken());
+                if (newExpiryInfo.isPresent()) {
+                    Map<String, Object> entries = Maps.newHashMap();
+                    String accessTimeRemaining = newExpiryInfo.get().getAccessTokenTimeRemaining();
+                    entries.put(OAuth.OAUTH_EXPIRES_IN, accessTimeRemaining);
+                    log.info("Token will now expire in " + accessTimeRemaining + " seconds");
+                    response.setHeader(OAuth.HeaderType.AUTHORIZATION, OAuthUtils.encodeOAuthHeader(entries));
+                }
+            }
             return;
         }
         log.info("Could not find grant scope matching request");
@@ -76,7 +99,13 @@ public class OAuth2RSDecision implements OAuthDecision {
     }
 
     private void checkTokenCurrentAndNotExpired(TokenGrantInfo tokenGrantInfo) throws OAuthProblemException {
-        int expirySeconds = Integer.parseInt(tokenGrantInfo.getAccessTokenExpiry());
+        int expirySeconds;
+        try {
+            expirySeconds = Integer.parseInt(tokenGrantInfo.getAccessTokenExpiry());
+        } catch (NumberFormatException e) {
+            log.warning("NumberFormatException during token check: " + e);
+            throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
+        }
         DateTime expiryDate = new DateTime(tokenGrantInfo.getGrantTimeStamp()).
                 plusSeconds(Math.abs(expirySeconds));
         // Allow tokens with expiry seconds set to 0; these are non-expiring tokens

@@ -37,7 +37,7 @@ import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil
 import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
 
 /**
- * Serves as an OAuth token endpoint. Accepts refresh token grants only.
+ * Serves as an OAuth token endpoint. Accepts refresh token grants only. For use by confidential clients.
  *
  *@author kamiller@redhat.com (Katie Miller)
  */
@@ -58,11 +58,9 @@ public class TokenWebService {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
-        //TODO logic for confidential clients?
         log.info("Processing token refresh request");
 
         try {
-            //TODO add custom request type that doesn't require client secret, for public clients
             OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
 
             // Check that client_id is registered
@@ -101,7 +99,7 @@ public class TokenWebService {
         makeGrantsNonCurrent(authService, oldTokenGrant.getGrantIdentity().getTokenGrants());
         // Issue new grant
         TokenGrant newTokenGrant = createTokenGrantWithDefaults(tokenIssuerService, authService,
-                oldTokenGrant.getGrantIdentity(), oldTokenGrant.getGrantClient());
+                oldTokenGrant.getGrantIdentity(), oldTokenGrant.getGrantClient(), true);
         newTokenGrant.setGrantScopes(newHashSet(oldTokenGrant.getGrantScopes()));
         authService.addGrant(newTokenGrant);
         return newTokenGrant;

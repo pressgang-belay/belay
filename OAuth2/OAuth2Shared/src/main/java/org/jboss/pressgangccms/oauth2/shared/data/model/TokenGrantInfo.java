@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Set;
 
 /**
- * Non-persistent class encapsulating token grant information.
+ * Shared domain class encapsulating token grant information.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -20,10 +20,11 @@ public class TokenGrantInfo implements Serializable {
 
     private String accessToken;
     private String accessTokenExpiry;
+    private Boolean hasRefreshToken;
     private String grantIdentityIdentifier;
     private String grantClientIdentifier;
     private Date grantTimeStamp; // In seconds, from time granted
-    private boolean grantCurrent;
+    private Boolean grantCurrent;
     private Set<String> grantScopeNames;
 
     TokenGrantInfo() {
@@ -32,6 +33,7 @@ public class TokenGrantInfo implements Serializable {
     private TokenGrantInfo(TokenGrantInfoBuilder builder) {
         this.accessToken = builder.accessToken;
         this.accessTokenExpiry = builder.accessTokenExpiry;
+        this.hasRefreshToken = builder.hasRefreshToken;
         this.grantIdentityIdentifier = builder.grantIdentityIdentifier;
         this.grantClientIdentifier = builder.grantClientIdentifier;
         this.grantTimeStamp = builder.grantTimeStamp;
@@ -51,15 +53,19 @@ public class TokenGrantInfo implements Serializable {
         return accessToken;
     }
 
-    public Date getGrantTimeStamp() {
-        return grantTimeStamp;
-    }
-
     public String getAccessTokenExpiry() {
         return accessTokenExpiry;
     }
 
-    public boolean getGrantCurrent() {
+    public Boolean getHasRefreshToken() {
+        return hasRefreshToken;
+    }
+
+    public Date getGrantTimeStamp() {
+        return grantTimeStamp;
+    }
+
+    public Boolean getGrantCurrent() {
         return grantCurrent;
     }
 
@@ -77,6 +83,7 @@ public class TokenGrantInfo implements Serializable {
         return new EqualsBuilder()
                 .append(accessToken, that.getAccessToken())
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())
+                .append(hasRefreshToken, that.getHasRefreshToken())
                 .append(grantIdentityIdentifier, that.getGrantIdentityIdentifier())
                 .append(grantClientIdentifier, that.getGrantClientIdentifier())
                 .append(grantTimeStamp, that.getGrantTimeStamp())
@@ -90,6 +97,7 @@ public class TokenGrantInfo implements Serializable {
         return new HashCodeBuilder()
                 .append(accessToken)
                 .append(accessTokenExpiry)
+                .append(hasRefreshToken)
                 .append(grantIdentityIdentifier)
                 .append(grantClientIdentifier)
                 .append(grantTimeStamp)
@@ -102,6 +110,7 @@ public class TokenGrantInfo implements Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("accessToken", accessToken)
                 .append("accessTokenExpiry", accessTokenExpiry)
+                .append("hasRefreshToken", hasRefreshToken)
                 .append("grantIdentityIdentifier", grantIdentityIdentifier)
                 .append("grantClientIdentifier", grantClientIdentifier)
                 .append("grantTimeStamp", grantTimeStamp)
@@ -114,6 +123,7 @@ public class TokenGrantInfo implements Serializable {
     public static class TokenGrantInfoBuilder implements Builder<TokenGrantInfo> {
         private String accessToken;
         private String accessTokenExpiry;
+        private boolean hasRefreshToken;
         private String grantIdentityIdentifier;
         private String grantClientIdentifier;
         private Date grantTimeStamp;
@@ -131,6 +141,11 @@ public class TokenGrantInfo implements Serializable {
 
         public TokenGrantInfoBuilder setAccessTokenExpiry(String accessTokenExpiry) {
             this.accessTokenExpiry = accessTokenExpiry;
+            return this;
+        }
+
+        public TokenGrantInfoBuilder setHasRefreshToken(boolean hasRefreshToken) {
+            this.hasRefreshToken = hasRefreshToken;
             return this;
         }
 

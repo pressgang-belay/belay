@@ -22,7 +22,7 @@
         <java.version>1.7</java.version>
         <junit.version>4.10</junit.version>
         <jboss.bom.version>1.0.1.CR1</jboss.bom.version>
-        <amber.version>0.2-SNAPSHOT</amber.version>
+        <amber.version>0.22-incubating</amber.version>
         <servletapi.version>2.5</servletapi.version>
         <httpclient.version>4.2.1</httpclient.version>
         <openid4java.version>0.9.6</openid4java.version>

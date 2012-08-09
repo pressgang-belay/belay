@@ -1,5 +1,7 @@
 package org.jboss.pressgangccms.oauth2.resourceserver.util;
 
+import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.seam.solder.resourceLoader.Resource;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +21,8 @@ import static org.jboss.pressgangccms.oauth2.resourceserver.util.Common.PROPERTI
 /**
  * This class uses CDI to alias Java EE resources, such as the persistence
  * context, to CDI beans
+ *
+ * @author kamiller@redhat.com (Katie Miller)
  */
 public class Resources {
     @Inject
@@ -34,6 +38,8 @@ public class Resources {
     private void initialise() {
         entityManagerFactoryJndiAddress = (String) resourceServerConfig.get("entityManagerFactoryJndiAddress");
         log.fine("Found entityManagerFactoryJndiAddress property: " + entityManagerFactoryJndiAddress);
+        // Make sure RestEasy provider factory is registered
+        RegisterBuiltin.register(ResteasyProviderFactory.getInstance());
     }
 
     @SuppressWarnings("unused")

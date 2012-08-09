@@ -36,6 +36,7 @@ public class Common {
     public static final String INVALID_REFRESH_TOKEN = "Refresh token is invalid";
     public static final String INVALID_GRANT_TYPE = "Grant type is unsupported";
     public static final String INVALID_METHOD = "Invalid HTTP method";
+    public static final String INVALID_REDIRECT_URI = "invalid_redirect_uri";
     public static final String REALM_ENDPOINT_ERROR = "Could not perform realm endpoint discovery on Relying Party";
     public static final String IDENTITIES_ASSOCIATED_ERROR = "Identities already associated";
     public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query identity";
@@ -44,6 +45,7 @@ public class Common {
 
     // General
     public static final String ONE_HOUR = "3600";
+    public static final String OAUTH_TOKEN_EXPIRY = ONE_HOUR;
     public static final String UTF_ENCODING = "UTF-8";
     public static final String OPENID_REALM = "/OAuth2AuthServer/rest/auth/";
     public static final String LOGIN_ENDPOINT = "/auth/login";

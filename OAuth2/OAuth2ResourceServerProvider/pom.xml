@@ -112,13 +112,13 @@
 
         <dependency>
             <groupId>org.apache.amber</groupId>
-            <artifactId>oauth2-resourceserver</artifactId>
+            <artifactId>amber-oauth2-resourceserver</artifactId>
             <version>${amber.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.amber</groupId>
-            <artifactId>oauth2-rs-filter</artifactId>
+            <artifactId>amber-oauth2-resourceserver-filter</artifactId>
             <version>${amber.version}</version>
         </dependency>
     </dependencies>
