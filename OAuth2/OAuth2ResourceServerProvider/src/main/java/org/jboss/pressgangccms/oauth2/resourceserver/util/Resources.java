@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -19,8 +18,7 @@ import java.util.logging.Logger;
 import static org.jboss.pressgangccms.oauth2.resourceserver.util.Common.PROPERTIES_FILEPATH;
 
 /**
- * This class uses CDI to alias Java EE resources, such as the persistence
- * context, to CDI beans
+ * This class uses CDI to alias Java EE resources, such as the persistence context, to CDI beans.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */

@@ -40,6 +40,9 @@ public class GuiceOverrideConsumerFactory extends ConsumerFactory {
         return helper;
     }
 
+    /**
+     * Class to override the existing GuiceModule.
+     */
     public class GuiceOverrideModule implements Module {
         @Override
         public void configure(Binder binder) {

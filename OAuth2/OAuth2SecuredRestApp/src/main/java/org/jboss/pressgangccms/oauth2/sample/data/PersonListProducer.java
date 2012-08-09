@@ -11,6 +11,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
 
+/**
+ * Produces Person objects. Follows JBoss AS 7 Kitchensink example pattern.
+ */
 @RequestScoped
 public class PersonListProducer {
 	

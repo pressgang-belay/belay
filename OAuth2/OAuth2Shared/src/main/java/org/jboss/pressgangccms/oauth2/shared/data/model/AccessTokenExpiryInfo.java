@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 /**
- * Shared domain class encapsulating access token expiry information
+ * Shared domain class encapsulating access token expiry information.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */

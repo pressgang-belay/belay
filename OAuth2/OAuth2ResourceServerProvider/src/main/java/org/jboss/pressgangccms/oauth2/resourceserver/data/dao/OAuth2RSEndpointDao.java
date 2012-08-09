@@ -31,7 +31,7 @@ public class OAuth2RSEndpointDao {
     @ResourceServer
     private EntityManager em;
 
-    public Optional<OAuth2RSEndpoint> findEndpointMatchingRequest(HttpServletRequest request) {
+    public Optional<OAuth2RSEndpoint> findEndpointMatchingRequest(final HttpServletRequest request) {
         String requestUrl = request.getRequestURL().toString();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<OAuth2RSEndpoint> criteria = cb.createQuery(OAuth2RSEndpoint.class);

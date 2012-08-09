@@ -8,8 +8,7 @@ import javax.persistence.PersistenceContextType;
 import java.util.logging.Logger;
 
 /**
- * This class uses CDI to alias Java EE resources, such as the persistence
- * context, to CDI beans
+ * This class uses CDI to alias Java EE resources, such as the persistence context, to CDI beans.
  */
 public class Resources {
 	// use @SuppressWarnings to tell IDE to ignore warnings about field not

@@ -159,6 +159,9 @@ public class IdentityInfo implements Serializable {
                 .toString();
     }
 
+    /**
+     * Builder class to assist with creating IdentityInfo objects. Implements builder interface.
+     */
     public static class IdentityInfoBuilder implements Builder<IdentityInfo> {
         private String identifier;
         private String firstName;

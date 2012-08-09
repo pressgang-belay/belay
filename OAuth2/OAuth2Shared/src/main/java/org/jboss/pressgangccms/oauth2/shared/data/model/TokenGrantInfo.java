@@ -119,7 +119,9 @@ public class TokenGrantInfo implements Serializable {
                 .toString();
     }
 
-
+    /**
+     * Builder class to assist with creating TokenGrantInfo objects. Implements builder interface.
+     */
     public static class TokenGrantInfoBuilder implements Builder<TokenGrantInfo> {
         private String accessToken;
         private String accessTokenExpiry;

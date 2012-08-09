@@ -8,6 +8,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.logging.Logger;
 
+/**
+ * Used to register people. Follows JBoss AS 7 Kitchensink example pattern.
+ */
 @Stateless
 public class PersonRegistration {
 	

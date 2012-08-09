@@ -15,6 +15,9 @@ import org.jboss.pressgangccms.oauth2.gwt.client.oauth.Authoriser;
 import org.jboss.pressgangccms.oauth2.gwt.client.oauth.OAuthHandler;
 import org.jboss.pressgangccms.oauth2.gwt.client.oauth.OAuthRequest;
 
+/**
+ * Demo app demonstrating how OAuth2 library can be used.
+ */
 public class App implements EntryPoint {
 
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
@@ -43,7 +46,7 @@ public class App implements EntryPoint {
     private final TextBox inputTextBox = new TextBox();
 
     public void onModuleLoad() {
-        Authoriser.export();
+        Authoriser.export(); // This line is needed
         addInput();
         addRedHatLogin();
         addGoogleLogin();
