@@ -16,10 +16,13 @@
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
    <persistence-unit name="sample">
       <jta-data-source>java:jboss/datasources/OAuth2SecuredRestAppDS</jta-data-source>
-      <properties>
+       <!-- Demo database settings only. Not suitable for production environment -->
+       <properties>
          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
          <property name="hibernate.hbm2ddl.import_files" value="import.sql" />
          <property name="hibernate.show_sql" value="false" />
+          <property name="hibernate.c3p0.timeout" value="0"/>
+          <property name="hibernate.c3p0.idle_test_period" value="120"/>
       </properties>
    </persistence-unit>
     <persistence-unit name="oauth2-resourceserver">
@@ -27,6 +30,7 @@
         <jar-file>resource-server-provider-1.0-SNAPSHOT.jar</jar-file>
         <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSScope</class>
         <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint</class>
+        <!-- Demo database settings only. Not suitable for production environment -->
         <properties>
             <!-- Set this so the library can access the entity manager factory for this data source -->
             <!-- Put this value in the resourceserver.properties file with the key entityManagerFactoryJndiAddress -->
@@ -34,6 +38,8 @@
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
             <property name="hibernate.hbm2ddl.import_files" value="resourceserver-import.sql" />
             <property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.c3p0.timeout" value="0"/>
+            <property name="hibernate.c3p0.idle_test_period" value="120"/>
         </properties>
     </persistence-unit>
 </persistence>

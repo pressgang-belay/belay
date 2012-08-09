@@ -19,10 +19,13 @@
         <jar-file>resource-server-provider-1.0-SNAPSHOT.jar</jar-file>
         <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSScope</class>
         <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint</class>
+        <!-- Demo database settings only. Not suitable for production environment -->
         <properties>
             <property name="jboss.entity.manager.factory.jndi.name" value="java:app/OAuth2AuthServerManagerFactory" />
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
             <property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.c3p0.timeout" value="0"/>
+            <property name="hibernate.c3p0.idle_test_period" value="120"/>
         </properties>
     </persistence-unit>
 </persistence>
