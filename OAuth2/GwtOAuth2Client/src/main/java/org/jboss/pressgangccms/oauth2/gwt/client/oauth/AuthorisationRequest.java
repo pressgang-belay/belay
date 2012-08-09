@@ -1,6 +1,6 @@
 package org.jboss.pressgangccms.oauth2.gwt.client.oauth;
 
-import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.*;
+import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Constants.*;
 
 /**
  * Includes code from the AuthRequest class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),

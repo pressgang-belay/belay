@@ -21,7 +21,7 @@ package org.jboss.pressgangccms.oauth2.gwt.client.oauth;
 import com.google.gwt.core.client.*;
 import com.google.gwt.storage.client.Storage;
 
-import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.OAUTH_POPUP_NAME;
+import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Constants.OAUTH_POPUP_NAME;
 
 /**
  * Includes code from the AuthImpl class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),

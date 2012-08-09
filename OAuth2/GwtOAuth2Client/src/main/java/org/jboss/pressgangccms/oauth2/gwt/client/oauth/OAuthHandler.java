@@ -5,14 +5,10 @@ import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.user.client.Window;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.AUTHORISATION_HEADER;
-import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.EXPIRES_IN;
-import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.OAUTH_HEADER_NAME;
+import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Constants.AUTHORISATION_HEADER;
+import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Constants.EXPIRES_IN;
+import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Constants.OAUTH_HEADER_NAME;
 
 /**
  * Provides methods to manage OAuth login and subsequent requests.

@@ -11,8 +11,8 @@ import java.net.URISyntaxException;
 import java.util.logging.Logger;
 
 import static org.apache.commons.lang.StringUtils.containsIgnoreCase;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.GMAIL;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.GOOGLE;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.GMAIL;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.GOOGLE;
 
 /**
  * This UrlHostMetaFetcher implementation uses a Google-hosted host-meta fetcher to get host-meta if the

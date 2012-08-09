@@ -1,9 +1,8 @@
 package org.jboss.pressgangccms.oauth2.gwt.client.oauth;
 
 import com.google.gwt.http.client.*;
-import com.google.gwt.user.client.Window;
 
-import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Common.*;
+import static org.jboss.pressgangccms.oauth2.gwt.client.oauth.Constants.*;
 
 /**
  * Wraps standard GWT RequestBuilder for the creation of authorised requests.

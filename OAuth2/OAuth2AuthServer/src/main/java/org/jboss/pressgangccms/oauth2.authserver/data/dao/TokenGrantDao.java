@@ -2,6 +2,7 @@ package org.jboss.pressgangccms.oauth2.authserver.data.dao;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgangccms.oauth2.authserver.data.model.Scope;
 import org.jboss.pressgangccms.oauth2.authserver.data.model.TokenGrant;
@@ -20,7 +21,7 @@ import java.util.logging.Logger;
 
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.ImmutableSet.copyOf;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.SERVER_ERROR;
+import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
 import static org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo.TokenGrantInfoBuilder.tokenGrantInfoBuilder;
 
 /**

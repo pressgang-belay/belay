@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import org.apache.amber.oauth2.as.request.OAuthTokenRequest;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
-import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
@@ -31,10 +30,9 @@ import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResp
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REFRESH_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.ResourceResponse.INVALID_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
-import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_GRANT;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.UNSUPPORTED_GRANT_TYPE;
 import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.*;
 
 /**
  * Serves as an OAuth token endpoint. Accepts refresh token grants only. For use by confidential clients.

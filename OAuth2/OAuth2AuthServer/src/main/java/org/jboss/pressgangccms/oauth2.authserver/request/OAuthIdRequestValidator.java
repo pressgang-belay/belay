@@ -3,11 +3,11 @@ package org.jboss.pressgangccms.oauth2.authserver.request;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.validators.AbstractValidator;
-import org.jboss.pressgangccms.oauth2.authserver.util.Common;
+import org.jboss.pressgangccms.oauth2.authserver.util.Constants;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.INVALID_METHOD;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.INVALID_METHOD;
 
 /**
  * Custom OAuth request validator for combined use of OpenID and OAuth.
@@ -22,7 +22,7 @@ public class OAuthIdRequestValidator extends AbstractValidator<HttpServletReques
         requiredParams.add(OAuth.OAUTH_RESPONSE_TYPE);
         requiredParams.add(OAuth.OAUTH_CLIENT_ID);
         requiredParams.add(OAuth.OAUTH_REDIRECT_URI);
-        requiredParams.add(Common.OPENID_PROVIDER);
+        requiredParams.add(Constants.OPENID_PROVIDER);
     }
 
     @Override

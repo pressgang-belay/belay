@@ -36,7 +36,7 @@ import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResp
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.*;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.*;
 
 /**
  * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint. The endpoint's functionality

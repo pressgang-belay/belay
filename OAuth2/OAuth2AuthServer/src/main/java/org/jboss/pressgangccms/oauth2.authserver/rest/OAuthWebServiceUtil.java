@@ -22,8 +22,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static org.apache.amber.oauth2.common.OAuth.OAUTH_HEADER_NAME;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_SCOPE;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.OAUTH_TOKEN_EXPIRY;
 
 /**
  * Encapsulates logic shared across auth web services.
@@ -158,9 +159,9 @@ class OAuthWebServiceUtil {
     }
 
     static String trimAccessToken(String accessToken) {
-        if (accessToken.toLowerCase().startsWith(BEARER)) {
+        if (accessToken.toLowerCase().startsWith(OAUTH_HEADER_NAME)) {
             // Remove leading header
-            accessToken = accessToken.substring(BEARER.length()).trim();
+            accessToken = accessToken.substring(OAUTH_HEADER_NAME.length()).trim();
         }
         return accessToken;
     }

@@ -15,7 +15,7 @@ import javax.xml.transform.TransformerException;
 import java.util.logging.Logger;
 
 import static org.jboss.pressgangccms.oauth2.authserver.rest.OAuthWebServiceUtil.buildBaseUrl;
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.*;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.*;
 
 /**
  * Provides OpenID Relying Party XRDS document to facilitate verification by OpenID Provider.

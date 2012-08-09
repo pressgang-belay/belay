@@ -3,10 +3,9 @@ package org.jboss.pressgangccms.oauth2.authserver.util;
 /**
  * Values common across classes.
  */
-public class Common {
+public class Constants {
 
     // Param/attribute standards
-    public static final String BEARER = "bearer";
     public static final String OPENID_PROVIDER = "provider";
     public static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
     public static final String OPENID_IDENTIFIER = "openid.identifier";
@@ -29,7 +28,6 @@ public class Common {
     public static final String KEY_VALUE_SEPARATOR = "=";
 
     // Errors
-    public static final String SERVER_ERROR = "server_error";
     public static final String INVALID_IDENTIFIER = "invalid_identifier";
     public static final String INVALID_PROVIDER = "invalid_openid_provider";
     public static final String INVALID_CLIENT_APPLICATION = "Client application is invalid";

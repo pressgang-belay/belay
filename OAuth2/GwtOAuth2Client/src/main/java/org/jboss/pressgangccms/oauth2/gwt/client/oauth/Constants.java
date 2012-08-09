@@ -5,7 +5,7 @@ package org.jboss.pressgangccms.oauth2.gwt.client.oauth;
  *
  *@author kamiller@redhat.com (Katie Miller)
  */
-class Common {
+class Constants {
     static final String SPACE = " ";
     static final String QUERY_STRING_MARKER = "?";
     static final String PARAMETER_SEPARATOR = "&";

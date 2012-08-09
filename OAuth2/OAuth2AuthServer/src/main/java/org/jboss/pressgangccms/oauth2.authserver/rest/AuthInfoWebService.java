@@ -18,7 +18,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import java.util.logging.Logger;
 
-import static org.jboss.pressgangccms.oauth2.authserver.util.Common.OAUTH_TOKEN_EXPIRY;
+import static org.jboss.pressgangccms.oauth2.authserver.util.Constants.OAUTH_TOKEN_EXPIRY;
 
 /**
  * Provides authorisation information for resource servers, which are confidential clients.
