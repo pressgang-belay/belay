@@ -92,9 +92,6 @@ public class LoginWebService {
         String providerUrl = getStringAttributeFromSessionAndRemove(request, log, OPENID_PROVIDER, "OpenId provider");
 
         try {
-            // Check client and redirect URI match expectations
-            checkOAuthClientAndRedirectUri(clientId, redirectUri);
-
             if (identifier == null) {
                 log.warning("No OpenID identifier received");
                 throw createOAuthProblemException(INVALID_IDENTIFIER, redirectUri);
@@ -119,8 +116,6 @@ public class LoginWebService {
 
             //TODO add logic to prompt user to accept client app request to access resource with scopes
             // based on whether or not property is set
-            // create scopes for the things in the identitywebservice ?
-            // add facility to add different scopes as default, depending on app's function
 
             // Check if identity already has current grant/s; if so, make them invalid
             Set<TokenGrant> grants = identity.getTokenGrants();
