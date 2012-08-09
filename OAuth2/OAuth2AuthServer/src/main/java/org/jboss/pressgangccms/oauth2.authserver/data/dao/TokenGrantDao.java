@@ -5,10 +5,10 @@ import com.google.common.base.Optional;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgangccms.oauth2.authserver.data.model.Scope;
 import org.jboss.pressgangccms.oauth2.authserver.data.model.TokenGrant;
-import org.jboss.pressgangccms.oauth2.authserver.util.Common;
 import org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -36,6 +36,9 @@ public class TokenGrantDao {
 
     @Inject
     private Logger log;
+
+    @Inject
+    private Event<TokenGrant> tokenGrantEventSrc;
 
     public Optional<TokenGrant> getTokenGrantFromAccessToken(String accessToken) throws OAuthSystemException {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -99,6 +102,18 @@ public class TokenGrantDao {
             log.fine("Returning TokenGrantInfo for access token " + accessToken);
             return Optional.of(builder.build());
         }
+    }
+
+    public void addTokenGrant(TokenGrant tokenGrant) {
+        log.info("Adding token grant");
+        em.persist(tokenGrant);
+        tokenGrantEventSrc.fire(tokenGrant);
+    }
+
+    public void updateTokenGrant(TokenGrant tokenGrant) {
+        log.info("Updating token grant");
+        em.merge(tokenGrant);
+        tokenGrantEventSrc.fire(tokenGrant);
     }
 
     private Optional<TokenGrant> processQueryWithMultipleResults(TypedQuery<TokenGrant> query, String tokenType) throws OAuthSystemException {

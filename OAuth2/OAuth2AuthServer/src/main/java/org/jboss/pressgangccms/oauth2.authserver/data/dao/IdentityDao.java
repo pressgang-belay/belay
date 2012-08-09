@@ -7,6 +7,7 @@ import org.jboss.pressgangccms.oauth2.authserver.data.model.Scope;
 import org.jboss.pressgangccms.oauth2.shared.data.model.IdentityInfo;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -33,6 +34,9 @@ public class IdentityDao {
 
     @Inject
     private Logger log;
+
+    @Inject
+    private Event<Identity> identityEventSrc;
 
     public Optional<Identity> getIdentityFromIdentifier(String identifier) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -88,5 +92,17 @@ public class IdentityDao {
             log.fine("Returning IdentityInfo with identifier " + identifier);
             return Optional.of(builder.build());
         }
+    }
+
+    public void addIdentity(Identity identity) {
+        log.info("Registering " + identity.getIdentifier());
+        em.persist(identity);
+        identityEventSrc.fire(identity);
+    }
+
+    public void updateIdentity(Identity identity) {
+        log.info("Updating " + identity.getIdentifier());
+        em.merge(identity);
+        identityEventSrc.fire(identity);
     }
 }

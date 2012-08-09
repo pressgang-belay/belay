@@ -105,7 +105,7 @@ public class Identity implements Serializable {
         return user;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantIdentity")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantIdentity", fetch = FetchType.EAGER)
     public Set<TokenGrant> getTokenGrants() {
         return tokenGrants;
     }

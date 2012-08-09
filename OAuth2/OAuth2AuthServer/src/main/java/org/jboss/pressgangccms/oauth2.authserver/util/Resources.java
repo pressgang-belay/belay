@@ -4,6 +4,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import java.util.logging.Logger;
 
 /**
@@ -15,7 +16,7 @@ public class Resources {
 	// being referenced directly
 	@SuppressWarnings("unused")
 	@Produces
-	@PersistenceContext(unitName = "oauth2-authserver")
+    @PersistenceContext(unitName = "oauth2-authserver", type = PersistenceContextType.EXTENDED)
 	private EntityManager em;
 
 	@Produces

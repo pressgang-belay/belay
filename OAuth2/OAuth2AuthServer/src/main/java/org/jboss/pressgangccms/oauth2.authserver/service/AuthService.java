@@ -7,27 +7,20 @@ import org.jboss.pressgangccms.oauth2.authserver.data.model.*;
 import org.jboss.pressgangccms.oauth2.shared.data.model.IdentityInfo;
 import org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo;
 
-import javax.ejb.Stateful;
-import javax.enterprise.event.Event;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import java.util.logging.Logger;
 
 /**
- * Service class wraps calls to DAOs and persistence logic.
+ * Service class wraps calls to DAOs.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-@Stateful
+@Stateless
 public class AuthService {
 
     @Inject
     private Logger log;
-
-    @PersistenceContext(unitName = "oauth2-authserver", type = PersistenceContextType.EXTENDED)
-    private EntityManager em;
 
     @Inject
     private ClientApplicationDao clientApplicationDao;
@@ -46,15 +39,6 @@ public class AuthService {
 
     @Inject
     private UserDao userDao;
-
-    @Inject
-    private Event<TokenGrant> tokenGrantEventSrc;
-
-    @Inject
-    private Event<Identity> userEventSrc;
-
-    @Inject
-    private Event<User> userGroupEventSrc;
 
     public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) throws OAuthSystemException {
         return tokenGrantDao.getTokenGrantFromAccessToken(accessToken);
@@ -98,47 +82,31 @@ public class AuthService {
         return openIdProviderDao.getOpenIdProviderFromUrl(providerUrl);
     }
 
-    //TODO move these methods to DAOs
     public void addIdentity(Identity identity) {
-        log.info("Registering " + identity.getIdentifier());
-        em.persist(identity);
-        userEventSrc.fire(identity);
+        identityDao.addIdentity(identity);
     }
 
     public void updateIdentity(Identity identity) {
-        log.info("Updating " + identity.getIdentifier());
-        em.merge(identity);
-        userEventSrc.fire(identity);
+        identityDao.updateIdentity(identity);
     }
 
     public User createUnassociatedUser() {
-        log.info("Creating new user");
-        User user = new User();
-        em.persist(user);
-        userGroupEventSrc.fire(user);
-        return user;
+        return userDao.createNewUser();
     }
 
     public void updateUser(User user) {
-        log.info("Updating user");
-        em.merge(user);
-        userGroupEventSrc.fire(user);
+        userDao.updateUser(user);
     }
 
     public void deleteUser(User user) {
-        log.info("Deleting user");
-        em.remove(em.merge(user));
+        userDao.deleteUser(user);
     }
 
     public void addGrant(TokenGrant tokenGrant) {
-        log.info("Adding token grant");
-        em.persist(tokenGrant);
-        tokenGrantEventSrc.fire(tokenGrant);
+        tokenGrantDao.addTokenGrant(tokenGrant);
     }
 
     public void updateGrant(TokenGrant tokenGrant) {
-        log.info("Updating token grant");
-        em.merge(tokenGrant);
-        tokenGrantEventSrc.fire(tokenGrant);
+        tokenGrantDao.updateTokenGrant(tokenGrant);
     }
 }
