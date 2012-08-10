@@ -14,7 +14,8 @@
         <module>OAuth2AuthServer</module>
         <module>OAuth2ResourceServerProvider</module>
         <module>OAuth2SecuredRestApp</module>
-        <module>GwtOAuth2Client</module>
+        <module>OAuth2GwtClientProvider</module>
+        <module>OAuth2GwtClientApp</module>
     </modules>
 
     <properties>
@@ -35,6 +36,7 @@
         <commonslang.version>2.6</commonslang.version>
         <commonsconfiguration.version>1.8</commonsconfiguration.version>
         <resteasy.version>2.3.4.Final</resteasy.version>
+        <hibernate.version>3.6.3.Final</hibernate.version>
         <guava.version>13.0-rc1</guava.version>
         <gwt.version>1.5.3</gwt.version>
         <gwtoauth2.version>0.2-alpha</gwtoauth2.version>
