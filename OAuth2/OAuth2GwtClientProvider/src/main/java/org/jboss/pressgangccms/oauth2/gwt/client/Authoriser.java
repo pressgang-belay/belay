@@ -123,7 +123,7 @@ public abstract class Authoriser {
      */
     // This method is called via a global method defined in AuthoriserImpl.register()
     @SuppressWarnings("unused")
-    void finish(String queryString, String hash) {
+    void finish(String hash) {
         TokenInfo info = new TokenInfo();
         String error = null;
         String errorDesc = "";

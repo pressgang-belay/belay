@@ -80,13 +80,6 @@
                         <resource>
                             <directory>${gwt.gen.dir}</directory>
                         </resource>
-                        <!--<resource>-->
-                            <!--<directory>src/main/java/org/jboss/pressgangccms/oauth2/gwt/client/resources</directory>-->
-                            <!--<includes>-->
-                                <!--<include>*.html</include>-->
-                            <!--</includes>-->
-                            <!--<targetPath>${gwt.module.name}</targetPath>-->
-                        <!--</resource>-->
                     </webResources>
                 </configuration>
             </plugin>

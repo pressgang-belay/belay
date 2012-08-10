@@ -21,7 +21,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.7</java.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.9</junit.version>
         <jboss.bom.version>1.0.1.CR1</jboss.bom.version>
         <amber.version>0.22-incubating</amber.version>
         <servletapi.version>2.5</servletapi.version>
@@ -33,6 +33,7 @@
         <openidfilter.version>1.0-SNAPSHOT</openidfilter.version>
         <jodatime.version>2.0</jodatime.version>
         <xmlbuilder.version>0.4</xmlbuilder.version>
+        <ipsedixit.version>1.0.1</ipsedixit.version>
         <commonslang.version>2.6</commonslang.version>
         <commonsconfiguration.version>1.8</commonsconfiguration.version>
         <resteasy.version>2.3.4.Final</resteasy.version>
@@ -136,6 +137,10 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefireplugin.version}</version>
+                    <configuration>
+                        <!-- Addresses issue caused by incompatibility between Cobertura and Java7 -->
+                        <argLine>-XX:-UseSplitVerifier</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -193,26 +198,23 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <!-- The default profile skips all tests, though you can tune it to run
-                   just unit tests based on a custom pattern -->
-            <!-- Separate profiles are provided for running all tests, including Arquillian
-                   tests that execute in the specified container -->
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skip>true</skip>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    <!--<profiles>-->
+    <!--<profile>-->
+    <!--&lt;!&ndash; The default profile skips all tests, though you can tune it to run-->
+    <!--just unit tests based on a custom pattern &ndash;&gt;-->
+    <!--&lt;!&ndash; Separate profiles are provided for running all tests, including Arquillian-->
+    <!--tests that execute in the specified container &ndash;&gt;-->
+    <!--<id>default</id>-->
+    <!--<activation>-->
+    <!--<activeByDefault>true</activeByDefault>-->
+    <!--</activation>-->
+    <!--<build>-->
+    <!--<plugins>-->
+    <!--<plugin>-->
+    <!--<artifactId>maven-surefire-plugin</artifactId>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+    <!--</build>-->
+    <!--</profile>-->
+    <!--</profiles>-->
 </project>

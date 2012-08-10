@@ -3,7 +3,7 @@
   <head>
     <script type="text/javascript">
       if (window.opener && window.opener.oauth2win && window.opener.oauth2win.__doAuthLogin) {
-        window.opener.oauth2win.__doAuthLogin(location.search, location.hash);
+        window.opener.oauth2win.__doAuthLogin(location.hash);
       } else {
         document.body.innerText =
             "Your browser seems to be stopping this window from communicating with the main window.";

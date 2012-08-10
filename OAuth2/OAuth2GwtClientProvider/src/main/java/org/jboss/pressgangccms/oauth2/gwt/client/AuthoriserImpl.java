@@ -58,8 +58,8 @@ class AuthoriserImpl extends Authoriser {
         if (!$wnd.oauth2win) {
             $wnd.oauth2win = {};
         }
-        $wnd.oauth2win.__doAuthLogin = $entry(function(queryString, hash) {
-          self.@org.jboss.pressgangccms.oauth2.gwt.client.Authoriser::finish(Ljava/lang/String;Ljava/lang/String;)(queryString,hash);
+        $wnd.oauth2win.__doAuthLogin = $entry(function(hash) {
+          self.@org.jboss.pressgangccms.oauth2.gwt.client.Authoriser::finish(Ljava/lang/String;)(hash);
         });
     }-*/;
 
@@ -81,12 +81,12 @@ class AuthoriserImpl extends Authoriser {
     }
 
     @Override
-    void finish(String queryString, String hash) {
+    void finish(String hash) {
         // Clean up the popup
         if (window != null && window.isOpen()) {
             window.close();
         }
-        super.finish(queryString, hash);
+        super.finish(hash);
     }
 
     // Because GWT's Window.open() method does not return a reference to the

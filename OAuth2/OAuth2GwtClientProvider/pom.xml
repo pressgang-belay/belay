@@ -14,11 +14,6 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <gwt.gen.dir>${project.build.directory}/gwt-gen</gwt.gen.dir>
-        <gwt.module.name>org.jboss.pressgangccms.oauth2.gwt.script.OAuth2GwtClientProviderScript</gwt.module.name>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -30,6 +25,17 @@
             <artifactId>gwt-oauth2</artifactId>
             <version>${gwtoauth2.version}</version>
             <classifier>alpha</classifier>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ipsedixit</groupId>
+            <artifactId>ipsedixit</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
     <build>
