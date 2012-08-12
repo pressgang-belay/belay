@@ -10,6 +10,7 @@ import org.apache.amber.oauth2.rsfilter.OAuthClient;
 import org.apache.amber.oauth2.rsfilter.OAuthDecision;
 import org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint;
 import org.jboss.pressgangccms.oauth2.resourceserver.service.OAuth2RSAuthService;
+import org.jboss.pressgangccms.oauth2.resourceserver.util.Resources;
 import org.jboss.pressgangccms.oauth2.shared.data.model.AccessTokenExpiryInfo;
 import org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo;
 import org.joda.time.DateTime;
@@ -77,11 +78,10 @@ public class OAuth2RSDecision implements OAuthDecision {
             log.info("Verified token " + tokenGrantInfo.getAccessToken());
             isAuthorized = true;
             // TODO add check that non-expiring tokens are being used with particular, approved clients
-            // If client has no refresh token and token does expire, push out expiry time
+            // If client has no refresh token and token is within the threshold time of expiring, push out expiry time
             if ((!tokenGrantInfo.getHasRefreshToken())
-                    && (!tokenGrantInfo.getAccessTokenExpiry().equals("0"))
+                    && tokenCloseToExpiring(tokenGrantInfo)
                     && response != null) {
-                // TODO Perhaps we should only request an extension when token is within certain period of expiring
                 log.info("Requesting token expiry time be extended");
                 Optional<AccessTokenExpiryInfo> newExpiryInfo = authService.extendAccessTokenExpiry(tokenGrantInfo.getAccessToken());
                 if (newExpiryInfo.isPresent()) {
@@ -98,7 +98,21 @@ public class OAuth2RSDecision implements OAuthDecision {
         throw OAuthProblemException.error(OAuthError.ResourceResponse.INSUFFICIENT_SCOPE);
     }
 
+    private boolean tokenCloseToExpiring(TokenGrantInfo tokenGrantInfo) throws OAuthProblemException {
+        Optional<DateTime> expiryDate = getTokenExpiryDate(tokenGrantInfo);
+        return (expiryDate.isPresent()
+                && expiryDate.get().minusSeconds(Resources.getTokenExpiryExtensionThreshold()).isBeforeNow());
+    }
+
     private void checkTokenCurrentAndNotExpired(TokenGrantInfo tokenGrantInfo) throws OAuthProblemException {
+        Optional<DateTime> expiryDate = getTokenExpiryDate(tokenGrantInfo);
+        if ((expiryDate.isPresent() && expiryDate.get().isBeforeNow()) || (!tokenGrantInfo.getGrantCurrent())) {
+            log.warning("Attempt to use expired or superseded token " + tokenGrantInfo.getAccessToken());
+            throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
+        }
+    }
+
+    private Optional<DateTime> getTokenExpiryDate(TokenGrantInfo tokenGrantInfo) throws OAuthProblemException {
         int expirySeconds;
         try {
             expirySeconds = Integer.parseInt(tokenGrantInfo.getAccessTokenExpiry());
@@ -106,12 +120,11 @@ public class OAuth2RSDecision implements OAuthDecision {
             log.warning("NumberFormatException during token check: " + e);
             throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
         }
-        DateTime expiryDate = new DateTime(tokenGrantInfo.getGrantTimeStamp()).
-                plusSeconds(Math.abs(expirySeconds));
-        // Allow tokens with expiry seconds set to 0; these are non-expiring tokens
-        if ((expirySeconds != 0 && expiryDate.isBeforeNow()) || (!tokenGrantInfo.getGrantCurrent())) {
-            log.warning("Attempt to use expired or superseded token " + tokenGrantInfo.getAccessToken());
-            throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
+        // If expiry seconds is 0, token does not expire
+        if (expirySeconds == 0) {
+            return Optional.absent();
+        } else {
+            return Optional.of(new DateTime(tokenGrantInfo.getGrantTimeStamp()).plusSeconds(Math.abs(expirySeconds)));
         }
     }
 
