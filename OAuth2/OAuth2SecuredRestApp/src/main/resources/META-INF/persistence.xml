@@ -21,8 +21,6 @@
          <property name="hibernate.hbm2ddl.auto" value="create-drop" />
          <property name="hibernate.hbm2ddl.import_files" value="import.sql" />
          <property name="hibernate.show_sql" value="false" />
-          <property name="hibernate.c3p0.timeout" value="0"/>
-          <property name="hibernate.c3p0.idle_test_period" value="120"/>
       </properties>
    </persistence-unit>
     <persistence-unit name="oauth2-resourceserver">
@@ -38,8 +36,6 @@
             <property name="hibernate.hbm2ddl.auto" value="create-drop" />
             <property name="hibernate.hbm2ddl.import_files" value="resourceserver-import.sql" />
             <property name="hibernate.show_sql" value="false" />
-            <property name="hibernate.c3p0.timeout" value="0"/>
-            <property name="hibernate.c3p0.idle_test_period" value="120"/>
         </properties>
     </persistence-unit>
 </persistence>
