@@ -33,7 +33,8 @@
         <openidfilter.version>1.0-SNAPSHOT</openidfilter.version>
         <jodatime.version>2.0</jodatime.version>
         <xmlbuilder.version>0.4</xmlbuilder.version>
-        <ipsedixit.version>1.0.1</ipsedixit.version>
+        <ipsedixit.version>1.0.2</ipsedixit.version>
+        <mockito.version>1.9.0</mockito.version>
         <commonslang.version>2.6</commonslang.version>
         <commonsconfiguration.version>1.8</commonsconfiguration.version>
         <resteasy.version>2.3.4.Final</resteasy.version>

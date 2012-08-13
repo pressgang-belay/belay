@@ -17,14 +17,19 @@ import static org.jboss.pressgangccms.oauth2.gwt.client.Constants.OAUTH_HEADER_N
  */
 public class OAuthHandler {
 
-    private AuthorisationRequest lastAuthRequest;
-    private final static Authoriser AUTH = Authoriser.get();
+    AuthorisationRequest lastAuthRequest;
+    private static Authoriser auth;
 
     public static OAuthHandler get() {
+        auth = Authoriser.get();
         return new OAuthHandler();
     }
 
-    private OAuthHandler() {
+    OAuthHandler() {
+    }
+
+    OAuthHandler(Authoriser authoriser) {
+        auth = authoriser;
     }
 
     /**
@@ -35,7 +40,7 @@ public class OAuthHandler {
      */
     public void login(AuthorisationRequest request, final Callback<String, Throwable> callback) {
         this.lastAuthRequest = request;
-        AUTH.authorise(request, callback);
+        auth.authorise(request, callback);
     }
 
     /**
@@ -52,7 +57,7 @@ public class OAuthHandler {
         final AuthorisationRequest lastAuthorisationRequest = lastAuthRequest;
 
         // Retrieve token
-        AUTH.authorise(lastAuthorisationRequest, new Callback<String, Throwable>() {
+        auth.authorise(lastAuthorisationRequest, new Callback<String, Throwable>() {
             @Override
             public void onFailure(Throwable reason) {
                 callback.onError(null, new RuntimeException("Could not obtain request authorisation"));
@@ -60,7 +65,7 @@ public class OAuthHandler {
 
             @Override
             public void onSuccess(String token) {
-                doOAuthRequest(request, callback, token, lastAuthorisationRequest);
+                doOAuthRequest(request, token, lastAuthorisationRequest, callback);
             }
         });
     }
@@ -69,24 +74,24 @@ public class OAuthHandler {
      * Clears all stored tokens.
      */
     public void clearAllTokens() {
-        AUTH.clearAllTokens();
+        auth.clearAllTokens();
     }
 
     public String encodeUrl(String url) {
-        return AUTH.encodeUrl(url);
+        return auth.encodeUrl(url);
     }
 
-    private void doOAuthRequest(final OAuthRequest request, final RequestCallback callback, final String token,
-                                final AuthorisationRequest lastAuthorisationRequest) {
+    private void doOAuthRequest(final OAuthRequest request, final String token,
+                                final AuthorisationRequest lastAuthorisationRequest, final RequestCallback callback) {
         try {
-            request.sendRequest(token, callback, this, lastAuthorisationRequest);
+            request.sendRequest(token, this, lastAuthorisationRequest, callback);
         } catch (RequestException e) {
             callback.onError(null, e);
         }
     }
 
-    void processOAuthRequestResponse(final Request request, final Response response, final RequestCallback callback,
-                                     final AuthorisationRequest authorisation) {
+    void processOAuthRequestResponse(final Request request, final Response response, final AuthorisationRequest authorisation,
+                                     final RequestCallback callback) {
         if (response.getHeader(AUTHORISATION_HEADER) != null
                 && response.getHeader(AUTHORISATION_HEADER).startsWith(OAUTH_HEADER_NAME)) {
             // Get header and remove leading OAuth header name and space
@@ -127,8 +132,8 @@ public class OAuthHandler {
     }
 
     private void setNewExpiresIn(final String expiresIn, final AuthorisationRequest lastAuthorisationRequest) {
-        Authoriser.TokenInfo tokenInfo = AUTH.getToken(lastAuthorisationRequest);
-        tokenInfo.expires = AUTH.convertExpiresInFromSeconds(expiresIn);
-        AUTH.setToken(lastAuthorisationRequest, tokenInfo);
+        Authoriser.TokenInfo tokenInfo = auth.getToken(lastAuthorisationRequest);
+        tokenInfo.expires = auth.convertExpiresInFromSeconds(expiresIn);
+        auth.setToken(lastAuthorisationRequest, tokenInfo);
     }
 }

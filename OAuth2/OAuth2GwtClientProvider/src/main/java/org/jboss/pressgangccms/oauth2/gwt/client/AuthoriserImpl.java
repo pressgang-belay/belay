@@ -21,11 +21,13 @@ package org.jboss.pressgangccms.oauth2.gwt.client;
 import com.google.gwt.core.client.*;
 import com.google.gwt.storage.client.Storage;
 
+import static org.jboss.pressgangccms.oauth2.gwt.client.Constants.OAUTH_POPUP_NAME;
+
 /**
  * Includes code from the AuthImpl class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),
  * written by Jason Hall. Library code has been modified.
  * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
- *
+ * <p/>
  * Provides methods to manage authentication flow.
  *
  * @author kamiller@redhat.com (Katie Miller)
@@ -38,7 +40,7 @@ class AuthoriserImpl extends Authoriser {
 
     AuthoriserImpl() {
         super(getTokenStore(), new RealClock(), new RealUrlCodex(), Scheduler.get(),
-                GWT.getModuleBaseURL() + Constants.OAUTH_POPUP_NAME);
+                GWT.getModuleBaseURL() + OAUTH_POPUP_NAME);
         register();
     }
 

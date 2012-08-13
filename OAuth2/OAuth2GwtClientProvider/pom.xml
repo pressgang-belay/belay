@@ -35,7 +35,14 @@
         <dependency>
             <groupId>net.sf.ipsedixit</groupId>
             <artifactId>ipsedixit</artifactId>
-            <version>1.0.2</version>
+            <version>${ipsedixit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

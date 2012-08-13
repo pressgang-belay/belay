@@ -53,14 +53,14 @@ public class OAuthRequest {
         return builder.getRequestData();
     }
 
-    void sendRequest(final String token, final RequestCallback callback, final OAuthHandler handler,
-                     final AuthorisationRequest authorisation)
+    void sendRequest(final String token, final OAuthHandler handler, final AuthorisationRequest authorisation,
+                     final RequestCallback callback)
             throws RequestException {
         setOAuthHeader(token);
         builder.sendRequest(builder.getRequestData(), new RequestCallback() {
             @Override
             public void onResponseReceived(Request request, Response response) {
-                handler.processOAuthRequestResponse(request, response, callback, authorisation);
+                handler.processOAuthRequestResponse(request, response, authorisation, callback);
             }
 
             @Override
@@ -70,11 +70,11 @@ public class OAuthRequest {
         });
     }
 
-    private void setOAuthHeader(String token) {
+    void setOAuthHeader(String token) {
         builder.setHeader(AUTHORISATION_HEADER, buildOAuthRequestString(token));
     }
 
-    private String buildOAuthRequestString(String token) {
+    String buildOAuthRequestString(String token) {
         return new StringBuilder(OAUTH_HEADER_NAME)
                 .append(SPACE)
                 .append(token)

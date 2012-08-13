@@ -4,17 +4,16 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.testing.StubScheduler;
 import junit.framework.Assert;
 import net.sf.ipsedixit.annotation.ArbitraryString;
-import net.sf.ipsedixit.integration.junit.JUnit4IpsedixitTestRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import static junit.framework.Assert.*;
 import static net.sf.ipsedixit.core.StringType.ALPHA;
 import static net.sf.ipsedixit.core.StringType.ALPHANUMERIC;
 import static org.jboss.pressgangccms.oauth2.gwt.client.Authoriser.TokenInfo;
@@ -29,8 +28,7 @@ import static org.jboss.pressgangccms.oauth2.gwt.client.Constants.SEPARATOR;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-@RunWith(JUnit4IpsedixitTestRunner.class)
-public class AuthoriserTest {
+public class AuthoriserTest extends BaseUnitTest {
 
     private MockAuthoriser authoriser;
     private static final String POPUP_NAME = "popup.html";
@@ -62,14 +60,14 @@ public class AuthoriserTest {
      * When the request does not have a token stored, the popup is used to get the token.
      */
     @Test
-    public void testLoginNoToken() {
+    public void testAuthoriseNoToken() {
         AuthorisationRequest req = new AuthorisationRequest(url, clientId).withScopes(scope);
         MockCallback callback = new MockCallback();
         authoriser.authorise(req, callback);
 
         // The popup was used and the iframe wasn't
-        Assert.assertTrue(authoriser.loggedInViaPopup);
-        Assert.assertEquals(url + "?client_id=" + clientId + "&response_type=token&scope=" + scope + "&redirect_uri="
+        assertTrue(authoriser.loggedInViaPopup);
+        assertEquals(url + "?client_id=" + clientId + "&response_type=token&scope=" + scope + "&redirect_uri="
                 + POPUP_NAME, authoriser.lastUrl);
     }
 
@@ -77,7 +75,7 @@ public class AuthoriserTest {
      * When the token is found in cookies, but may expire soon, the popup will be used to refresh the token.
      */
     @Test
-    public void testLoginExpiringSoon() {
+    public void testAuthoriseExpiringSoon() {
         AuthorisationRequest req = new AuthorisationRequest(url, clientId).withScopes(scope);
 
         // Storing a token that expires soon (in just under one minute)
@@ -89,11 +87,11 @@ public class AuthoriserTest {
         MockCallback callback = new MockCallback();
         authoriser.authorise(req, callback);
 
-        Assert.assertTrue(authoriser.expiringInOneOrExpired(info));
+        assertTrue(authoriser.expiringInOneOrExpired(info));
 
-        Assert.assertTrue(authoriser.loggedInViaPopup);
-        Assert.assertEquals(url + "?client_id=" + clientId + "&response_type=token&scope=" + scope + "&redirect_uri=" + POPUP_NAME,
-                authoriser.lastUrl);
+        assertTrue(authoriser.loggedInViaPopup);
+        assertEquals(url + "?client_id=" + clientId + "&response_type=token&scope=" + scope + "&redirect_uri="
+                + POPUP_NAME, authoriser.lastUrl);
     }
 
     /**
@@ -101,7 +99,7 @@ public class AuthoriserTest {
      * token is immediately passed to the callback.
      */
     @Test
-    public void testLoginNotExpiringSoon() {
+    public void testAuthoriseNotExpiringSoon() {
         AuthorisationRequest req = new AuthorisationRequest(url, clientId).withScopes(scope);
 
         // Storing a token that does not expire soon (in exactly 10 minutes)
@@ -115,15 +113,38 @@ public class AuthoriserTest {
 
         // A deferred command will have been scheduled. Execute it.
         List<ScheduledCommand> deferred = ((StubScheduler) authoriser.scheduler).getScheduledCommands();
-        Assert.assertEquals(1, deferred.size());
+        assertEquals(1, deferred.size());
         deferred.get(0).execute();
 
-        // The iframe was used and the popup wasn't.
-        Assert.assertFalse(authoriser.loggedInViaPopup);
+        // The popup wasn't used.
+        assertFalse(authoriser.loggedInViaPopup);
 
         // onSuccess() was called and onFailure() wasn't.
-        Assert.assertEquals(accessToken, callback.token);
-        Assert.assertNull(callback.failure);
+        assertEquals(accessToken, callback.token);
+        assertNull(callback.failure);
+    }
+
+    /**
+     * If the forceNewRequest flag is set, the popup should be used even if a token is already in storage.
+     */
+    @Test
+    public void testAuthoriseForceNewRequest() {
+        // Given an AuthorisationRequest with the forceNewRequest flag set to true
+        AuthorisationRequest req = new AuthorisationRequest(url, clientId).withScopes(scope).forceNewRequest(true);
+        // And a token that is not due to expire soon
+        TokenInfo info = new TokenInfo();
+        info.accessToken = accessToken;
+        info.expires = String.valueOf(MockClock.now + 10 * 60 * 1000);
+        authoriser.setToken(req, info);
+
+        // When an authorise request is made
+        MockCallback callback = new MockCallback();
+        authoriser.authorise(req, callback);
+
+        // Then the user is logged in via popup
+        assertTrue(authoriser.loggedInViaPopup);
+        // And the forceNewRequest flag is reset to false
+        assertFalse(req.isForceNewRequest());
     }
 
     /**
@@ -131,7 +152,7 @@ public class AuthoriserTest {
      * iframe will be used to refresh the token without displaying the popup.
      */
     @Test
-    public void testLoginNullExpires() {
+    public void testAuthoriseNullExpires() {
         AuthorisationRequest req = new AuthorisationRequest(url, clientId).withScopes(scope);
 
         // Storing a token with a null expires time
@@ -143,10 +164,10 @@ public class AuthoriserTest {
         MockCallback callback = new MockCallback();
         authoriser.authorise(req, callback);
 
-        // When Auth supports immediate mode for supporting
+        // TODO (Jason Hall) When Authoriser supports immediate mode for supporting
         // providers, a null expiration will trigger an iframe immediate-mode
         // refresh. Until then, the popup is always used.
-        Assert.assertTrue(authoriser.loggedInViaPopup);
+        assertTrue(authoriser.loggedInViaPopup);
     }
 
     /**
@@ -164,17 +185,17 @@ public class AuthoriserTest {
         authoriser.finish("#access_token=" + accessToken + "&expires_in=10000");
 
         // onSuccess() was called and onFailure() wasn't
-        Assert.assertEquals(accessToken, callback.token);
-        Assert.assertNull(callback.failure);
+        assertEquals(accessToken, callback.token);
+        assertNull(callback.failure);
 
         // A token was stored as a result
         InMemoryTokenStore ts = (InMemoryTokenStore) authoriser.tokenStore;
-        Assert.assertEquals(1, ts.store.size());
+        assertEquals(1, ts.store.size());
 
         // That token is clientId+scope -> foo+expires
         TokenInfo info = TokenInfo.fromString(ts.store.get(clientId + SEPARATOR + scope));
-        Assert.assertEquals(accessToken, info.accessToken);
-        Assert.assertEquals("1.0005E7", info.expires);
+        assertEquals(accessToken, info.accessToken);
+        assertEquals("1.0005E7", info.expires);  // This is a brittle test and may fail intermittently
     }
 
     /**
@@ -192,12 +213,12 @@ public class AuthoriserTest {
 
         // onFailure() was called with a RuntimeException stating the error.
         Assert.assertNotNull(callback.failure);
-        Assert.assertTrue(callback.failure instanceof RuntimeException);
-        Assert.assertEquals("Could not find token in hash #foobarbaznonsense",
+        assertTrue(callback.failure instanceof RuntimeException);
+        assertEquals("Could not find token in hash #foobarbaznonsense",
                 ((RuntimeException) callback.failure).getMessage());
 
         // onSuccess() was not called.
-        Assert.assertNull(callback.token);
+        assertNull(callback.token);
     }
 
     /**
@@ -215,17 +236,17 @@ public class AuthoriserTest {
         authoriser.finish("#access_token=" + accessToken);
 
         // onSuccess() was called and onFailure() wasn't
-        Assert.assertEquals(accessToken, callback.token);
-        Assert.assertNull(callback.failure);
+        assertEquals(accessToken, callback.token);
+        assertNull(callback.failure);
 
         // A token was stored as a result
         InMemoryTokenStore ts = (InMemoryTokenStore) authoriser.tokenStore;
-        Assert.assertEquals(1, ts.store.size());
+        assertEquals(1, ts.store.size());
 
         // That token is clientId+scope -> foo+expires
         TokenInfo info = TokenInfo.fromString(ts.store.get(clientId + SEPARATOR + scope));
-        Assert.assertEquals(accessToken, info.accessToken);
-        Assert.assertNull(info.expires);
+        assertEquals(accessToken, info.accessToken);
+        assertNull(info.expires);
     }
 
     /**
@@ -269,11 +290,11 @@ public class AuthoriserTest {
 
         // onFailure() was called with a RuntimeException stating the error.
         Assert.assertNotNull(callback.failure);
-        Assert.assertTrue(callback.failure instanceof RuntimeException);
-        Assert.assertEquals(error, ((RuntimeException) callback.failure).getMessage());
+        assertTrue(callback.failure instanceof RuntimeException);
+        assertEquals(error, ((RuntimeException) callback.failure).getMessage());
 
         // onSuccess() was not called.
-        Assert.assertNull(callback.token);
+        assertNull(callback.token);
     }
 
     @Test
@@ -285,17 +306,36 @@ public class AuthoriserTest {
         authoriser.finish("#access_token=" + accessToken + "&expires_in=10");
 
         MockClock.now += 1000; // Fast forward 1s
-        Assert.assertEquals(9000.0, authoriser.expiresIn(req));
+        assertEquals(9000.0, authoriser.expiresIn(req));
 
         MockClock.now += 10000; // Fast forward another 10s
-        Assert.assertEquals(-1000.0, authoriser.expiresIn(req));
+        assertEquals(-1000.0, authoriser.expiresIn(req));
 
         // A request that has no corresponding token expires in -1ms
         AuthorisationRequest newReq = new AuthorisationRequest(anotherUrl, anotherClientId).withScopes(scope);
-        Assert.assertEquals(Double.NEGATIVE_INFINITY, authoriser.expiresIn(newReq));
+        assertEquals(Double.NEGATIVE_INFINITY, authoriser.expiresIn(newReq));
     }
 
-    static class MockAuthoriser extends Authoriser {
+    /**
+     * Clear tokens method should remove any existing tokens.
+     */
+    @Test
+    public void testClearTokens() {
+        // Given an Authoriser with an existing token
+        AuthorisationRequest req = new AuthorisationRequest(url, clientId).withScopes(scope);
+        TokenInfo info = new TokenInfo();
+        info.accessToken = accessToken;
+        info.expires = String.valueOf(MockClock.now + 10 * 60 * 1000);
+        authoriser.setToken(req, info);
+
+        // When clear tokens is called
+        authoriser.clearAllTokens();
+
+        // The token is removed
+        assertNull(authoriser.getToken(req));
+    }
+
+    protected static class MockAuthoriser extends Authoriser {
         private boolean loggedInViaPopup;
         private String lastUrl;
 

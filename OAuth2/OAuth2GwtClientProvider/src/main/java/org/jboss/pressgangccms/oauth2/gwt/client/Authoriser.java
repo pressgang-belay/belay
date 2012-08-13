@@ -16,13 +16,13 @@ import com.google.gwt.core.client.Scheduler;
  */
 public abstract class Authoriser {
 
-    private AuthorisationRequest lastAuthRequest;
-    private Callback<String, Throwable> lastCallback;
+    AuthorisationRequest lastAuthRequest;
+    Callback<String, Throwable> lastCallback;
 
     /**
      * Instance of the {@link Authoriser} to use in a GWT application.
      */
-    public static final Authoriser get() {
+    public static Authoriser get() {
         return AuthoriserImpl.INSTANCE;
     }
 
@@ -78,8 +78,7 @@ public abstract class Authoriser {
                     .toString();
             doAuthLogin(authUrl, callback);
         } else {
-            // Token was found and is good, immediately execute the callback with the
-            // access token.
+            // Token was found and is good, immediately execute the callback with the access token.
             scheduler.scheduleDeferred(new Scheduler.ScheduledCommand() {
                 @Override
                 public void execute() {
