@@ -12,7 +12,7 @@ import static org.jboss.pressgangccms.oauth2.gwt.client.Constants.*;
  */
 public class OAuthRequest {
 
-    private RequestBuilder builder;
+    RequestBuilder builder;
 
     public OAuthRequest(RequestBuilder.Method method, String url) {
         this.builder = new RequestBuilder(method, url);

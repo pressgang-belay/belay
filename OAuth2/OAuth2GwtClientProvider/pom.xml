@@ -14,6 +14,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <cobertura.totalbranchrate>60</cobertura.totalbranchrate>
+        <cobertura.totallinerate>60</cobertura.totallinerate>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -48,6 +53,34 @@
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefireplugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*GwtTest.java</exclude>
+                        <exclude>**/GwtBaseUnitTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!-- Cobertura results do not include these tests -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>${gwtplugin.version}</version>
+                <configuration>
+                    <mode>headless</mode>
+                    <includes>**/*GwtTest.java</includes>
+                    <skipTests>${skipGwtTests}</skipTests>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Prevents creation of unwanted jar -->
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>

@@ -114,7 +114,7 @@ class AuthoriserImpl extends Authoriser {
     /**
      * Real GWT implementation of Clock.
      */
-    private static class RealClock implements Clock {
+    static class RealClock implements Clock {
         @Override
         public double now() {
             return Duration.currentTimeMillis();
@@ -124,7 +124,7 @@ class AuthoriserImpl extends Authoriser {
     /**
      * Real GWT implementation of UrlCodex.
      */
-    private static class RealUrlCodex implements UrlCodex {
+    static class RealUrlCodex implements UrlCodex {
         @Override
         public native String encode(String url) /*-{
             var regexp = /%20/g;
