@@ -67,6 +67,7 @@ public class App implements EntryPoint {
 
     private void addInput() {
         RootPanel.get().add(inputLabel);
+        inputTextBox.getElement().setId("inputTextBox");
         RootPanel.get().add(inputTextBox);
     }
 
@@ -75,6 +76,7 @@ public class App implements EntryPoint {
         // as a direct result of a user action, such as clicking a button or link.
         // Otherwise, a browser's popup blocker may block the popup.
         Button button = new Button("Login with Red Hat");
+        button.getElement().setId("redHatLoginButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -88,6 +90,7 @@ public class App implements EntryPoint {
 
     private void addGoogleLogin() {
         Button button = new Button("Login with Google");
+        button.getElement().setId("googleLoginButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -101,6 +104,7 @@ public class App implements EntryPoint {
 
     private void addYahooLogin() {
         Button button = new Button("Login with Yahoo");
+        button.getElement().setId("yahooLoginButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -114,6 +118,7 @@ public class App implements EntryPoint {
 
     private void addFacebookLogin() {
         Button button = new Button("Login with Facebook");
+        button.getElement().setId("facebookLoginButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -129,6 +134,7 @@ public class App implements EntryPoint {
 
     private void addMyOpenIdLogin() {
         Button button = new Button("Login with MyOpenID.com*");
+        button.getElement().setId("myOpenIdLoginButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -142,6 +148,7 @@ public class App implements EntryPoint {
 
     private void addFedoraLogin() {
         Button button = new Button("Login with Fedora Account System*");
+        button.getElement().setId("fedoraLoginButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -155,6 +162,7 @@ public class App implements EntryPoint {
 
     private void addGetPeople() {
         Button button = new Button("GET all people");
+        button.getElement().setId("getAllPeopleButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -166,6 +174,7 @@ public class App implements EntryPoint {
 
     private void addGetPerson() {
         Button button = new Button("GET person one");
+        button.getElement().setId("getPersonOneButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -177,6 +186,7 @@ public class App implements EntryPoint {
 
     private void addAssociateIdentity() {
         Button button = new Button("Associate provider identity*");
+        button.getElement().setId("associateProviderIdentityButton");
 
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -191,6 +201,7 @@ public class App implements EntryPoint {
 
     private void makeIdentityPrimary() {
         Button button = new Button("Make identity primary*");
+        button.getElement().setId("makeIdentityPrimaryButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -205,6 +216,7 @@ public class App implements EntryPoint {
 
     private void getIdentityInfo() {
         Button button = new Button("GET identity info");
+        button.getElement().setId("getIdentityInfoButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -236,6 +248,7 @@ public class App implements EntryPoint {
     // disappear if the token has not expired.
     private void addClearTokens() {
         Button button = new Button("Clear stored tokens");
+        button.getElement().setId("clearStoredTokensButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

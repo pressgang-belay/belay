@@ -3,7 +3,7 @@ insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_U
 insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI) values (-2, 'pressgangccms_id', 'GwtOAuth2Client', 'https://localhost:8443/OAuth2GwtClientApp/org.jboss.pressgangccms.oauth2.gwt.sample.App/oAuthWindow.html')
 
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-1, 'Google', 'gmail.com')
-insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-2, 'Red Hat Kerberos', 'https://localhost:8443/OpenIdProvider/')
+insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-2, 'Red Hat', 'https://localhost:8443/OpenIdProvider')
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-3, 'Yahoo', 'yahoo.com')
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-4, 'Facebook', 'facebook.com')
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-5, 'myOpenID', 'myopenid.com')

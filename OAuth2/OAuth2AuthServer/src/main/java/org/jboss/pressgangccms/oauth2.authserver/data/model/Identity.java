@@ -97,7 +97,6 @@ public class Identity implements Serializable {
         return openIdProvider;
     }
 
-    //@NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinTable(name="OPENID_IDENTITY_OPENID_USER", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
             inverseJoinColumns = { @JoinColumn(name = "USER_ID") })

@@ -87,7 +87,7 @@ public class TokenGrant implements Serializable {
         return grantCurrent;
     }
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "SCOPE_SCOPE_ID")
     public Set<Scope> getGrantScopes() {
         return grantScopes;

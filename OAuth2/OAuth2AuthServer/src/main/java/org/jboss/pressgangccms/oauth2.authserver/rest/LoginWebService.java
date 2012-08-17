@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.net.URLDecoder.decode;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
@@ -174,10 +175,10 @@ public class LoginWebService {
         String error;
         try {
             if (! clientFound.isPresent()) {
-                log.warning("Invalid OAuth2 client in login request");
+                log.warning("Invalid OAuth2 client with id '" + clientId + "' in login request");
                 error = INVALID_CLIENT;
-            } else if (! clientRedirectUriMatches(URLDecoder.decode(redirectUri, UTF_ENCODING), clientFound.get())) {
-                log.warning("Invalid OAuth2 redirect URI in login request");
+            } else if (! clientRedirectUriMatches(decode(redirectUri, UTF_ENCODING), clientFound.get())) {
+                log.warning("Invalid OAuth2 redirect URI in login request: " + decode(redirectUri, UTF_ENCODING));
                 error = INVALID_REDIRECT_URI;
             } else {
                 return;
@@ -194,7 +195,7 @@ public class LoginWebService {
         String providerUrl = request.getParameter(OPENID_PROVIDER);
         String decodedProviderUrl;
         try {
-            decodedProviderUrl = URLDecoder.decode(providerUrl, UTF_ENCODING);
+            decodedProviderUrl = decode(providerUrl, UTF_ENCODING);
         } catch (UnsupportedEncodingException e) {
             log.severe("Could not decode provider URL: " + providerUrl);
             throw OAuthWebServiceUtil.createOAuthProblemException(URL_DECODING_ERROR, oAuthRequest.getRedirectURI());
@@ -240,17 +241,17 @@ public class LoginWebService {
     private Identity addNewIdentity(String identifier, String providerUrl, HttpServletRequest request) {
         log.info("Creating new identity and associated user");
         Identity newIdentity = new Identity();
-        User newUser = authService.createUnassociatedUser();
         newIdentity.setIdentifier(identifier);
         newIdentity.setIdentityScopes(newHashSet(authService.getDefaultScope()));
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(providerUrl);
         newIdentity.setOpenIdProvider(providerFound.get());
-        newIdentity.setUser(newUser);
         // Set extra attributes if available
         setExtraIdentityAttributes(request, newIdentity);
         authService.addIdentity(newIdentity);
+        User newUser = authService.createUnassociatedUser();
+        newIdentity.setUser(newUser);
         newUser.setPrimaryIdentity(newIdentity);
-        authService.updateUser(newUser);
+        authService.updateIdentity(newIdentity);
         return newIdentity;
     }
 

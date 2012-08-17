@@ -47,7 +47,7 @@ public class User implements Serializable {
         return primaryIdentity;
     }
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     public Set<Identity> getUserIdentities() {
         return userIdentities;
     }
