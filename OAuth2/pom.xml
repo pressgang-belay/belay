@@ -33,7 +33,7 @@
         <guice.version>2.0</guice.version>
         <json.version>20090211</json.version>
         <arquillian.version>1.0.2.Final</arquillian.version>
-        <drone.version>1.0.0.Final</drone.version>
+        <drone.version>1.1.0.CR2</drone.version>
         <picketlink.version>2.0.0.Beta1</picketlink.version>
         <seamsolder.version>3.0.0.Final</seamsolder.version>
         <openidfilter.version>1.0-SNAPSHOT</openidfilter.version>

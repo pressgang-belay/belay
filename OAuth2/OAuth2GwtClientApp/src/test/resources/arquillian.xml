@@ -9,10 +9,8 @@
     </engine>
 
     <extension qualifier="webdriver">
-        <!--<property name="browserCapabilities">firefox</property>-->
-        <!--<property name="capabilityWebdriverFirefoxBin">/usr/bin/firefox</property>-->
-        <property name="implementationClass">org.openqa.selenium.firefox.FirefoxDriver</property>
-        <property name="firefoxBinary">/usr/bin/firefox</property>
+        <property name="browserCapabilities">firefox</property>
+        <property name="capabilityWebdriverFirefoxBin">/usr/bin/firefox</property>
     </extension>
 
 </arquillian>
