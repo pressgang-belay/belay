@@ -1,74 +1,54 @@
 package org.jboss.pressgangccms.oauth2.gwt.sample.client;
 
-import com.google.common.base.Optional;
-import org.junit.After;
+import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.AppPage;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.jboss.pressgangccms.oauth2.gwt.sample.client.WebDriverUtils.*;
-import static org.junit.Assert.assertThat;
+import static org.jboss.pressgangccms.oauth2.gwt.sample.client.WebDriverUtils.TEN_SECONDS;
+import static org.jboss.pressgangccms.oauth2.gwt.sample.client.WebDriverUtils.waitUntilPageDisplayed;
 
 /**
- * Provides tests for {@link org.jboss.pressgangccms.oauth2.gwt.sample.client.App} class.
+ * Provides functional tests for {@link org.jboss.pressgangccms.oauth2.gwt.sample.client.App}.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
 public class AppTest extends WebDriverBaseTest {
 
-    private static String googleUser;
-    private static String googlePassword;
-
-    @BeforeClass
-    public static void initialise() {
-        googleUser = (String)testProperties.get("googleUser");
-        googlePassword = (String)testProperties.get("googlePassword");
-        if (googleUser == null || googlePassword == null || googleUser.isEmpty() || googlePassword.isEmpty()) {
-            throw new WebDriverException("Properties could not be initialised");
-        }
-    }
+    private AppPage appPage;
 
     @Before
     public void setUp() {
-        clearStoredTokens();
-    }
-
-    @After
-    public void tearDown() {
-        driver.close();
+        super.setUp();
+        driver.manage().window().maximize();
+        driver.manage().deleteAllCookies();
+        driver.get(BASE_URL);
+        this.appPage = waitUntilPageDisplayed(driver, TEN_SECONDS, new AppPage(driver)).clearStoredTokens();
     }
 
     @Test
     public void loginWithGoogle() throws Exception {
-        String originalWindowHandle = driver.getWindowHandle();
-        driver.findElement(By.id("googleLoginButton")).click();
-        String popupHandle = waitUntilPopupPresent(driver, log, TEN_SECONDS, "Google Accounts");
-        driver.switchTo().window(popupHandle);
-        waitUntilElementPresent(driver, log, TEN_SECONDS, By.id("Email")).sendKeys(googleUser);
-        driver.findElement(By.id("Passwd")).sendKeys(googlePassword);
-        driver.findElement(By.id("signIn")).click();
-        Optional<WebElement> approveButton = waitToSeeIfElementPresent(driver, log, TEN_SECONDS, By.id("approve_button"));
-        if (approveButton.isPresent()) {
-            approveButton.get().click();
-            log.info("Clicked Allow after login");
-        }
-        driver.switchTo().window(originalWindowHandle);
-        Alert alert = driver.switchTo().alert();
-        String alertText = alert.getText();
-        log.info("Alert text: " + alertText);
-        alert.accept();
-        assertThat(alertText, containsString("Result"));
+        appPage.loginWithGoogle(testUsers.get("googleUser"), testUsers.get("googlePassword"), false, false);
     }
 
-    private void clearStoredTokens() {
-        log.info("Clearing stored tokens");
-        driver.get(BASE_URL);
-        driver.findElement(By.id("clearStoredTokensButton")).click();
-        driver.switchTo().alert().accept();
+    @Test
+    public void loginWithYahoo() throws Exception {
+        appPage.loginWithYahoo(testUsers.get("yahooUser"), testUsers.get("yahooPassword"), false);
     }
+
+    @Test
+    public void loginWithFedora() throws Exception {
+        appPage.loginWithFedora(testUsers.get("fedoraUser"), testUsers.get("fedoraPassword"));
+    }
+
+    @Test
+    public void loginWithMyOpenId() throws Exception {
+        appPage.loginWithMyOpenId(testUsers.get("myOpenIdUser"), testUsers.get("myOpenIdPassword"), false, false);
+    }
+
+    @Test
+    public void loginWithRedHat() throws Exception {
+        appPage.loginWithRedHat(testUsers.get("redHatUser"), testUsers.get("redHatPassword"));
+    }
+
+
 }

@@ -8,6 +8,12 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>PressGangCCMSOAuth2Parent</name>
+    <developers>
+        <developer>
+            <name>Katie Miller</name>
+            <email>kamiller@redhat.com</email>
+        </developer>
+    </developers>
 
     <modules>
         <module>OAuth2Shared</module>
@@ -111,14 +117,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${compilerplugin.version}</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${jarplugin.version}</version>
@@ -152,46 +150,38 @@
                         <skipTests>${skipTests}</skipTests>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>${checkstyleplugin.version}</version>
-                    <configuration>
-                        <configLocation>checkstyle.xml</configLocation>
-                        <consoleOutput>true</consoleOutput>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${coberturaplugin.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compilerplugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <inherited>true</inherited>
+                <version>${checkstyleplugin.version}</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <inherited>true</inherited>
+                <version>${coberturaplugin.version}</version>
                 <configuration>
                     <instrumentation>
                         <excludes>
@@ -204,8 +194,16 @@
                         <haltOnFailure>${cobertura.haltonfailure}</haltOnFailure>
                     </check>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
+
     </build>
 
     <!--<profiles>-->

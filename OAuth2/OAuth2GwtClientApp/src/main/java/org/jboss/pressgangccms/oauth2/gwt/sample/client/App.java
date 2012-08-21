@@ -29,7 +29,7 @@ public class App implements EntryPoint {
     private static final String MYOPENID_PROVIDER_PREFIX = "https://";
     private static final String MYOPENID_PROVIDER_SUFFIX = ".myopenid.com";
     private static final String FEDORA_PROVIDER_PREFIX = "https://admin.fedoraproject.org/accounts/openid/id/";
-    private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider/";
+    private static final String RED_HAT_PROVIDER_URL = "https://localhost:8443/OpenIdProvider";
     private static final String SAMPLE_REST_APP_URL = "https://localhost:8443/OAuth2SecuredRestApp";
     private static final String PEOPLE_URL = SAMPLE_REST_APP_URL + "/rest/people";
     private static final String PERSON_1_URL = SAMPLE_REST_APP_URL + "/rest/people/1";
@@ -72,7 +72,7 @@ public class App implements EntryPoint {
     }
 
     private void addRedHatLogin() {
-        // Since the auth flow requires opening a popup window, it must be started
+        // Since the auth flow requires opening a popup window, it must be sthttp://oauth.net/2/arted
         // as a direct result of a user action, such as clicking a button or link.
         // Otherwise, a browser's popup blocker may block the popup.
         Button button = new Button("Login with Red Hat");
@@ -174,7 +174,7 @@ public class App implements EntryPoint {
 
     private void addGetPerson() {
         Button button = new Button("GET person one");
-        button.getElement().setId("getPersonOneButton");
+        button.getElement().setId("getPersonButton");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -253,7 +253,6 @@ public class App implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 OAuthHandler.get().clearAllTokens();
-                Window.alert("All tokens cleared");
             }
         });
         RootPanel.get().add(button);
