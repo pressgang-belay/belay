@@ -4,15 +4,15 @@ import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.AppPage;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.jboss.pressgangccms.oauth2.gwt.sample.client.WebDriverUtils.TEN_SECONDS;
-import static org.jboss.pressgangccms.oauth2.gwt.sample.client.WebDriverUtils.waitUntilPageDisplayed;
+import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtils.TEN_SECONDS;
+import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtils.waitUntilPageDisplayed;
 
 /**
  * Provides functional tests for {@link org.jboss.pressgangccms.oauth2.gwt.sample.client.App}.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AppTest extends WebDriverBaseTest {
+public class AppTest extends BaseAppTest {
 
     private AppPage appPage;
 

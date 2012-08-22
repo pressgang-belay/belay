@@ -1,11 +1,11 @@
 package org.jboss.pressgangccms.oauth2.gwt.sample.client.page;
 
 import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.external.*;
-import org.openqa.selenium.Alert;
+import org.jboss.pressgangccms.util.test.functional.webdriver.page.BasePage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import static org.jboss.pressgangccms.oauth2.gwt.sample.client.WebDriverUtils.*;
+import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtils.*;
 
 /**
  * Page object representing the (only) page in the demo Application.

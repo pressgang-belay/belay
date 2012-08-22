@@ -1,6 +1,6 @@
 package org.jboss.pressgangccms.oauth2.gwt.sample.client.page.external;
 
-import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.BasePage;
+import org.jboss.pressgangccms.util.test.functional.webdriver.page.BasePage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;

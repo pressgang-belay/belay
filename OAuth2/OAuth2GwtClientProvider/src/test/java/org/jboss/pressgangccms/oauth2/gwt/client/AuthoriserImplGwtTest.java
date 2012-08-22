@@ -5,7 +5,7 @@ package org.jboss.pressgangccms.oauth2.gwt.client;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AuthoriserImplGwtTest extends GwtBaseUnitTest {
+public class AuthoriserImplGwtTest extends BaseGwtTest {
 
     private AuthoriserImpl.UrlCodex urlCodex;
     private String unencodedUrl = "http://www.example.com/test address";

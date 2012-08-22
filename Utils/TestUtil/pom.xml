@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.pressgangccms.util.test</groupId>
+    <artifactId>test-util</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+    <name>TestUtil</name>
+    <developers>
+        <developer>
+            <name>Katie Miller</name>
+            <email>kamiller@redhat.com</email>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>webdriver-util</module>
+        <module>gwt-util</module>
+    </modules>
+
+    <properties>
+        <junit.version>4.9</junit.version>
+        <arquillian.version>1.0.2.Final</arquillian.version>
+        <drone.version>1.1.0.CR2</drone.version>
+        <hamcrest.version>1.3</hamcrest.version>
+        <ipsedixit.version>1.0.2</ipsedixit.version>
+        <mockito.version>1.9.0</mockito.version>
+        <gwtuser.version>2.4.0</gwtuser.version>
+        <jarplugin.version>2.4</jarplugin.version>
+        <author.name>Katie Miller (kamiller@redhat.com)</author.name>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${jarplugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Built-By>${author.name}</Built-By>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

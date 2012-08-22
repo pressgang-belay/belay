@@ -1,9 +1,8 @@
 package org.jboss.pressgangccms.oauth2.gwt.sample.client;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.drone.api.annotation.Drone;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.pressgangccms.util.test.functional.webdriver.BaseWebDriverTest;
+import org.jboss.pressgangccms.util.test.functional.webdriver.ScreenshotTestRule;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
@@ -11,11 +10,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,22 +19,19 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 
 /**
- * Base class for WebDriver tests.
+ * Base test for {@link org.jboss.pressgangccms.oauth2.gwt.sample.client.App}.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-@RunWith(Arquillian.class)
-public class WebDriverBaseTest {
+public class BaseAppTest extends BaseWebDriverTest {
 
     private static Properties testProperties = new Properties();
     private static List<String> providers = asList("google", "yahoo", "fedora", "myOpenId", "redHat", "facebook");
-    static final Logger log = Logger.getLogger(AppTest.class.getName());
     static final String WEBAPP_SRC = "src/main/webapp";
     static final String APP_NAME = "OAuth2GwtClientApp";
     static final String BASE_URL = "https://localhost:8443/" + APP_NAME;
@@ -55,15 +47,8 @@ public class WebDriverBaseTest {
                 .addAsWebInfResource(new File(WEBAPP_SRC, "WEB-INF/web.xml"));
     }
 
-    @Drone
-    FirefoxDriver driver;
-
-    // Hopefully can use this when url/contextRoot can be defined in config
-    @ArquillianResource
-    URL deploymentURL;
-
     @Rule
-    public ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule((String) testProperties.get("projectBaseDir"));
+    public ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule(testProperties.get("projectBaseDir") + "/target/surefire-reports/screenshots/");
 
     @BeforeClass
     public static void initialise() throws IOException {
@@ -88,15 +73,4 @@ public class WebDriverBaseTest {
         screenshotTestRule.setDriver(driver);
     }
 
-    @Test
-    public void sanity() {
-        // Requires a test to prevent initialisation error
-        assert (true);
-    }
-
-    public WebDriver getDriver() {
-        return driver;
-    }
 }
-
-

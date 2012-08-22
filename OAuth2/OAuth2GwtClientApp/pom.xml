@@ -38,6 +38,12 @@
             <version>${gwtuser.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jboss.pressgangccms.util.test</groupId>
+            <artifactId>webdriver-util</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>

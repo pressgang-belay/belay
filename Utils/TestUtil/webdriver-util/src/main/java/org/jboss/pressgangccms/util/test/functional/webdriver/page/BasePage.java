@@ -1,10 +1,10 @@
-package org.jboss.pressgangccms.oauth2.gwt.sample.client.page;
+package org.jboss.pressgangccms.util.test.functional.webdriver.page;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
 /**
- * Base page object.
+ * Base page object for functional testing with WebDriver.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */

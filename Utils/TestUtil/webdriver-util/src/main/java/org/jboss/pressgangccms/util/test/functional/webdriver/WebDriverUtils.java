@@ -1,19 +1,14 @@
-package org.jboss.pressgangccms.oauth2.gwt.sample.client;
+package org.jboss.pressgangccms.util.test.functional.webdriver;
 
 import com.google.common.base.Optional;
-import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.BasePage;
+import org.jboss.pressgangccms.util.test.functional.webdriver.page.BasePage;
 import org.openqa.selenium.*;
 
-import javax.swing.plaf.metal.MetalBorders;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -22,8 +17,6 @@ import static org.junit.Assert.assertThat;
  * @author kamiller@redhat.com (Katie Miller)
  */
 public class WebDriverUtils {
-
-    //TODO put in separate project
 
     public static final long ONE_SECOND = 1000;
     public static final long THREE_SECONDS = ONE_SECOND * 3;
@@ -145,14 +138,16 @@ public class WebDriverUtils {
         do {
             try {
                 Thread.sleep(ONE_SECOND);
-            } catch (InterruptedException e) {
+            } catch (java.lang.InterruptedException e) {
                 log.warning("Wait interrupted");
                 return;
             }
         } while (currentTimeMillis() < endTime);
     }
 
-    // Used to get around WebDriver bug
+    /**
+     * Used as workaround for WebDriver bug.
+     */
     public static void verifyAlertInParallelThreadAfterWait(final WebDriver driver, final String windowHandle,
                                                             final long waitMillis, final long timeout,
                                                             final String verifyText) throws Exception {

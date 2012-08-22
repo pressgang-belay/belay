@@ -1,4 +1,4 @@
-package org.jboss.pressgangccms.oauth2.gwt.client;
+package org.jboss.pressgangccms.util.test.unit.gwt;
 
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.http.client.Request;
@@ -41,19 +41,19 @@ public class BaseUnitTest {
      * Modelled from http://blog.reflectedcircle.co.uk/2009/12/08/gwt-rpc-asynccallback-testing-using-mockito/.
      */
     public static class CallbackMockStubber {
-        static <T> Stubber callSuccessWith(final String data) {
+        public static <T> Stubber callSuccessWith(final String data) {
             return Mockito.doAnswer(new Answer<T>() {
                 @Override
                 @SuppressWarnings("unchecked")
                 public T answer(InvocationOnMock invocationOnMock) throws Throwable {
-                    final Object[] args = invocationOnMock.getArguments();
+                    final java.lang.Object[] args = invocationOnMock.getArguments();
                     ((Callback) args[args.length - 1]).onSuccess(data);
                     return null;
                 }
             });
         }
 
-        static <T> Stubber callFailureWith(final Throwable error) {
+        public static <T> Stubber callFailureWith(final Throwable error) {
             return Mockito.doAnswer(new Answer<T>() {
                 @Override
                 @SuppressWarnings("unchecked")
@@ -65,7 +65,7 @@ public class BaseUnitTest {
             });
         }
 
-        static <T> Stubber callOnResponseReceivedWith(final Request request, final Response response) {
+        public static <T> Stubber callOnResponseReceivedWith(final Request request, final Response response) {
             return Mockito.doAnswer(new Answer<T>() {
                 @Override
                 @SuppressWarnings("unchecked")
@@ -77,7 +77,7 @@ public class BaseUnitTest {
             });
         }
 
-        static <T> Stubber callOnErrorWith(final Request request, final Throwable exception) {
+        public static <T> Stubber callOnErrorWith(final Request request, final Throwable exception) {
             return Mockito.doAnswer(new Answer<T>() {
                 @Override
                 @SuppressWarnings("unchecked")

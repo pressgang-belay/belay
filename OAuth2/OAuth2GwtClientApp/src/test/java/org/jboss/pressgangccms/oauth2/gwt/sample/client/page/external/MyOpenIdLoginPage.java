@@ -1,13 +1,13 @@
 package org.jboss.pressgangccms.oauth2.gwt.sample.client.page.external;
 
-import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.BasePage;
+import org.jboss.pressgangccms.util.test.functional.webdriver.page.BasePage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import static org.jboss.pressgangccms.oauth2.gwt.sample.client.WebDriverUtils.*;
 import static org.jboss.pressgangccms.oauth2.gwt.sample.client.page.AppPage.getExpectedLoginResultText;
 import static org.jboss.pressgangccms.oauth2.gwt.sample.client.page.AppPage.getWindowHandle;
+import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtils.*;
 
 /**
  * Page object representing MyOpenID login page.

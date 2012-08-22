@@ -4,6 +4,7 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.testing.StubScheduler;
 import junit.framework.Assert;
 import net.sf.ipsedixit.annotation.ArbitraryString;
+import org.jboss.pressgangccms.util.test.unit.gwt.BaseUnitTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

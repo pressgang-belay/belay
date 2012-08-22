@@ -1,4 +1,4 @@
-package org.jboss.pressgangccms.oauth2.gwt.sample.client;
+package org.jboss.pressgangccms.util.test.functional.webdriver;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.rules.TestRule;
@@ -24,9 +24,9 @@ public class ScreenshotTestRule implements TestRule {
     static WebDriver driver;
     static String screenshotDir;
 
-    public ScreenshotTestRule(String projectBaseDir) {
+    public ScreenshotTestRule(String screenshotDir) {
         super();
-        screenshotDir = projectBaseDir + "/target/surefire-reports/screenshots/";
+        this.screenshotDir = screenshotDir;
         log.info("Screenshots will be saved to: " + screenshotDir);
     }
 
