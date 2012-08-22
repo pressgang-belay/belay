@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,7 +71,9 @@ public class BaseAppTest extends BaseWebDriverTest {
     @Before
     public void setUp() {
         // Set WebDriver
-        screenshotTestRule.setDriver(driver);
+        getDriver().quit();
+        setDriver(new FirefoxDriver());
+        screenshotTestRule.setDriver(getDriver());
     }
 
 }

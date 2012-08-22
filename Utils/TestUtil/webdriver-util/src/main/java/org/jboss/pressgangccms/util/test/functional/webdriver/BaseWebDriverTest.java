@@ -24,7 +24,7 @@ public abstract class BaseWebDriverTest {
     static final Logger log = Logger.getLogger(BaseWebDriverTest.class.getName());
 
     @Drone
-    protected WebDriver driver;
+    WebDriver driver;
 
     @ArquillianResource
     URL deploymentURL;
@@ -33,10 +33,16 @@ public abstract class BaseWebDriverTest {
     public void sanityCheck() {
         // Requires a test to prevent initialisation error
         assertThat(true, is(true));
+        driver.close();
     }
 
     public WebDriver getDriver() {
         return driver;
+    }
+
+    public WebDriver setDriver(WebDriver driver) {
+        this.driver = driver;
+        return this.driver;
     }
 }
 

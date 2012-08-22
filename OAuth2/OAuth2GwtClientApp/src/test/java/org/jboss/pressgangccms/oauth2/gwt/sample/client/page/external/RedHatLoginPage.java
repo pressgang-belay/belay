@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 
 import static org.jboss.pressgangccms.oauth2.gwt.sample.client.page.AppPage.getExpectedLoginResultText;
 import static org.jboss.pressgangccms.oauth2.gwt.sample.client.page.AppPage.getWindowHandle;
-import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtils.*;
+import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtil.*;
 
 /**
  * Page object representing Red Hat login page.

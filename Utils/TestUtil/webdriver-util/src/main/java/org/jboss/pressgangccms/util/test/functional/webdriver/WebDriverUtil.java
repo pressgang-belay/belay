@@ -16,7 +16,7 @@ import static org.junit.Assert.assertThat;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class WebDriverUtils {
+public class WebDriverUtil {
 
     public static final long ONE_SECOND = 1000;
     public static final long THREE_SECONDS = ONE_SECOND * 3;
@@ -26,7 +26,7 @@ public class WebDriverUtils {
     public static final long THIRTY_SECONDS = TEN_SECONDS * 3;
     public static final long ONE_MINUTE = THIRTY_SECONDS * 2;
 
-    private static final Logger log = Logger.getLogger(WebDriverUtils.class.getName());
+    private static final Logger log = Logger.getLogger(WebDriverUtil.class.getName());
 
     public interface WaitCondition<T> {
         public Optional<T> checkWaitCondition();
@@ -91,7 +91,7 @@ public class WebDriverUtils {
         });
     }
 
-    public static Optional<BasePage> waitToSeeIfPageDisplayed(WebDriver driver, long maxWaitMillis, BasePage page) {
+    public static <T extends BasePage> Optional<T> waitToSeeIfPageDisplayed(WebDriver driver, long maxWaitMillis, T page) {
         try {
             return Optional.of(waitUntilPageDisplayed(driver, maxWaitMillis, page));
         } catch (Exception e) {
@@ -109,12 +109,20 @@ public class WebDriverUtils {
             @Override
             public String handleTimeout() {
                 log.warning("Timed out while looking for popup with title: " + popupTitle);
-                throw new WebDriverException("Could not find popup with title: " + popupTitle);
+                throw new WebDriverException("Could not find popup with title containing: " + popupTitle);
             }
         });
     }
 
-    public static Alert waitUntilAlertPresent(final WebDriver driver, long maxWaitMillis) {
+    public static Optional<String> waitToSeeIfPopupPresent(final WebDriver driver, long maxWaitMillis, final String popupTitle) {
+        try {
+            return Optional.of(waitUntilPopupPresent(driver, maxWaitMillis, popupTitle));
+        } catch (WebDriverException e) {
+            return Optional.absent();
+        }
+    }
+
+    public static Alert waitUntilAlertPresent(final WebDriver driver, final long maxWaitMillis) {
         return waitForCondition(maxWaitMillis, new WaitCondition<Alert>() {
             @Override
             public Optional<Alert> checkWaitCondition() {
@@ -131,6 +139,14 @@ public class WebDriverUtils {
                 throw new WebDriverException("Alert could not be found");
             }
         });
+    }
+
+    public static Optional<Alert> waitToSeeIfAlertPresent(final WebDriver driver, final long maxWaitMillis) {
+        try {
+            return Optional.of(waitUntilAlertPresent(driver, maxWaitMillis));
+        } catch (WebDriverException e) {
+            return Optional.absent();
+        }
     }
 
     public static void doWait(long waitMillis) {
@@ -150,20 +166,15 @@ public class WebDriverUtils {
      */
     public static void verifyAlertInParallelThreadAfterWait(final WebDriver driver, final String windowHandle,
                                                             final long waitMillis, final long timeout,
-                                                            final String verifyText) throws Exception {
+                                                            final String expectedAlertText) throws Exception {
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 doWait(waitMillis);
-                log.info("Checking for alert in parallel thread");
+                log.info("Switching window and verifying alert in parallel thread");
                 driver.switchTo().window(windowHandle);
-                Alert alert = waitUntilAlertPresent(driver, timeout);
-                String alertText = alert.getText();
-                log.info("Alert text: " + alertText);
-                alert.accept();
-                assertThat(alertText, containsString(verifyText));
-
+                verifyAlertText(driver, expectedAlertText, timeout);
             }
         }).start();
     }
@@ -171,7 +182,7 @@ public class WebDriverUtils {
     public static Optional<String> getWindowHandleByTitle(WebDriver driver, String title) {
         for (String handle : driver.getWindowHandles()) {
             log.fine("Found window handle: " + handle);
-            if (title.equals(driver.switchTo().window(handle).getTitle())) {
+            if (driver.switchTo().window(handle).getTitle().contains(title)) {
                 return Optional.of(handle);
             }
         }
@@ -185,4 +196,11 @@ public class WebDriverUtils {
         assertThat(checkbox.isSelected(), is(checked));
     }
 
+    public static void verifyAlertText(WebDriver driver, String expectedAlertText, long timeout) {
+        Alert alert = waitUntilAlertPresent(driver, timeout);
+        String alertText = alert.getText();
+        log.info("Alert text: " + alertText);
+        alert.accept();
+        assertThat(alertText, containsString(expectedAlertText));
+    }
 }

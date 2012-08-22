@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtils.setCheckbox;
+import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtil.setCheckbox;
 
 /**
  * Page object representing MyOpenID's OpenID approval page.

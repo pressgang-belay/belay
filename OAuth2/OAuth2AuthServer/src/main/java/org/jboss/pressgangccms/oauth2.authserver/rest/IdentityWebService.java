@@ -363,7 +363,7 @@ public class IdentityWebService {
         if ((!primaryIdentity.isPresent() || (!authService.isIdentityAssociatedWithUser(identifier,
                 primaryIdentity.get().getUser())))) {
             log.warning("Could not process request related to identity " + identifier
-                    + "; user unauthorised or system error");
+                    + " ; user unauthorised or system error");
             throw OAuthWebServiceUtil.createWebApplicationException(UNAUTHORISED_QUERY_ERROR + " " + identifier,
                     HttpServletResponse.SC_UNAUTHORIZED);
         }

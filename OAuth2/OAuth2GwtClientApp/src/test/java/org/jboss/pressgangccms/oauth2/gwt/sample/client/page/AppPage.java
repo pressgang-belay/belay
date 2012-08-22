@@ -1,11 +1,13 @@
 package org.jboss.pressgangccms.oauth2.gwt.sample.client.page;
 
+import com.google.common.base.Optional;
 import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.external.*;
 import org.jboss.pressgangccms.util.test.functional.webdriver.page.BasePage;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtils.*;
+import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtil.*;
 
 /**
  * Page object representing the (only) page in the demo Application.
@@ -57,33 +59,19 @@ public class AppPage extends BasePage {
         return expectedLoginResultText;
     }
 
-    public AppPage loginWithRedHat() {
-        redHatLoginButton.click();
-        return this;
-    }
-
     public AppPage loginWithGoogle(String email, String password, boolean isLoginPersistent,
                                    boolean isOpenIdApprovalPersistent) throws Exception {
         googleLoginButton.click();
-        GoogleLoginPage googleLoginPage = new GoogleLoginPage(getDriver());
-        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, googleLoginPage.getExpectedPageTitle());
-        getDriver().switchTo().window(popupHandle);
-        waitUntilPageDisplayed(getDriver(), TEN_SECONDS, googleLoginPage);
-        googleLoginPage.doLogin(email, password, isLoginPersistent, isOpenIdApprovalPersistent);
-        return this;
+        return doGoogleLogin(email, password, isLoginPersistent, isOpenIdApprovalPersistent);
     }
 
     public AppPage loginWithYahoo(String username, String password, boolean isLoginPersistent) throws Exception {
         yahooLoginButton.click();
-        YahooLoginPage yahooLoginPage = new YahooLoginPage(getDriver());
-        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, yahooLoginPage.getExpectedPageTitle());
-        getDriver().switchTo().window(popupHandle);
-        waitUntilPageDisplayed(getDriver(), TEN_SECONDS, yahooLoginPage);
-        yahooLoginPage.doLogin(username, password, isLoginPersistent);
-        return this;
+        return doYahooLogin(username, password, isLoginPersistent);
     }
 
     public AppPage loginWithFedora(String username, String password) throws Exception {
+        inputTextBox.clear();
         inputTextBox.sendKeys(username);
         fedoraLoginButton.click();
         FedoraLoginPage fedoraLoginPage = new FedoraLoginPage(getDriver());
@@ -96,6 +84,7 @@ public class AppPage extends BasePage {
 
     public AppPage loginWithMyOpenId(String username, String password, boolean isLoginPersistent,
                                      boolean isOpenIdApprovalPersistent) throws Exception {
+        inputTextBox.clear();
         inputTextBox.sendKeys(username);
         myOpenIdLoginButton.click();
         MyOpenIdLoginPage myOpenIdLoginPage = new MyOpenIdLoginPage(getDriver());
@@ -108,9 +97,17 @@ public class AppPage extends BasePage {
 
     public AppPage loginWithRedHat(String username, String password) throws Exception {
         redHatLoginButton.click();
+        RedHatApprovalPage approvalPage = new RedHatApprovalPage(getDriver());
+        Optional<String> approvalPopupHandle = waitToSeeIfPopupPresent(getDriver(), FIVE_SECONDS, approvalPage.getExpectedPageTitle());
+        if (approvalPopupHandle.isPresent()) {
+            getDriver().switchTo().window(approvalPopupHandle.get());
+            verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TEN_SECONDS, getExpectedLoginResultText());
+            approvalPage.approve();
+            return this;
+        }
         RedHatLoginPage redHatLoginPage = new RedHatLoginPage(getDriver());
-        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, redHatLoginPage.getExpectedPageTitle());
-        getDriver().switchTo().window(popupHandle);
+        String loginPopupHandle = waitUntilPopupPresent(getDriver(), TEN_SECONDS, redHatLoginPage.getExpectedPageTitle());
+        getDriver().switchTo().window(loginPopupHandle);
         waitUntilPageDisplayed(getDriver(), TEN_SECONDS, redHatLoginPage);
         redHatLoginPage.doLogin(username, password);
         return this;
@@ -119,5 +116,76 @@ public class AppPage extends BasePage {
     public AppPage clearStoredTokens() {
         clearStoredTokensButton.click();
         return this;
+    }
+
+    public AppPage associateGoogleIdentity(String email, String password, boolean isLoginPersistent,
+                                           boolean isOpenIdApprovalPersistent) throws Exception {
+        inputTextBox.clear();
+        inputTextBox.sendKeys("gmail.com");
+        associateProviderIdentityButton.click();
+        Optional<Alert> alert = waitToSeeIfAlertPresent(getDriver(), THREE_SECONDS);
+        if (alert.isPresent()) {
+            alert.get().accept();
+            return this;
+        }
+        return doGoogleLogin(email, password, isLoginPersistent, isOpenIdApprovalPersistent);
+    }
+
+    public AppPage associateYahooIdentity(String username, String password, boolean isLoginPersistent) throws Exception {
+        inputTextBox.clear();
+        inputTextBox.sendKeys("yahoo.com");
+        associateProviderIdentityButton.click();
+        Optional<Alert> alert = waitToSeeIfAlertPresent(getDriver(), FIVE_SECONDS);
+        if (alert.isPresent()) {
+            alert.get().accept();
+            return this;
+        }
+        return doYahooLogin(username, password, isLoginPersistent);
+    }
+
+    public String makeIdentityPrimary(String newPrimaryIdentifier) throws Exception {
+        inputTextBox.clear();
+        inputTextBox.sendKeys(newPrimaryIdentifier);
+        makeIdentityPrimaryButton.click();
+        return getAlertText(TEN_SECONDS);
+    }
+
+    public String getResultFromRedHatLoginClick() throws Exception {
+        redHatLoginButton.click();
+        return getAlertText(TEN_SECONDS);
+    }
+
+    public String getAllPeople() {
+        getAllPeopleButton.click();
+        return getAlertText(TWENTY_SECONDS);
+    }
+
+    public String getIdentityInfo() {
+        getIdentityInfoButton.click();
+        return getAlertText(TWENTY_SECONDS);
+    }
+
+    private AppPage doGoogleLogin(String email, String password, boolean isLoginPersistent, boolean isOpenIdApprovalPersistent) throws Exception {
+        GoogleLoginPage googleLoginPage = new GoogleLoginPage(getDriver());
+        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, googleLoginPage.getExpectedPageTitle());
+        getDriver().switchTo().window(popupHandle);
+        waitUntilPageDisplayed(getDriver(), TEN_SECONDS, googleLoginPage);
+        googleLoginPage.doLogin(email, password, isLoginPersistent, isOpenIdApprovalPersistent);
+        return this;
+    }
+
+    private AppPage doYahooLogin(String username, String password, boolean isLoginPersistent) throws Exception {
+        YahooLoginPage yahooLoginPage = new YahooLoginPage(getDriver());
+        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, yahooLoginPage.getExpectedPageTitle());
+        getDriver().switchTo().window(popupHandle);
+        waitUntilPageDisplayed(getDriver(), TEN_SECONDS, yahooLoginPage);
+        yahooLoginPage.doLogin(username, password, isLoginPersistent);
+        return this;
+    }
+
+    private String getAlertText(long timeout) {
+        Alert alert = waitUntilAlertPresent(getDriver(), timeout);
+        alert.accept();
+        return alert.getText();
     }
 }

@@ -14,7 +14,7 @@ public class RedHatApprovalPage extends BasePage {
 
     @FindBy(xpath = "html/body/form/input") private WebElement continueButton;
 
-    protected RedHatApprovalPage(WebDriver driver) {
+    public RedHatApprovalPage(WebDriver driver) {
         super(driver);
     }
 
