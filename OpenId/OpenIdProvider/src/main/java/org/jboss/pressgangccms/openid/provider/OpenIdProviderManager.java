@@ -1,5 +1,13 @@
 package org.jboss.pressgangccms.openid.provider;
 
+
+import org.openid4java.message.AuthSuccess;
+import org.openid4java.message.DirectError;
+import org.openid4java.message.Message;
+import org.openid4java.message.ParameterList;
+import org.openid4java.server.InMemoryServerAssociationStore;
+import org.openid4java.server.ServerManager;
+
 /**
  * This class is based on org.picketlink.identity.federation.api.openid.provider.OpenIDProviderManager by Anil Saldhana.
  * It has been modified from the original, in 2012.
@@ -26,14 +34,6 @@ package org.jboss.pressgangccms.openid.provider;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-
-import org.openid4java.message.AuthSuccess;
-import org.openid4java.message.DirectError;
-import org.openid4java.message.Message;
-import org.openid4java.message.ParameterList;
-import org.openid4java.server.InMemoryServerAssociationStore;
-import org.openid4java.server.ServerManager;
-
 public class OpenIdProviderManager {
 
     private static ServerManager serverManager;
@@ -79,6 +79,9 @@ public class OpenIdProviderManager {
         return new OpenIdMessage(DirectError.createDirectError(msg));
     }
 
+    /**
+     * Message class to model OpenID responses.
+     */
     public static class OpenIdMessage {
         private Message message;
 

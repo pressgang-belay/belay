@@ -2,26 +2,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.pressgangccms.oauth2</groupId>
+    <groupId>org.jboss.pressgangccms.auth</groupId>
     <artifactId>gwt-client-app</artifactId>
     <name>OAuth2GwtClientApp</name>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
-        <groupId>org.jboss.pressgangccms.oauth2</groupId>
-        <artifactId>pressgangccms-oauth2</artifactId>
+        <groupId>org.jboss.pressgangccms.auth</groupId>
+        <artifactId>pressgangccms-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <properties>
+        <maven.resources.overwrite>true</maven.resources.overwrite>
         <gwt.gen.dir>${project.build.directory}/gwt-gen</gwt.gen.dir>
         <gwt.module.name>org.jboss.pressgangccms.oauth2.gwt.sample.App</gwt.module.name>
+        <jboss.base.dir>${project.build.directory}/jboss</jboss.base.dir>
+        <jboss.dir>${jboss.base.dir}/jboss-as-${jbossarquillian.version}</jboss.dir>
+        <jboss.config.dir>${jboss.dir}/standalone/configuration</jboss.config.dir>
+        <jboss.deployments.dir>${jboss.dir}/standalone/deployments</jboss.deployments.dir>
+        <jboss.httpclient.dir>${jboss.dir}/modules/org/apache/httpcomponents/main</jboss.httpclient.dir>
+        <keystore.password>password</keystore.password>
+        <truststore.password>password</truststore.password>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.pressgangccms.oauth2</groupId>
+            <groupId>org.jboss.pressgangccms.auth</groupId>
             <artifactId>gwt-client-provider</artifactId>
             <version>1.0-SNAPSHOT</version>
             <classifier>alpha</classifier>
@@ -38,7 +47,7 @@
             <version>${gwtuser.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.pressgangccms.util.test</groupId>
+            <groupId>org.jboss.pressgangccms.auth</groupId>
             <artifactId>webdriver-util</artifactId>
             <version>1.0</version>
             <scope>test</scope>
@@ -109,10 +118,36 @@
         <finalName>${project.name}</finalName>
         <testResources>
             <testResource>
-                <directory>src/test/resources</directory>
+                <directory>src/test/resources/functional</directory>
                 <filtering>true</filtering>
             </testResource>
+            <testResource>
+                <directory>src/test/resources/jboss</directory>
+                <targetPath>${jboss.config.dir}</targetPath>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/ssl</directory>
+                <targetPath>${jboss.config.dir}</targetPath>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources/module</directory>
+                <targetPath>${jboss.httpclient.dir}</targetPath>
+            </testResource>
         </testResources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <phase>process-test-classes</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -169,30 +204,132 @@
                 <artifactId>jboss-as-maven-plugin</artifactId>
                 <version>${jbossplugin.version}</version>
             </plugin>
-            <!--<plugin>-->
-            <!--<artifactId>maven-dependency-plugin</artifactId>-->
-            <!--<executions>-->
-            <!--<execution>-->
-            <!--<id>unpack</id>-->
-            <!--<phase>process-test-classes</phase>-->
-            <!--<goals>-->
-            <!--<goal>unpack</goal>-->
-            <!--</goals>-->
-            <!--<configuration>-->
-            <!--<artifactItems>-->
-            <!--<artifactItem>-->
-            <!--<groupId>org.jboss.as</groupId>-->
-            <!--<artifactId>jboss-as-dist</artifactId>-->
-            <!--<version>${jbossarquillian.version}</version>-->
-            <!--<type>zip</type>-->
-            <!--<overWrite>false</overWrite>-->
-            <!--<outputDirectory>target</outputDirectory>-->
-            <!--</artifactItem>-->
-            <!--</artifactItems>-->
-            <!--</configuration>-->
-            <!--</execution>-->
-            <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-jboss</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.as</groupId>
+                                    <artifactId>jboss-as-dist</artifactId>
+                                    <version>${jbossarquillian.version}</version>
+                                    <type>zip</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${jboss.base.dir}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>deploy-module-fix</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>
+                                copy
+                            </goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.httpcomponents</groupId>
+                                    <artifactId>httpclient</artifactId>
+                                    <version>4.1.1</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${jboss.httpclient.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>deploy-wars</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jboss.pressgangccms.auth</groupId>
+                                    <artifactId>auth-server</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <destFileName>${oauth2authserver.project.name}.war</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jboss.pressgangccms.auth</groupId>
+                                    <artifactId>secured-rest-app</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <destFileName>${securedrestapp.project.name}.war</destFileName>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jboss.pressgangccms.auth</groupId>
+                                    <artifactId>openid-provider</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <overWrite>true</overWrite>
+                                    <destFileName>${openidprovider.project.name}.war</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${jboss.deployments.dir}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>create-deploy-files</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>
+                                <touch file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.dodeploy"/>
+                                <touch file="${jboss.deployments.dir}/${openidprovider.project.name}.war.dodeploy"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>${xmlplugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <transformationSets>
+                        <transformationSet>
+                            <dir>${jboss.config.dir}</dir>
+                            <includes>
+                                <include>standalone*.xml</include>
+                            </includes>
+                            <outputDir>${jboss.config.dir}</outputDir>
+                            <stylesheet>${jboss.config.dir}/standalone.xsl</stylesheet>
+                        </transformationSet>
+                    </transformationSets>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

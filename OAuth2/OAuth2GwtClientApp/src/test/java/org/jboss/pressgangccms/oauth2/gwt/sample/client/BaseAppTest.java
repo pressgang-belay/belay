@@ -71,9 +71,17 @@ public class BaseAppTest extends BaseWebDriverTest {
     @Before
     public void setUp() {
         // Set WebDriver
-        getDriver().quit();
+        if (getDriver() != null) {
+            getDriver().quit();
+        }
         setDriver(new FirefoxDriver());
         screenshotTestRule.setDriver(getDriver());
+    }
+
+    private static String getProperty(String propertyName) throws IOException {
+        URL url = ClassLoader.getSystemResource("functionaltest.properties");
+        testProperties.load(new FileInputStream(new File(url.getFile())));
+        return (String) testProperties.get(propertyName);
     }
 
 }

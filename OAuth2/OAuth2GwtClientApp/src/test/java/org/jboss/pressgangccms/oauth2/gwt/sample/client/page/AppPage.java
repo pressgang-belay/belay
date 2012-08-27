@@ -123,7 +123,7 @@ public class AppPage extends BasePage {
         inputTextBox.clear();
         inputTextBox.sendKeys("gmail.com");
         associateProviderIdentityButton.click();
-        Optional<Alert> alert = waitToSeeIfAlertPresent(getDriver(), THREE_SECONDS);
+        Optional<Alert> alert = waitToSeeIfAlertPresent(getDriver(), TEN_SECONDS);
         if (alert.isPresent()) {
             alert.get().accept();
             return this;
@@ -135,7 +135,7 @@ public class AppPage extends BasePage {
         inputTextBox.clear();
         inputTextBox.sendKeys("yahoo.com");
         associateProviderIdentityButton.click();
-        Optional<Alert> alert = waitToSeeIfAlertPresent(getDriver(), FIVE_SECONDS);
+        Optional<Alert> alert = waitToSeeIfAlertPresent(getDriver(), THREE_SECONDS);
         if (alert.isPresent()) {
             alert.get().accept();
             return this;
@@ -147,12 +147,12 @@ public class AppPage extends BasePage {
         inputTextBox.clear();
         inputTextBox.sendKeys(newPrimaryIdentifier);
         makeIdentityPrimaryButton.click();
-        return getAlertText(TEN_SECONDS);
+        return getAlertText(TWENTY_SECONDS);
     }
 
     public String getResultFromRedHatLoginClick() throws Exception {
         redHatLoginButton.click();
-        return getAlertText(TEN_SECONDS);
+        return getAlertText(TWENTY_SECONDS);
     }
 
     public String getAllPeople() {

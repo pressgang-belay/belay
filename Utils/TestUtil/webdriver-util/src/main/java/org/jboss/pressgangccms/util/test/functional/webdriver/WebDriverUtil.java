@@ -28,6 +28,11 @@ public class WebDriverUtil {
 
     private static final Logger log = Logger.getLogger(WebDriverUtil.class.getName());
 
+    /**
+     * Interface for conditions that it is desired to have WebDriver wait for.
+     *
+     * @param <T> The type that may returned after the wait
+     */
     public interface WaitCondition<T> {
         public Optional<T> checkWaitCondition();
 

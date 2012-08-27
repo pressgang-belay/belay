@@ -1,5 +1,24 @@
 package org.jboss.pressgangccms.openid.provider;
 
+import com.jamesmurty.utils.XMLBuilder;
+
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
+import java.net.URI;
+import java.security.Principal;
+import java.util.logging.Logger;
+
+import static org.jboss.pressgangccms.openid.provider.Common.*;
+import static org.jboss.pressgangccms.openid.provider.OpenIdProviderManager.OpenIdMessage;
+
 /**
  * This class is based on org.picketlink.identity.federation.api.openid.provider.OpenIDProvider by Anil Saldhana.
  * It has been modified from the original, in 2012.
@@ -26,26 +45,6 @@ package org.jboss.pressgangccms.openid.provider;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-
-import com.jamesmurty.utils.XMLBuilder;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.IOException;
-import java.net.URI;
-import java.security.Principal;
-import java.util.logging.Logger;
-
-import static org.jboss.pressgangccms.openid.provider.Common.*;
-import static org.jboss.pressgangccms.openid.provider.OpenIdProviderManager.OpenIdMessage;
-
 @Path("/provider")
 @RequestScoped
 public class OpenIdProvider {

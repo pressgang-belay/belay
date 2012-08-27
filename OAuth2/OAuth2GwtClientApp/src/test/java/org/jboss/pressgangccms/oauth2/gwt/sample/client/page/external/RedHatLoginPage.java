@@ -40,7 +40,7 @@ public class RedHatLoginPage extends BasePage {
         loginButton.click();
         RedHatApprovalPage approvalPage = new RedHatApprovalPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TWENTY_SECONDS, getExpectedLoginResultText());
+        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TEN_SECONDS, getExpectedLoginResultText());
         if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, approvalPage).isPresent()) {
             approvalPage.approve();
         }

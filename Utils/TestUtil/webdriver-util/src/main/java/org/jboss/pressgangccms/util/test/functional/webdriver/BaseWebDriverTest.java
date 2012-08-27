@@ -21,13 +21,10 @@ import static org.junit.Assert.assertThat;
 @RunWith(Arquillian.class)
 public abstract class BaseWebDriverTest {
 
-    static final Logger log = Logger.getLogger(BaseWebDriverTest.class.getName());
+    protected static final Logger log = Logger.getLogger(BaseWebDriverTest.class.getName());
 
     @Drone
     WebDriver driver;
-
-    @ArquillianResource
-    URL deploymentURL;
 
     @Test
     public void sanityCheck() {

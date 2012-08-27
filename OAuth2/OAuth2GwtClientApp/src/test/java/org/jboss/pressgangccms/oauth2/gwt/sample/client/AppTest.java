@@ -22,20 +22,21 @@ public class AppTest extends BaseAppTest {
     public void setUp() {
         super.setUp();
         getDriver().manage().window().maximize();
+        getDriver().manage().deleteAllCookies();
         getDriver().get(BASE_URL);
         this.appPage = waitUntilPageDisplayed(getDriver(), TEN_SECONDS, new AppPage(getDriver())).clearStoredTokens();
     }
 
     @After
     public void tearDown() {
-        getDriver().manage().deleteAllCookies();
-        getDriver().quit();
+        if (getDriver() != null) {
+            getDriver().quit();
+        }
     }
 
     @Test
     public void loginWithGoogle() throws Exception {
         appPage.loginWithGoogle(testUsers.get("googleUser"), testUsers.get("googlePassword"), false, false);
-
     }
 
     @Test
@@ -95,7 +96,7 @@ public class AppTest extends BaseAppTest {
         appPage.associateYahooIdentity(testUsers.get("yahooUser"), testUsers.get("yahooPassword"), false);
 
         // Then the identities are associated
-        doWait(FIVE_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
+        doWait(TEN_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
         String result = appPage.getIdentityInfo();
         assertThat(result, containsString("https://me.yahoo.com"));
         assertThat(result, containsString("/OpenIdProvider/openid/provider?id="));
@@ -107,7 +108,7 @@ public class AppTest extends BaseAppTest {
         appPage.loginWithRedHat(testUsers.get("redHatUser"), testUsers.get("redHatPassword"));
         assertLoggedInWithRedHat();
         appPage.associateGoogleIdentity(testUsers.get("googleUser"), testUsers.get("googlePassword"), false, false);
-        doWait(THREE_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
+        doWait(TEN_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
         String identityInfo = appPage.getIdentityInfo();
         String newPrimaryIdentifier = identityInfo.substring(identityInfo.indexOf("https://www.google.com")); // Trim start
         newPrimaryIdentifier = newPrimaryIdentifier.substring(0, newPrimaryIdentifier.indexOf("\"],\"identityScopes")); // Trim end
