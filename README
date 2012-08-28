@@ -7,4 +7,4 @@ OAuth2 directory contains an OAuth2 authorisation server implementation, an OAut
 
 Development work still in progress.
 
-Why the name? According to one <a href="http://www.thepiratesrealm.com/pirate%20talk.html">online pirate dictionary</a>, belay means "either to tie something down tight and secure...or to stop or ignore, as in, 'Belay that last command.'". This seemed appropriate for an auth project that will be part of the pirate-themed PressGangCCMS. 
+Why the name? According to one online pirate dictionary (http://www.thepiratesrealm.com/pirate%20talk.html), belay means "either to tie something down tight and secure...or to stop or ignore, as in, 'Belay that last command.'". This seemed appropriate for an auth project that will be part of the pirate-themed PressGangCCMS. 
