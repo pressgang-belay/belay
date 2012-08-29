@@ -7,6 +7,9 @@
     <extension qualifier="webdriver">
         <property name="browserCapabilities">firefox</property>
         <property name="capabilityWebdriverFirefoxBin">${firefox.dir}/firefox</property>
+        <property name="capabilityWebdriverFirefoxDriver">${firefox.dir}/firefox</property>
+        <property name="capabilityWebdriverAcceptUntrustedCerts">true</property>
+        <property name="capabilityWebdriverAssumeUntrustedIssuer">true</property>
     </extension>
 
     <container qualifier="jbossas-managed" default="true">

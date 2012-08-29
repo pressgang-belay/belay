@@ -177,12 +177,8 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skipTests>${skipTests}</skipTests>
-                    <reportFormat>plain</reportFormat>
-                    <goal>report-only</goal>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -321,8 +317,11 @@
                         </goals>
                         <configuration>
                             <tasks>
+                                <delete file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>
+                                <delete file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.dodeploy"/>
+                                <delete file="${jboss.deployments.dir}/${openidprovider.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${openidprovider.project.name}.war.dodeploy"/>
                                 <!-- JSE configuration will only work if bundled APR libs are removed -->
                                 <delete dir="${jboss.dir}/modules/org/jboss/as/web/main/lib"/>

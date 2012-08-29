@@ -125,6 +125,17 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefireplugin.version}</version>
+                    <configuration>
+                        <!-- Addresses issue caused by incompatibility between Cobertura and Java7 -->
+                        <argLine>-XX:-UseSplitVerifier</argLine>
+                        <skipTests>${skipTests}</skipTests>
+                        <goal>report-only</goal>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${jarplugin.version}</version>
                     <configuration>
@@ -158,18 +169,6 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefireplugin.version}</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <!-- Addresses issue caused by incompatibility between Cobertura and Java7 -->
-                    <argLine>-XX:-UseSplitVerifier</argLine>
-                    <skipTests>${skipTests}</skipTests>
-                    <goal>report-only</goal>
                 </configuration>
             </plugin>
             <plugin>
