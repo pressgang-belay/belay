@@ -218,12 +218,11 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                        <groupId>com.atlassian.browsers</groupId>
-                                        <artifactId>firefox</artifactId>
-                                        <version>8.0</version>
-                                        <classifier>linux64</classifier>
-                                        <type>jar</type>
-                                        <outputDirectory>${firefox.dir}</outputDirectory>
+                                    <groupId>org.mozilla</groupId>
+                                    <artifactId>firefox</artifactId>
+                                    <version>14.0.1</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${firefox.dir}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
