@@ -19,6 +19,7 @@
         <maven.resources.overwrite>true</maven.resources.overwrite>
         <gwt.gen.dir>${project.build.directory}/gwt-gen</gwt.gen.dir>
         <gwt.module.name>org.jboss.pressgangccms.oauth2.gwt.sample.App</gwt.module.name>
+        <firefox.dir>/usr/lib/firefox8</firefox.dir>
         <jboss.base.dir>${project.build.directory}/jboss</jboss.base.dir>
         <jboss.dir>${jboss.base.dir}/jboss-as-${jbossarquillian.version}</jboss.dir>
         <jboss.config.dir>${jboss.dir}/standalone/configuration</jboss.config.dir>
@@ -177,12 +178,6 @@
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
                     <reportFormat>plain</reportFormat>
-                    <!--<properties>-->
-                        <!--<property>-->
-                            <!--<name>listener</name>-->
-                            <!--<value>org.jboss.pressgangccms.oauth2.gwt.sample.client.MyResultListener</value>-->
-                        <!--</property>-->
-                    <!--</properties>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -214,6 +209,25 @@
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>unpack-firefox</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                        <groupId>com.atlassian.browsers</groupId>
+                                        <artifactId>firefox</artifactId>
+                                        <version>8.0</version>
+                                        <classifier>linux64</classifier>
+                                        <type>jar</type>
+                                        <outputDirectory>${firefox.dir}</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>unpack-jboss</id>
                         <phase>generate-test-resources</phase>
