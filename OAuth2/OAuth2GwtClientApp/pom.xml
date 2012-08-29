@@ -169,6 +169,7 @@
                     <module>${gwt.module.name}</module>
                     <webappDirectory>${gwt.gen.dir}</webappDirectory>
                     <extraParam>true</extraParam>
+                    <extraParam>true</extraParam>
                     <extra>${project.build.directory}/classes</extra>
                     <buildOutputDirectory>${gwt.gen.dir}</buildOutputDirectory>
                     <!-- For debug mode -->
@@ -180,6 +181,7 @@
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
                     <reportFormat>plain</reportFormat>
+                    <goal>report-only</goal>
                 </configuration>
             </plugin>
             <plugin>
