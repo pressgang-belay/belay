@@ -19,7 +19,9 @@
         <maven.resources.overwrite>true</maven.resources.overwrite>
         <gwt.gen.dir>${project.build.directory}/gwt-gen</gwt.gen.dir>
         <gwt.module.name>org.jboss.pressgangccms.oauth2.gwt.sample.App</gwt.module.name>
-        <firefox.dir>/usr/lib/firefox8</firefox.dir>
+        <firefox.version>14.0.1</firefox.version>
+        <firefox.base.dir>${project.build.directory}/firefox</firefox.base.dir>
+        <firefox.dir>${firefox.base.dir}/firefox-${firefox.version}</firefox.dir>
         <jboss.base.dir>${project.build.directory}/jboss</jboss.base.dir>
         <jboss.dir>${jboss.base.dir}/jboss-as-${jbossarquillian.version}</jboss.dir>
         <jboss.config.dir>${jboss.dir}/standalone/configuration</jboss.config.dir>
@@ -220,9 +222,9 @@
                                 <artifactItem>
                                     <groupId>org.mozilla</groupId>
                                     <artifactId>firefox</artifactId>
-                                    <version>14.0.1</version>
+                                    <version>${firefox.version}</version>
                                     <type>jar</type>
-                                    <outputDirectory>${firefox.dir}</outputDirectory>
+                                    <outputDirectory>${firefox.base.dir}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
