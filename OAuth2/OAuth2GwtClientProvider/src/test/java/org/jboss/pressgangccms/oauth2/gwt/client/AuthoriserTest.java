@@ -8,6 +8,7 @@ import org.jboss.pressgangccms.util.test.unit.gwt.BaseUnitTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +18,11 @@ import static com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import static junit.framework.Assert.*;
 import static net.sf.ipsedixit.core.StringType.ALPHA;
 import static net.sf.ipsedixit.core.StringType.ALPHANUMERIC;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.jboss.pressgangccms.oauth2.gwt.client.Authoriser.TokenInfo;
 import static org.jboss.pressgangccms.oauth2.gwt.client.Constants.SEPARATOR;
+import static org.junit.Assert.assertThat;
 
 /**
  * Includes code from the AuthTest class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),
@@ -196,7 +200,8 @@ public class AuthoriserTest extends BaseUnitTest {
         // That token is clientId+scope -> foo+expires
         TokenInfo info = TokenInfo.fromString(ts.store.get(clientId + SEPARATOR + scope));
         assertEquals(accessToken, info.accessToken);
-        assertEquals("1.0005E7", info.expires);  // This is a brittle test and may fail intermittently
+        assertThat(Double.parseDouble(info.expires), greaterThan(1.0000E7));
+        assertThat(Double.parseDouble(info.expires), lessThan(1.0020E7));
     }
 
     /**

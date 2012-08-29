@@ -148,17 +148,6 @@
                         </archive>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${surefireplugin.version}</version>
-                    <configuration>
-                        <!-- Addresses issue caused by incompatibility between Cobertura and Java7 -->
-                        <argLine>-XX:-UseSplitVerifier</argLine>
-                        <skipTests>${skipTests}</skipTests>
-                        <goal>report-only</goal>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -169,6 +158,18 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefireplugin.version}</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <!-- Addresses issue caused by incompatibility between Cobertura and Java7 -->
+                    <argLine>-XX:-UseSplitVerifier</argLine>
+                    <skipTests>${skipTests}</skipTests>
+                    <goal>report-only</goal>
                 </configuration>
             </plugin>
             <plugin>
@@ -214,24 +215,4 @@
         </plugins>
 
     </build>
-
-    <!--<profiles>-->
-    <!--<profile>-->
-    <!--&lt;!&ndash; The default profile skips all tests, though you can tune it to run-->
-    <!--just unit tests based on a custom pattern &ndash;&gt;-->
-    <!--&lt;!&ndash; Separate profiles are provided for running all tests, including Arquillian-->
-    <!--tests that execute in the specified container &ndash;&gt;-->
-    <!--<id>default</id>-->
-    <!--<activation>-->
-    <!--<activeByDefault>true</activeByDefault>-->
-    <!--</activation>-->
-    <!--<build>-->
-    <!--<plugins>-->
-    <!--<plugin>-->
-    <!--<artifactId>maven-surefire-plugin</artifactId>-->
-    <!--</plugin>-->
-    <!--</plugins>-->
-    <!--</build>-->
-    <!--</profile>-->
-    <!--</profiles>-->
 </project>
