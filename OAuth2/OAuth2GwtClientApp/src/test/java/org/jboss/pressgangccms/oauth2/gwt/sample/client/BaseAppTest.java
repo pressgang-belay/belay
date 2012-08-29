@@ -49,7 +49,7 @@ public class BaseAppTest extends BaseWebDriverTest {
     }
 
     @Rule
-    public ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule(testProperties.get("projectBaseDir") + "/target/surefire-reports/screenshots/");
+    public ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule(testProperties.get("projectBaseDir") + "/target/surefire-reports", true);
 
     @BeforeClass
     public static void initialise() throws IOException {
@@ -68,7 +68,6 @@ public class BaseAppTest extends BaseWebDriverTest {
         }
     }
 
-    @Before
     public void setUp() {
         // Set WebDriver
         if (getDriver() != null) {

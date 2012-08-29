@@ -15,11 +15,26 @@
 
     <xsl:template match="*[@default-virtual-server]">
         <xsl:copy>
-            <xsl:apply-templates select="@*|node()"/>
+            <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" redirect-port="8443"/>
             <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
                 <ssl name="https" password="${keystore.password}"
-                certificate-key-file="${jboss.config.dir}/server.keystore" protocol="TLS" />
+                     certificate-key-file="${jboss.config.dir}/server.keystore" protocol="TLS"/>
             </connector>
+            <virtual-server name="default-host" enable-welcome-root="true">
+                <alias name="localhost"/>
+                <alias name="example.com"/>
+            </virtual-server>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="*[@port='8080']">
+        <xsl:copy>
+            <xsl:attribute name="name">
+                <xsl:value-of select="'http'"/>
+            </xsl:attribute>
+            <xsl:attribute name="port">
+                <xsl:value-of select="'18081'"/>
+            </xsl:attribute>
         </xsl:copy>
     </xsl:template>
 
@@ -35,10 +50,10 @@
 
     <!--<xsl:template match="*[@name='INFO']">-->
     <!--<xsl:copy>-->
-            <!--<xsl:attribute name="name">-->
-                <!--<xsl:value-of select="'DEBUG'"/>-->
-            <!--</xsl:attribute>-->
-        <!--</xsl:copy>-->
+    <!--<xsl:attribute name="name">-->
+    <!--<xsl:value-of select="'DEBUG'"/>-->
+    <!--</xsl:attribute>-->
+    <!--</xsl:copy>-->
     <!--</xsl:template>-->
 
 </xsl:stylesheet>

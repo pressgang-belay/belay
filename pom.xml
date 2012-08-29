@@ -69,7 +69,7 @@
         <jarplugin.version>2.4</jarplugin.version>
         <jbossplugin.version>7.1.1.Final</jbossplugin.version>
         <xmlplugin.version>1.0</xmlplugin.version>
-        <surefireplugin.version>2.4.3</surefireplugin.version>
+        <surefireplugin.version>2.12.2</surefireplugin.version>
         <checkstyleplugin.version>2.6</checkstyleplugin.version>
         <coberturaplugin.version>2.5.1</coberturaplugin.version>
         <cobertura.totalbranchrate>75</cobertura.totalbranchrate>
@@ -149,12 +149,14 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${surefireplugin.version}</version>
                     <configuration>
                         <!-- Addresses issue caused by incompatibility between Cobertura and Java7 -->
                         <argLine>-XX:-UseSplitVerifier</argLine>
                         <skipTests>${skipTests}</skipTests>
+                        <goal>report-only</goal>
                     </configuration>
                 </plugin>
             </plugins>

@@ -21,17 +21,19 @@ import static org.apache.commons.lang.StringUtils.join;
 public class ScreenshotTestRule implements TestRule {
 
     static final Logger log = Logger.getLogger(ScreenshotTestRule.class.getName());
-    static WebDriver driver;
-    static String screenshotDir;
+    private WebDriver driver;
+    private String screenshotDir;
+    private boolean quitWebDriverAfterTest;
 
-    public ScreenshotTestRule(String screenshotDir) {
+    public ScreenshotTestRule(String screenshotDir, boolean quitWebDriverAfterEachTest) {
         super();
         this.screenshotDir = screenshotDir;
         log.info("Screenshots will be saved to: " + screenshotDir);
+        this.quitWebDriverAfterTest = quitWebDriverAfterEachTest;
     }
 
     public void setDriver(WebDriver driver) {
-        ScreenshotTestRule.driver = driver;
+        this.driver = driver;
     }
 
     @Override
@@ -41,18 +43,20 @@ public class ScreenshotTestRule implements TestRule {
             public void evaluate() throws Throwable {
                 try {
                     statement.evaluate();
+                    if (quitWebDriverAfterTest) driver.quit();
                 } catch (Throwable t) {
-                    captureScreenshot(description.getClassName() + "." + description.getMethodName());
+                    captureScreenshot(description.getClassName(), description.getClassName() + "." + description.getMethodName());
+                    if (quitWebDriverAfterTest) driver.quit();
                     throw t;
                 }
             }
         };
     }
 
-    public void captureScreenshot(String testName) {
+    public void captureScreenshot(String className, String testName) {
         try {
             File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
-            String screenshotPath = screenshotDir + "screenshot-" + testName + ".png";
+            String screenshotPath = screenshotDir + "/" + className + "/screenshot-" + testName + ".png";
             FileUtils.copyFile(screenshot, new File(screenshotPath));
             log.info("Screenshot saved to: " + screenshotPath);
         } catch (Throwable t) {

@@ -55,7 +55,7 @@ public class TokenWebService {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
+    public Response authorise(@Context HttpServletRequest request) throws OAuthSystemException {
         log.info("Processing token refresh request");
 
         try {

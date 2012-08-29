@@ -4,6 +4,7 @@ import org.jboss.pressgangccms.oauth2.gwt.sample.client.page.AppPage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import static org.jboss.pressgangccms.util.test.functional.webdriver.WebDriverUtil.*;
 import static org.junit.Assert.assertThat;
@@ -25,13 +26,6 @@ public class AppTest extends BaseAppTest {
         getDriver().manage().deleteAllCookies();
         getDriver().get(BASE_URL);
         this.appPage = waitUntilPageDisplayed(getDriver(), TEN_SECONDS, new AppPage(getDriver())).clearStoredTokens();
-    }
-
-    @After
-    public void tearDown() {
-        if (getDriver() != null) {
-            getDriver().quit();
-        }
     }
 
     @Test

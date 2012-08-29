@@ -176,6 +176,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
+                    <reportFormat>plain</reportFormat>
+                    <!--<properties>-->
+                        <!--<property>-->
+                            <!--<name>listener</name>-->
+                            <!--<value>org.jboss.pressgangccms.oauth2.gwt.sample.client.MyResultListener</value>-->
+                        <!--</property>-->
+                    <!--</properties>-->
                 </configuration>
             </plugin>
             <plugin>
@@ -300,6 +307,8 @@
                                 <touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>
                                 <touch file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.dodeploy"/>
                                 <touch file="${jboss.deployments.dir}/${openidprovider.project.name}.war.dodeploy"/>
+                                <!-- JSE configuration will only work if bundled APR libs are removed -->
+                                <delete dir="${jboss.dir}/modules/org/jboss/as/web/main/lib"/>
                             </tasks>
                         </configuration>
                     </execution>
