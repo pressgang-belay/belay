@@ -38,6 +38,23 @@
         </xsl:copy>
     </xsl:template>
 
+    <xsl:template match="*[@path='deployments']">
+        <xsl:copy>
+            <xsl:attribute name="path">
+                <xsl:value-of select="'deployments'"/>
+            </xsl:attribute>
+            <xsl:attribute name="relative-to">
+                <xsl:value-of select="'jboss.server.base.dir'"/>
+            </xsl:attribute>
+            <xsl:attribute name="scan-interval">
+                <xsl:value-of select="'5000'"/>
+            </xsl:attribute>
+            <xsl:attribute name="deployment-timeout">
+                <xsl:value-of select="'1200'"/>
+            </xsl:attribute>
+        </xsl:copy>
+    </xsl:template>
+
     <xsl:template match="node()[name(.)='extensions']">
         <xsl:copy-of select="."/>
         <system-properties>
