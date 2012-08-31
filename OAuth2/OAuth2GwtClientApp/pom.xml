@@ -286,7 +286,7 @@
                             <tasks>
                                 <exec executable="bash">
                                     <arg value="-c"/>
-                                    <arg value="DISPLAY='ecsmaven.usersys.redhat.com:0.0'"/>
+                                    <arg value="export DISPLAY='ecsmaven.usersys.redhat.com:0.0'"/>
                                 </exec>
                                 <delete file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>
