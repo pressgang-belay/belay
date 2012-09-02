@@ -284,10 +284,6 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <exec executable="bash">
-                                    <arg value="-c"/>
-                                    <arg value="export DISPLAY=':0'"/>
-                                </exec>
                                 <delete file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>
                                 <delete file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.deployed"/>
