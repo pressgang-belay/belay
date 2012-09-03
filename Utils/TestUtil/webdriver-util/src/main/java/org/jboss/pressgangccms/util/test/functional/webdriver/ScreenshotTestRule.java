@@ -43,10 +43,10 @@ public class ScreenshotTestRule implements TestRule {
             public void evaluate() throws Throwable {
                 try {
                     statement.evaluate();
-                    if (quitWebDriverAfterTest) driver.quit();
+                    if (quitWebDriverAfterTest && driver != null) driver.quit();
                 } catch (Throwable t) {
                     captureScreenshot(description.getClassName(), description.getClassName() + "." + description.getMethodName());
-                    if (quitWebDriverAfterTest) driver.quit();
+                    if (quitWebDriverAfterTest && driver != null) driver.quit();
                     throw t;
                 }
             }

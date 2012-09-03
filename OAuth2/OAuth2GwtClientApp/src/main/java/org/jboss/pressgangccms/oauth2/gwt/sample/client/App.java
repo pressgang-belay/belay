@@ -11,7 +11,6 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import org.jboss.pressgangccms.oauth2.gwt.client.AuthorisationRequest;
-import org.jboss.pressgangccms.oauth2.gwt.client.Authoriser;
 import org.jboss.pressgangccms.oauth2.gwt.client.OAuthHandler;
 import org.jboss.pressgangccms.oauth2.gwt.client.OAuthRequest;
 
@@ -48,7 +47,6 @@ public class App implements EntryPoint {
     private final TextBox inputTextBox = new TextBox();
 
     public void onModuleLoad() {
-        Authoriser.export(); // This line is needed
         addInput();
         addRedHatLogin();
         addGoogleLogin();

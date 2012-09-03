@@ -30,7 +30,6 @@ public abstract class BaseWebDriverTest {
     public void sanityCheck() {
         // Requires a test to prevent initialisation error
         assertThat(true, is(true));
-        driver.close();
     }
 
     public WebDriver getDriver() {
