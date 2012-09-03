@@ -75,6 +75,7 @@ public class BaseAppTest extends BaseWebDriverTest {
             getDriver().quit();
         }
         setDriver(new FirefoxDriver());
+        getDriver().manage().timeouts().pageLoadTimeout(5, TimeUnit.MINUTES);
         screenshotTestRule.setDriver(getDriver());
     }
 
