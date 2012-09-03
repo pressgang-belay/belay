@@ -98,17 +98,17 @@ public class AppPage extends BasePage {
     public AppPage loginWithRedHat(String username, String password) throws Exception {
         redHatLoginButton.click();
         RedHatApprovalPage approvalPage = new RedHatApprovalPage(getDriver());
-        Optional<String> approvalPopupHandle = waitToSeeIfPopupPresent(getDriver(), TWENTY_SECONDS, approvalPage.getExpectedPageTitle());
+        Optional<String> approvalPopupHandle = waitToSeeIfPopupPresent(getDriver(), TEN_SECONDS, approvalPage.getExpectedPageTitle());
         if (approvalPopupHandle.isPresent()) {
             getDriver().switchTo().window(approvalPopupHandle.get());
-            verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
+            verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TWENTY_SECONDS, getExpectedLoginResultText());
             approvalPage.approve();
             return this;
         }
         RedHatLoginPage redHatLoginPage = new RedHatLoginPage(getDriver());
-        String loginPopupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, redHatLoginPage.getExpectedPageTitle());
+        String loginPopupHandle = waitUntilPopupPresent(getDriver(), TEN_SECONDS, redHatLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(loginPopupHandle);
-        waitUntilPageDisplayed(getDriver(), TWENTY_SECONDS, redHatLoginPage);
+        waitUntilPageDisplayed(getDriver(), THIRTY_SECONDS, redHatLoginPage);
         redHatLoginPage.doLogin(username, password);
         return this;
     }

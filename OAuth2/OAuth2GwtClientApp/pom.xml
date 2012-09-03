@@ -277,6 +277,25 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>remove-files</id>
+                        <phase>process-test-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.deployed"/>
+                                <delete file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.deployed"/>
+                                <delete file="${jboss.deployments.dir}/${openidprovider.project.name}.war.deployed"/>
+                                <delete>
+                                    <fileset dir="${jboss.config.dir}" includes="standalone*.xml"/>
+                                </delete>
+                                <!-- JSE configuration will only work if bundled APR libs are removed -->
+                                <delete dir="${jboss.dir}/modules/org/jboss/as/web/main/lib"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>create-deploy-files</id>
                         <phase>process-test-classes</phase>
                         <goals>
@@ -284,14 +303,9 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <delete file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>
-                                <delete file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.dodeploy"/>
-                                <delete file="${jboss.deployments.dir}/${openidprovider.project.name}.war.deployed"/>
                                 <touch file="${jboss.deployments.dir}/${openidprovider.project.name}.war.dodeploy"/>
-                                <!-- JSE configuration will only work if bundled APR libs are removed -->
-                                <delete dir="${jboss.dir}/modules/org/jboss/as/web/main/lib"/>
                             </tasks>
                         </configuration>
                     </execution>
