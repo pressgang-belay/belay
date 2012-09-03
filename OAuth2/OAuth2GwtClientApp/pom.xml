@@ -288,7 +288,7 @@
                                 <delete file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.deployed"/>
                                 <delete file="${jboss.deployments.dir}/${openidprovider.project.name}.war.deployed"/>
                                 <delete>
-                                    <fileset dir="${jboss.config.dir}" includes="standalone*.xml"/>
+                                    <fileset dir="${jboss.config.dir}" includes="**/standalone*.xml"/>
                                 </delete>
                                 <!-- JSE configuration will only work if bundled APR libs are removed -->
                                 <delete dir="${jboss.dir}/modules/org/jboss/as/web/main/lib"/>
