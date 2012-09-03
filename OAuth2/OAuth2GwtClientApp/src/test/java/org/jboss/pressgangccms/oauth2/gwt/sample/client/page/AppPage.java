@@ -75,7 +75,7 @@ public class AppPage extends BasePage {
         inputTextBox.sendKeys(username);
         fedoraLoginButton.click();
         FedoraLoginPage fedoraLoginPage = new FedoraLoginPage(getDriver());
-        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, fedoraLoginPage.getExpectedPageTitle());
+        String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, fedoraLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TEN_SECONDS, fedoraLoginPage);
         fedoraLoginPage.doLogin(username, password);
@@ -88,7 +88,7 @@ public class AppPage extends BasePage {
         inputTextBox.sendKeys(username);
         myOpenIdLoginButton.click();
         MyOpenIdLoginPage myOpenIdLoginPage = new MyOpenIdLoginPage(getDriver());
-        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, myOpenIdLoginPage.getExpectedPageTitle());
+        String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, myOpenIdLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TEN_SECONDS, myOpenIdLoginPage);
         myOpenIdLoginPage.doLogin(password, isLoginPersistent, isOpenIdApprovalPersistent);
@@ -98,7 +98,7 @@ public class AppPage extends BasePage {
     public AppPage loginWithRedHat(String username, String password) throws Exception {
         redHatLoginButton.click();
         RedHatApprovalPage approvalPage = new RedHatApprovalPage(getDriver());
-        Optional<String> approvalPopupHandle = waitToSeeIfPopupPresent(getDriver(), FIVE_SECONDS, approvalPage.getExpectedPageTitle());
+        Optional<String> approvalPopupHandle = waitToSeeIfPopupPresent(getDriver(), TEN_SECONDS, approvalPage.getExpectedPageTitle());
         if (approvalPopupHandle.isPresent()) {
             getDriver().switchTo().window(approvalPopupHandle.get());
             verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TEN_SECONDS, getExpectedLoginResultText());
@@ -167,7 +167,7 @@ public class AppPage extends BasePage {
 
     private AppPage doGoogleLogin(String email, String password, boolean isLoginPersistent, boolean isOpenIdApprovalPersistent) throws Exception {
         GoogleLoginPage googleLoginPage = new GoogleLoginPage(getDriver());
-        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, googleLoginPage.getExpectedPageTitle());
+        String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, googleLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TEN_SECONDS, googleLoginPage);
         googleLoginPage.doLogin(email, password, isLoginPersistent, isOpenIdApprovalPersistent);
@@ -176,7 +176,7 @@ public class AppPage extends BasePage {
 
     private AppPage doYahooLogin(String username, String password, boolean isLoginPersistent) throws Exception {
         YahooLoginPage yahooLoginPage = new YahooLoginPage(getDriver());
-        String popupHandle = waitUntilPopupPresent(getDriver(), TWENTY_SECONDS, yahooLoginPage.getExpectedPageTitle());
+        String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, yahooLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TEN_SECONDS, yahooLoginPage);
         yahooLoginPage.doLogin(username, password, isLoginPersistent);

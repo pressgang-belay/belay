@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
@@ -74,6 +75,8 @@ public class BaseAppTest extends BaseWebDriverTest {
             getDriver().quit();
         }
         setDriver(new FirefoxDriver());
+        getDriver().manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+        getDriver().manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
         screenshotTestRule.setDriver(getDriver());
     }
 
