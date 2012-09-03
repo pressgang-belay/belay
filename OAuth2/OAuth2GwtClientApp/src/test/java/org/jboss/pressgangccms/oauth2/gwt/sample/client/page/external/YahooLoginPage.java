@@ -42,8 +42,8 @@ public class YahooLoginPage extends BasePage {
         loginButton.click();
         YahooApprovalPage approvalPage = new YahooApprovalPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TWENTY_SECONDS, AppPage.getExpectedLoginResultText());
-        if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, approvalPage).isPresent()) {
+        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, AppPage.getExpectedLoginResultText());
+        if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.approve();
         }
         return this;

@@ -101,7 +101,7 @@ public class AppPage extends BasePage {
         Optional<String> approvalPopupHandle = waitToSeeIfPopupPresent(getDriver(), TWENTY_SECONDS, approvalPage.getExpectedPageTitle());
         if (approvalPopupHandle.isPresent()) {
             getDriver().switchTo().window(approvalPopupHandle.get());
-            verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TWENTY_SECONDS, getExpectedLoginResultText());
+            verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
             approvalPage.approve();
             return this;
         }
