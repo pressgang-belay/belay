@@ -154,10 +154,8 @@
                             </excludes>
                         </instrumentation>
                         <formats>
-                            <format>
-                                <format>html</format>
-                                <format>xml</format>
-                            </format>
+                            <format>html</format>
+                            <format>xml</format>
                         </formats>
                         <check>
                             <totalBranchRate>${cobertura.totalbranchrate}</totalBranchRate>
@@ -167,8 +165,9 @@
                     </configuration>
                     <executions>
                         <execution>
+                            <phase>package</phase>
                             <goals>
-                                <goal>check</goal>
+                                <goal>cobertura</goal>
                             </goals>
                         </execution>
                     </executions>
