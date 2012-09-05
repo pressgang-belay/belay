@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.pressgangccms.auth</groupId>
     <artifactId>auth-server</artifactId>
-    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>${oauth2authserver.project.name}</name>
 
     <parent>
@@ -18,180 +19,8 @@
     <dependencies>
         <dependency>
             <groupId>org.jboss.pressgangccms.auth</groupId>
-            <artifactId>oauth2-shared</artifactId>
+            <artifactId>auth-server-provider</artifactId>
             <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- Used for identity services -->
-        <dependency>
-            <groupId>org.jboss.pressgangccms.auth</groupId>
-            <artifactId>resource-server-provider</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- Import the CDI API, using provided scope as the API is included in
-              JBoss AS 7 -->
-        <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Import the Common Annotations API (JSR-250), using provided scope
-              as the API is included in JBoss AS 7 -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Import the JAX-RS API, using provided scope as the API is included
-              in JBoss AS 7 -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.ws.rs</groupId>
-            <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Import the JPA API, using provided scope as the API is included in
-              JBoss AS 7 -->
-        <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Import the EJB API, using provided scope as the API is included in
-              JBoss AS 7 -->
-        <dependency>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- JSR-303 (Bean Validation) Implementation -->
-        <!-- Provides portable constraints such as @Email -->
-        <!-- Hibernate Validator is shipped in JBoss AS 7 -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator-annotation-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>${servletapi.version}</version>
-        </dependency>
-
-        <!-- OAuth2 TODO remove unnecessary dependencies  -->
-        <dependency>
-            <groupId>org.apache.amber</groupId>
-            <artifactId>amber-oauth2-authzserver</artifactId>
-            <version>${amber.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.amber</groupId>
-            <artifactId>amber-oauth2-resourceserver</artifactId>
-            <version>${amber.version}</version>
-        </dependency>
-
-        <!-- For testing only; remove in prod code -->
-        <dependency>
-            <groupId>org.apache.amber</groupId>
-            <artifactId>amber-oauth2-client</artifactId>
-            <version>${amber.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <!-- 4.1.2 causes SSL issues -->
-            <version>4.1.1</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openid4java</groupId>
-            <artifactId>openid4java-nodeps</artifactId>
-            <version>${openid4java.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.guice</groupId>
-            <artifactId>guice</artifactId>
-            <version>${guice.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${json.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.picketlink</groupId>
-            <artifactId>picketlink-consolidated-social</artifactId>
-            <version>${picketlink.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code</groupId>
-            <artifactId>openid-filter</artifactId>
-            <version>${openidfilter.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.google-collections</groupId>
-                    <artifactId>google-collect</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jamesmurty.utils</groupId>
-            <artifactId>java-xmlbuilder</artifactId>
-            <version>${xmlbuilder.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${jodatime.version}</version>
         </dependency>
     </dependencies>
 
@@ -211,4 +40,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

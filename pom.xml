@@ -20,6 +20,7 @@
         <module>Utils/TestUtil</module>
         <module>OpenId/OpenIdProvider</module>
         <module>OAuth2/OAuth2Shared</module>
+        <module>OAuth2/OAuth2AuthServerProvider</module>
         <module>OAuth2/OAuth2AuthServer</module>
         <module>OAuth2/OAuth2ResourceServerProvider</module>
         <module>OAuth2/OAuth2SecuredRestApp</module>
@@ -38,6 +39,14 @@
         <skipTests>false</skipTests>
         <skipGwtTests>true</skipGwtTests>
         <jboss.bom.version>1.0.1.CR2</jboss.bom.version>
+        <jboss.jaxrs.api.version>1.0.0.Final</jboss.jaxrs.api.version>
+        <jboss.annotations.api.version>1.0.1.Final</jboss.annotations.api.version>
+        <jboss.ejb.api.version>1.0.2.Final</jboss.ejb.api.version>
+        <hibernate.jpa.api.version>1.0.1.Final</hibernate.jpa.api.version>
+        <hibernate.validator.version>4.3.0.Final</hibernate.validator.version>
+        <hibernate.jpamodelgen.version>1.2.0.Final</hibernate.jpamodelgen.version>
+        <hibernate.validator.annotationproc.version>4.3.0.Final</hibernate.validator.annotationproc.version>
+        <cdi.api.version>1.0-SP4</cdi.api.version>
         <amber.version>0.22-incubating</amber.version>
         <servletapi.version>2.5</servletapi.version>
         <httpclient.version>4.2.1</httpclient.version>
