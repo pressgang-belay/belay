@@ -153,6 +153,12 @@
                                 <exclude>**/test/*</exclude>
                             </excludes>
                         </instrumentation>
+                        <formats>
+                            <format>
+                                <format>html</format>
+                                <format>xml</format>
+                            </format>
+                        </formats>
                         <check>
                             <totalBranchRate>${cobertura.totalbranchrate}</totalBranchRate>
                             <totalLineRate>${cobertura.totallinerate}</totalLineRate>
