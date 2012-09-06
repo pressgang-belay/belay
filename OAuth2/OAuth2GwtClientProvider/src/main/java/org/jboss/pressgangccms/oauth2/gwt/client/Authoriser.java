@@ -70,7 +70,7 @@ public abstract class Authoriser {
             lastAuthRequest.forceNewRequest(false);
             // A new request has been forced, token wasn't found or doesn't have an expiration, or is expired or
             // about to expire. Request a new access token.
-            String authUrl = new StringBuilder(request.toLoginUrl(urlCodex))
+            String authUrl = new StringBuilder(request.toAuthUrl(urlCodex))
                     .append(Constants.PARAMETER_SEPARATOR)
                     .append(Constants.REDIRECT_URI)
                     .append(Constants.KEY_VALUE_SEPARATOR)

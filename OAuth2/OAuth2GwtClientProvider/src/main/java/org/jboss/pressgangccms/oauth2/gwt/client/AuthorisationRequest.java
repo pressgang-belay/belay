@@ -39,7 +39,7 @@ public class AuthorisationRequest {
     /**
      * Ensure request will go to OAuth provider, regardless of whether or not a valid
      * token for this request exists. Defaults to false if not set and resets to default
-     * after a login attempt, regardless of the outcome.
+     * after an authorisation attempt, regardless of the outcome.
      */
     public AuthorisationRequest forceNewRequest(boolean forceNewRequest) {
         this.forceNewRequest = forceNewRequest;
@@ -68,7 +68,7 @@ public class AuthorisationRequest {
      * Returns a URL representation of this request, appending the client ID, scopes and, if provided,
      * OpenID provider to the original authUrl.
      */
-    String toLoginUrl(Authoriser.UrlCodex urlCodex) {
+    String toAuthUrl(Authoriser.UrlCodex urlCodex) {
         return new StringBuilder(authUrl)
                 .append(authUrl.contains(Constants.QUERY_STRING_MARKER) ? Constants.PARAMETER_SEPARATOR : Constants.QUERY_STRING_MARKER)
                 .append(Constants.CLIENT_ID).append(Constants.KEY_VALUE_SEPARATOR).append(urlCodex.encode(clientId))

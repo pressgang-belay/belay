@@ -6,12 +6,14 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import net.sf.ipsedixit.annotation.Arbitrary;
 import net.sf.ipsedixit.annotation.ArbitraryString;
+import org.hamcrest.CoreMatchers;
 import org.jboss.pressgangccms.util.test.unit.gwt.BaseUnitTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
+import static java.lang.Integer.toString;
 import static net.sf.ipsedixit.core.StringType.ALPHA;
 import static org.hamcrest.CoreMatchers.is;
 import static org.jboss.pressgangccms.oauth2.gwt.client.Authoriser.TokenInfo;
@@ -69,24 +71,24 @@ public class OAuthHandlerTest extends BaseUnitTest {
     }
 
     @Test
-    public void testLogin() throws Exception {
+    public void testAuthorisation() throws Exception {
         // Given an OAuthHandler and an AuthorisationRequest
 
-        // When login is called
-        handler.login(authRequest, callback);
+        // When authorise is called
+        handler.sendAuthRequest(authRequest, callback);
 
         // Then the authoriser is called to authorise the request
-        verify(authoriser).authorise(authRequest, callback);
+        verify(authoriser).authorise(any(AuthorisationRequest.class), any(Callback.class));
         // And the authorisation request is recorded
         assertThat(handler.lastAuthRequest.equals(authRequest), is(true));
     }
 
     @Test
-    public void testSendRequestBeforeLogin() throws Exception {
-        // Given a call to login has not been made
+    public void testSendRequestBeforeAuthorisation() throws Exception {
+        // Given a call to authorise has not been made
         handler.lastAuthRequest = null;
 
-        // When an attempt to login is made
+        // When an attempt to authorise is made
         // Then the callback's error branch is taken
         handler.sendRequest(oAuthRequest, new RequestCallback() {
             @Override
@@ -96,13 +98,13 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
             @Override
             public void onError(Request request, Throwable exception) {
-                assertThat(exception.getMessage(), is("You must log in before making requests"));
+                assertThat(exception.getMessage(), is("You must be authorised before making requests"));
             }
         });
     }
 
     @Test
-    public void testSendRequestAfterLogin() throws Exception {
+    public void testSendRequestAfterAuthorisation() throws Exception {
         // Given the user has logged in previously
         handler.lastAuthRequest = authRequest;
 
@@ -115,7 +117,7 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
     @Test
     public void testSendRequestWhenTokenInvalid() throws Exception {
-        // Given a user has logged in but a valid token cannot be retrieved
+        // Given a user has logged in previously but a valid token cannot be retrieved
         handler.lastAuthRequest = authRequest;
         CallbackMockStubber.callFailureWith(exception).when(authoriser)
                 .authorise(any(AuthorisationRequest.class), any(Callback.class));
@@ -213,6 +215,40 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
         // The authoriser is called to clear all tokens
         verify(authoriser).clearAllTokens();
+    }
+
+    @Test
+    public void testGetLastTokenResult() throws Exception {
+        // Given an OAuthHandler and a prior successful authorisation
+        CallbackMockStubber.callSuccessWith(token).when(authoriser)
+                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+
+        handler.sendAuthRequest(authRequest, callback);
+
+        // When getLastTokenResult is called
+        String result = handler.getLastTokenResult();
+
+        // Then the previous token result is returned
+        assertThat(result, is(token));
+    }
+
+    @Test
+    public void testGetTokenForRequest() throws Exception {
+        // Given an OAuthHandler and a prior successful authorisation with a given AuthorisationRequest
+        CallbackMockStubber.callSuccessWith(token).when(authoriser)
+                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+        TokenInfo info = new TokenInfo();
+        info.accessToken = token;
+        info.expires = Integer.toString(expiry);
+        given(authoriser.getToken(authRequest)).willReturn(info);
+
+        handler.sendAuthRequest(authRequest, callback);
+
+        // When getTokenForRequest is called for that request
+        String result = handler.getTokenForRequest(authRequest);
+
+        // Then the previous token result is returned
+        assertThat(result, is(token));
     }
 
     @Test

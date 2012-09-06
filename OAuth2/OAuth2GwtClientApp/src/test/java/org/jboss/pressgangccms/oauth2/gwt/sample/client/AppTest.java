@@ -77,7 +77,7 @@ public class AppTest extends BaseAppTest {
         String result = appPage.getAllPeople();
 
         // Then an error is returned
-        assertThat(result, containsString("You must log in before making requests"));
+        assertThat(result, containsString("You must be authorised before making requests"));
     }
 
     @Test

@@ -11,13 +11,14 @@ import static org.jboss.pressgangccms.oauth2.gwt.client.Constants.EXPIRES_IN;
 import static org.jboss.pressgangccms.oauth2.gwt.client.Constants.OAUTH_HEADER_NAME;
 
 /**
- * Provides methods to manage OAuth login and subsequent requests.
+ * Provides methods to manage OAuth authorisation and subsequent requests.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
 public class OAuthHandler {
 
     AuthorisationRequest lastAuthRequest;
+    private String lastTokenResult;
     private static Authoriser auth;
 
     public static OAuthHandler get() {
@@ -33,14 +34,25 @@ public class OAuthHandler {
     }
 
     /**
-     * Authenticate with an OAuth 2.0 provider.
+     * Gain end-user authorisation with an OAuth 2.0 provider.
      *
      * @param request  Request for authentication.
      * @param callback Callback for when access has been granted.
      */
-    public void login(AuthorisationRequest request, final Callback<String, Throwable> callback) {
+    public void sendAuthRequest(AuthorisationRequest request, final Callback<String, Throwable> callback) {
         this.lastAuthRequest = request;
-        auth.authorise(request, callback);
+        auth.authorise(request, new Callback<String, Throwable>() {
+            @Override
+            public void onFailure(Throwable reason) {
+                callback.onFailure(reason);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                lastTokenResult = result;
+                callback.onSuccess(result);
+            }
+        });
     }
 
     /**
@@ -51,12 +63,12 @@ public class OAuthHandler {
      */
     public void sendRequest(final OAuthRequest request, final RequestCallback callback) {
         if (lastAuthRequest == null) {
-            callback.onError(null, new RuntimeException("You must log in before making requests"));
+            callback.onError(null, new RuntimeException("You must be authorised before making requests"));
         }
 
         final AuthorisationRequest lastAuthorisationRequest = lastAuthRequest;
 
-        // Retrieve token
+        // Retrieve token or prompt authorisation
         auth.authorise(lastAuthorisationRequest, new Callback<String, Throwable>() {
             @Override
             public void onFailure(Throwable reason) {
@@ -65,6 +77,7 @@ public class OAuthHandler {
 
             @Override
             public void onSuccess(String token) {
+                lastTokenResult = token;
                 doOAuthRequest(request, token, lastAuthorisationRequest, callback);
             }
         });
@@ -75,6 +88,31 @@ public class OAuthHandler {
      */
     public void clearAllTokens() {
         auth.clearAllTokens();
+    }
+
+    /**
+     * Get the last token returned after a successful authorisation attempt. Will be null if no such attempt
+     * has been made.
+     *
+     * @return OAuth2 access token String
+     */
+    public String getLastTokenResult() {
+        return lastTokenResult;
+    }
+
+    /**
+     * Get the last token returned after a successful authorisation attempt using the given request parameter.
+     * Will be null if no such request result is found.
+     *
+     * @param request The AuthorisationRequest to query with
+     * @return OAuth2 access token String
+     */
+    public String getTokenForRequest(AuthorisationRequest request) {
+        Authoriser.TokenInfo tokenInfo = auth.getToken(request);
+        if (tokenInfo != null) {
+            return tokenInfo.accessToken;
+        }
+        return null;
     }
 
     public String encodeUrl(String url) {

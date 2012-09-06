@@ -14,6 +14,7 @@ class Constants {
     static final String AUTHORISATION_HEADER = "Authorization";
     static final String OAUTH_HEADER_NAME = "Bearer";
     static final String TOKEN = "token";
+    static final String OAUTH_TOKEN = "oauth_token";
     static final String CLIENT_ID = "client_id";
     static final String RESPONSE_TYPE = "response_type";
     static final String SCOPE = "scope";
@@ -24,5 +25,9 @@ class Constants {
     static final String ERROR_DESCRIPTION = "error_description";
     static final String ERROR_URI = "error_uri";
     static final String OAUTH_POPUP_NAME = "oAuthWindow.html";
+    static final String PROVIDER = "provider";
+    static final String NEW_IDENTITY_PRIMARY = "newIdentityPrimary";
+    static final String ID = "id";
+    static final String TRUE = "true";
     static final double ONE_MINUTE = 60 * 1000;
 }

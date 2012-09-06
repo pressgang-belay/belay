@@ -59,7 +59,7 @@ public class AuthorisationRequestTest extends BaseUnitTest {
     }
 
     @Test
-    public void testCreateLoginUrl() {
+    public void testCreateAuthUrl() {
         // Given a set of AuthorisationRequest parameters and a URL encoder that just returns the argument
         when(urlCodex.encode(anyString())).thenAnswer(new Answer<String>() {
             @Override
@@ -68,8 +68,8 @@ public class AuthorisationRequestTest extends BaseUnitTest {
             }
         });
 
-        // When a login URL is created
-        String result = authRequest.toLoginUrl(urlCodex);
+        // When an auth URL is created
+        String result = authRequest.toAuthUrl(urlCodex);
 
         // Then it is formed as expected
         assertThat(result, is(url + "?client_id=" + clientId + "&response_type=token&scope=" + scope + scopeDelimiter + anotherScope));

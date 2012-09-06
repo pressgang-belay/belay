@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.*;
 import org.jboss.pressgangccms.oauth2.gwt.client.AuthorisationRequest;
 import org.jboss.pressgangccms.oauth2.gwt.client.OAuthHandler;
 import org.jboss.pressgangccms.oauth2.gwt.client.OAuthRequest;
+import org.jboss.pressgangccms.oauth2.gwt.client.OpenIdAuthRequestUtil;
 
 /**
  * Sample app demonstrating how OAuth2GwtClientProvider library can be used.
@@ -38,9 +39,6 @@ public class App implements EntryPoint {
     private static final String PRESSGANGCCMS_MAKE_PRIMARY_URL = PRESSGANGCCMS_AUTH_SERVER_URL + "/rest/auth/identity/makePrimary";
     private static final String PRESSGANGCCMS_LOGIN_URL = PRESSGANGCCMS_AUTH_SERVER_URL + "/rest/auth/login";
     private static final String PRESSGANGCCMS_CLIENT_ID = "pressgangccms_id";
-    private final String PROVIDER_PARAM_STRING = "?provider=";
-    private final String USER_ID_PARAM_STRING = "?id=";
-    private final String TOKEN_PARAM_STRING = "&oauth_token=";
 
     private static String currentToken;
     private final Label inputLabel = new Label("Input: ");
@@ -78,9 +76,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + RED_HAT_PROVIDER_URL, PRESSGANGCCMS_CLIENT_ID);
-                AUTH_HANDLER.login(request, getStandardCallback());
+                final AuthorisationRequest request = OpenIdAuthRequestUtil.openIdAuthorisationRequest(PRESSGANGCCMS_LOGIN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, RED_HAT_PROVIDER_URL);
+                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -92,9 +90,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + GOOGLE_PROVIDER_URL, PRESSGANGCCMS_CLIENT_ID);
-                AUTH_HANDLER.login(request, getStandardCallback());
+                final AuthorisationRequest request = OpenIdAuthRequestUtil.openIdAuthorisationRequest(PRESSGANGCCMS_LOGIN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, GOOGLE_PROVIDER_URL);
+                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -106,9 +104,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + YAHOO_PROVIDER_URL, PRESSGANGCCMS_CLIENT_ID);
-                AUTH_HANDLER.login(request, getStandardCallback());
+                final AuthorisationRequest request = OpenIdAuthRequestUtil.openIdAuthorisationRequest(PRESSGANGCCMS_LOGIN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, YAHOO_PROVIDER_URL);
+                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -121,10 +119,6 @@ public class App implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 Window.alert("Not yet implemented!");
-//                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
-//                        + FACEBOOK_PROVIDER_URL, PRESSGANGCCMS_TOKEN_URL,
-//                        PRESSGANGCCMS_CLIENT_ID, PRESSGANGCCMS_CLIENT_SECRET);
-//                AUTH_HANDLER.login(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -136,9 +130,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + MYOPENID_PROVIDER_PREFIX + inputTextBox.getText() + MYOPENID_PROVIDER_SUFFIX, PRESSGANGCCMS_CLIENT_ID);
-                AUTH_HANDLER.login(request, getStandardCallback());
+                final AuthorisationRequest request = OpenIdAuthRequestUtil.openIdAuthorisationRequest(PRESSGANGCCMS_LOGIN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, MYOPENID_PROVIDER_PREFIX + inputTextBox.getText() + MYOPENID_PROVIDER_SUFFIX);
+                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -150,9 +144,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_LOGIN_URL + PROVIDER_PARAM_STRING
-                        + FEDORA_PROVIDER_PREFIX + inputTextBox.getText(), PRESSGANGCCMS_CLIENT_ID);
-                AUTH_HANDLER.login(request, getStandardCallback());
+                final AuthorisationRequest request = OpenIdAuthRequestUtil.openIdAuthorisationRequest(PRESSGANGCCMS_LOGIN_URL,
+                        PRESSGANGCCMS_CLIENT_ID, FEDORA_PROVIDER_PREFIX + inputTextBox.getText());
+                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -189,9 +183,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_ASSOCIATE_URL + PROVIDER_PARAM_STRING
-                        + inputTextBox.getText() + TOKEN_PARAM_STRING + currentToken, PRESSGANGCCMS_CLIENT_ID).forceNewRequest(true);
-                AUTH_HANDLER.login(request, getStandardCallback());
+                final AuthorisationRequest request = OpenIdAuthRequestUtil.associateIdentityRequest(PRESSGANGCCMS_ASSOCIATE_URL,
+                        PRESSGANGCCMS_CLIENT_ID, inputTextBox.getText(), AUTH_HANDLER.getLastTokenResult(), false);
+                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);
@@ -203,10 +197,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorisationRequest request = new AuthorisationRequest(PRESSGANGCCMS_MAKE_PRIMARY_URL
-                        + USER_ID_PARAM_STRING + AUTH_HANDLER.encodeUrl(inputTextBox.getText()) + TOKEN_PARAM_STRING + currentToken,
-                        PRESSGANGCCMS_CLIENT_ID).forceNewRequest(true);
-                AUTH_HANDLER.login(request, getStandardCallback());
+                final AuthorisationRequest request = OpenIdAuthRequestUtil.makeIdentityPrimaryRequest(PRESSGANGCCMS_MAKE_PRIMARY_URL,
+                        PRESSGANGCCMS_CLIENT_ID, inputTextBox.getText(), AUTH_HANDLER.getLastTokenResult());
+                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
         RootPanel.get().add(button);

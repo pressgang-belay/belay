@@ -176,7 +176,7 @@ public class AuthoriserTest extends BaseUnitTest {
     }
 
     /**
-     * When finish() is called, the callback passed to login() is executed with
+     * When finish() is called, the callback passed to authorise() is executed with
      * the correct token, and a cookie is set with relevant information, expiring
      * in the correct amount of time.
      */
