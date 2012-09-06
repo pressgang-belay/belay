@@ -84,6 +84,8 @@
                     <mode>headless</mode>
                     <includes>**/*GwtTest.java</includes>
                     <skipTests>${skipGwtTests}</skipTests>
+                    <timeOut>120</timeOut>
+                    <productionMode>true</productionMode>
                 </configuration>
                 <executions>
                     <execution>
