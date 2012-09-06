@@ -17,7 +17,7 @@
     </developers>
 
     <modules>
-        <module>Utils/TestUtil</module>
+        <module>Util/TestUtil</module>
         <module>OpenId/OpenIdProvider</module>
         <module>OAuth2/OAuth2Shared</module>
         <module>OAuth2/OAuth2ResourceServerProvider</module>
