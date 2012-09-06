@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.pressgangccms.auth</groupId>
+    <groupId>org.jboss.pressgang.belay</groupId>
     <artifactId>gwt-client-app</artifactId>
     <name>OAuth2GwtClientApp</name>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <parent>
-        <groupId>org.jboss.pressgangccms.auth</groupId>
-        <artifactId>pressgangccms-parent</artifactId>
+        <groupId>org.jboss.pressgang.belay</groupId>
+        <artifactId>belay-parent</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
@@ -18,7 +18,7 @@
     <properties>
         <maven.resources.overwrite>true</maven.resources.overwrite>
         <gwt.gen.dir>${project.build.directory}/gwt-gen</gwt.gen.dir>
-        <gwt.module.name>org.jboss.pressgangccms.oauth2.gwt.sample.App</gwt.module.name>
+        <gwt.module.name>org.jboss.pressgang.belay.oauth2.gwt.sample.App</gwt.module.name>
         <jboss.base.dir>${project.build.directory}/jboss</jboss.base.dir>
         <jboss.dir>${jboss.base.dir}/jboss-as-${jbossarquillian.version}</jboss.dir>
         <jboss.config.dir>${jboss.dir}/standalone/configuration</jboss.config.dir>
@@ -30,7 +30,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jboss.pressgangccms.auth</groupId>
+            <groupId>org.jboss.pressgang.belay</groupId>
             <artifactId>gwt-client-provider</artifactId>
             <version>1.0-SNAPSHOT</version>
             <classifier>alpha</classifier>
@@ -47,9 +47,9 @@
             <version>${gwtuser.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.pressgangccms.auth</groupId>
+            <groupId>org.jboss.pressgang.belay</groupId>
             <artifactId>webdriver-util</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -243,25 +243,25 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.jboss.pressgangccms.auth</groupId>
+                                    <groupId>org.jboss.pressgang.belay</groupId>
                                     <artifactId>auth-server</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>1.0-SNAPSHOT</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
                                     <destFileName>${oauth2authserver.project.name}.war</destFileName>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.jboss.pressgangccms.auth</groupId>
+                                    <groupId>org.jboss.pressgang.belay</groupId>
                                     <artifactId>secured-rest-app</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>1.0-SNAPSHOT</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
                                     <destFileName>${securedrestapp.project.name}.war</destFileName>
                                 </artifactItem>
                                 <artifactItem>
-                                    <groupId>org.jboss.pressgangccms.auth</groupId>
+                                    <groupId>org.jboss.pressgang.belay</groupId>
                                     <artifactId>openid-provider</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>1.0-SNAPSHOT</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
                                     <destFileName>${openidprovider.project.name}.war</destFileName>

@@ -3,11 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jboss.pressgangccms.auth</groupId>
-    <artifactId>pressgangccms-parent</artifactId>
+    <groupId>org.jboss.pressgang.belay</groupId>
+    <artifactId>belay-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>PressGangCCMSParent</name>
+    <name>PressGangBelayParent</name>
 
     <developers>
         <developer>
@@ -20,15 +20,16 @@
         <module>Utils/TestUtil</module>
         <module>OpenId/OpenIdProvider</module>
         <module>OAuth2/OAuth2Shared</module>
-        <module>OAuth2/OAuth2AuthServerProvider</module>
-        <module>OAuth2/OAuth2AuthServer</module>
         <module>OAuth2/OAuth2ResourceServerProvider</module>
         <module>OAuth2/OAuth2SecuredRestApp</module>
+        <module>OAuth2/OAuth2AuthServerProvider</module>
+        <module>OAuth2/OAuth2AuthServer</module>
         <module>OAuth2/OAuth2GwtClientProvider</module>
         <module>OAuth2/OAuth2GwtClientApp</module>
     </modules>
 
     <properties>
+        <belay.version>1.0-SNAPSHOT</belay.version>
         <oauth2authserver.project.name>OAuth2AuthServer</oauth2authserver.project.name>
         <securedrestapp.project.name>OAuth2SecuredRestApp</securedrestapp.project.name>
         <openidprovider.project.name>OpenIdProvider</openidprovider.project.name>

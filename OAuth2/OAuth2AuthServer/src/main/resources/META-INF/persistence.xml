@@ -18,14 +18,14 @@
         <jta-data-source>java:jboss/datasources/OAuth2AuthServerDS</jta-data-source>
         <jar-file>resource-server-provider-1.0-SNAPSHOT.jar</jar-file>
         <jar-file>auth-server-provider-1.0-SNAPSHOT.jar</jar-file>
-        <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSScope</class>
-        <class>org.jboss.pressgangccms.oauth2.resourceserver.data.model.OAuth2RSEndpoint</class>
-        <class>org.jboss.pressgangccms.oauth2.authserver.data.model.ClientApplication</class>
-        <class>org.jboss.pressgangccms.oauth2.authserver.data.model.Identity</class>
-        <class>org.jboss.pressgangccms.oauth2.authserver.data.model.OpenIdProvider</class>
-        <class>org.jboss.pressgangccms.oauth2.authserver.data.model.Scope</class>
-        <class>org.jboss.pressgangccms.oauth2.authserver.data.model.TokenGrant</class>
-        <class>org.jboss.pressgangccms.oauth2.authserver.data.model.User</class>
+        <class>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSScope</class>
+        <class>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSEndpoint</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.ClientApplication</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.Identity</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.OpenIdProvider</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.TokenGrant</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.User</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <!-- Demo database settings only. Not suitable for production environment -->
         <properties>
