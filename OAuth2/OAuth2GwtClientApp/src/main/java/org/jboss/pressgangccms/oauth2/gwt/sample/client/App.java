@@ -158,7 +158,17 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), getStandardRequestCallback());
+                AUTH_HANDLER.sendRequest(new OAuthRequest(RequestBuilder.GET, PEOPLE_URL), new RequestCallback() {
+                    @Override
+                    public void onResponseReceived(Request request, Response response) {
+                        Window.alert("Result: " + response.getText());
+                    }
+
+                    @Override
+                    public void onError(Request request, Throwable exception) {
+                        Window.alert("Error:\n" + exception.getMessage());
+                    }
+                });
             }
         });
         RootPanel.get().add(button);
@@ -243,7 +253,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                OAuthHandler.get().clearAllTokens();
+                AUTH_HANDLER.clearAllTokens();
             }
         });
         RootPanel.get().add(button);

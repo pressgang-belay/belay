@@ -104,9 +104,9 @@
             <url>http://openid-filter.googlecode.com/svn/repo</url>
         </repository>
         <repository>
-            <id>third-party-apps-repo</id>
+            <id>gwt-oauth2-repo</id>
             <name>Repository containing gwt-oauth2 library</name>
-            <url>http://ecsmaven.usersys.redhat.com/nexus/content/repositories/thirdparty</url>
+            <url>${gwt.oauth2.repo}</url>
         </repository>
     </repositories>
 
