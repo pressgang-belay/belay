@@ -19,7 +19,7 @@
     <!-- TODO get rid of provided scopes as code may not be used on AS7 -->
     <dependencies>
         <dependency>
-            <groupId>org.jboss.pressgangccms.auth</groupId>
+            <groupId>org.jboss.pressgang.belay</groupId>
             <artifactId>oauth2-shared</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

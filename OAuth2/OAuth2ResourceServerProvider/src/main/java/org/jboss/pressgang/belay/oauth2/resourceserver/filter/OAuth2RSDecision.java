@@ -11,8 +11,8 @@ import org.apache.amber.oauth2.rsfilter.OAuthDecision;
 import org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSEndpoint;
 import org.jboss.pressgang.belay.oauth2.resourceserver.service.OAuth2RSAuthService;
 import org.jboss.pressgang.belay.oauth2.resourceserver.util.Resources;
-import org.jboss.pressgangccms.oauth2.shared.data.model.AccessTokenExpiryInfo;
-import org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo;
+import org.jboss.pressgang.belay.oauth2.shared.data.model.AccessTokenExpiryInfo;
+import org.jboss.pressgang.belay.oauth2.shared.data.model.TokenGrantInfo;
 import org.joda.time.DateTime;
 
 import javax.naming.InitialContext;

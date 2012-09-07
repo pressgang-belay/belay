@@ -10,10 +10,10 @@ import org.jboss.pressgang.belay.oauth2.resourceserver.data.dao.OAuth2RSEndpoint
 import org.jboss.pressgang.belay.oauth2.resourceserver.data.dao.OAuth2RSScopeDao;
 import org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSEndpoint;
 import org.jboss.pressgang.belay.oauth2.resourceserver.util.ResourceServer;
-import org.jboss.pressgangccms.oauth2.shared.data.model.AccessTokenExpiryInfo;
-import org.jboss.pressgangccms.oauth2.shared.data.model.TokenGrantInfo;
-import org.jboss.pressgangccms.oauth2.shared.rest.TokenExpiryExtensionEndpoint;
-import org.jboss.pressgangccms.oauth2.shared.rest.TokenGrantInfoEndpoint;
+import org.jboss.pressgang.belay.oauth2.shared.data.model.AccessTokenExpiryInfo;
+import org.jboss.pressgang.belay.oauth2.shared.data.model.TokenGrantInfo;
+import org.jboss.pressgang.belay.oauth2.shared.rest.TokenExpiryExtensionEndpoint;
+import org.jboss.pressgang.belay.oauth2.shared.rest.TokenGrantInfoEndpoint;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.ProxyFactory;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
