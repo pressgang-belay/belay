@@ -110,7 +110,7 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
             }
 
             // Check if this is part of an identity association request
-            if (clientId.equals(oAuthProviderId) && redirectUri.equals(completeAssociationEndpoint)) {
+            if (clientId.equals(authServerOAuthClientId) && redirectUri.equals(completeAssociationEndpoint)) {
                 return createAssociationRequestResponse(request, identifier);
             }
 

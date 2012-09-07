@@ -346,7 +346,7 @@ public abstract class IdentityEndpointImpl implements IdentityEndpoint {
                 .append(OPENID_PROVIDER).append(KEY_VALUE_SEPARATOR)
                 .append(provider).append(PARAMETER_SEPARATOR)
                 .append(OAuth.OAUTH_CLIENT_ID).append(KEY_VALUE_SEPARATOR)
-                .append(oAuthProviderId).append(PARAMETER_SEPARATOR)
+                .append(authServerOAuthClientId).append(PARAMETER_SEPARATOR)
                 .append(OAUTH_REDIRECT_URI).append(KEY_VALUE_SEPARATOR)
                 .append(completeAssociationEndpoint).append(PARAMETER_SEPARATOR)
                 .append(OAuth.OAUTH_RESPONSE_TYPE).append(KEY_VALUE_SEPARATOR)

@@ -64,5 +64,5 @@ public class Resources {
     public static String authEndpoint = "/auth/authorise";
     public static String completeAssociationEndpoint = "/auth/identity/completeAssociation";
     public static String openIdReturnUri = "/OAuth2AuthServer/rest" + authEndpoint;
-    public static String oAuthProviderId = "OAuth2AuthServer";
+    public static String authServerOAuthClientId = "OAuth2AuthServer";
 }

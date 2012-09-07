@@ -45,7 +45,7 @@ public class Resources {
 
         tokenExpiryExtensionThreshold = (String)  resourceServerConfig.get("tokenExpiryExtensionThreshold");
         try {
-        tokenExpiryThresholdSeconds = tokenExpiryExtensionThreshold == null
+        tokenExpiryThresholdSeconds = tokenExpiryExtensionThreshold == null || tokenExpiryExtensionThreshold.isEmpty()
                 ? Integer.parseInt(TOKEN_EXPIRY_THRESHOLD_DEFAULT)
                 : Integer.parseInt(tokenExpiryExtensionThreshold);
         } catch (NumberFormatException e) {
