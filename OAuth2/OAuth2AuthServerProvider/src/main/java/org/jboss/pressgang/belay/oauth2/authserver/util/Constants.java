@@ -44,17 +44,11 @@ public class Constants {
 
     // General
     public static final String ONE_HOUR = "3600";
-    public static final String OAUTH_TOKEN_EXPIRY = ONE_HOUR;
-    public static final String UTF_ENCODING = "UTF-8";
-    public static final String OPENID_REALM = "/OAuth2AuthServer/rest/auth/";
-    public static final String LOGIN_ENDPOINT = "/auth/login";
-    public static final String COMPLETE_ASSOCIATION_ENDPOINT = "/auth/identity/completeAssociation";
-    public static final String OPENID_RETURN_URI = "/OAuth2AuthServer/rest" + LOGIN_ENDPOINT;
-    public static final String OAUTH_PROVIDER_ID = "OAuth2AuthServer";
     public static final String STORED_OAUTH_REDIRECT_URI = "storedOAuthRedirectUri";
     public static final String STORED_OAUTH_CLIENT_ID = "storedOAuthClientId";
     public static final String GOOGLE = "google";
     public static final String GMAIL = "gmail";
+    public static final String PROPERTIES_FILEPATH = "META-INF/authserver.properties";
 
     // Yadis
     public static final String NS_TAG = "xmlns";

@@ -24,7 +24,7 @@ public class App implements EntryPoint {
 
     private static final OAuthHandler AUTH_HANDLER = OAuthHandler.get();
     private static final String GOOGLE_PROVIDER_URL = "gmail.com";
-    private static final String YAHOO_PROVIDER_URL = "yahoo.com";
+    private static final String YAHOO_PROVIDER_URL = "me.yahoo.com";
     private static final String FACEBOOK_PROVIDER_URL = "www.facebook.com";
     private static final String MYOPENID_PROVIDER_PREFIX = "https://";
     private static final String MYOPENID_PROVIDER_SUFFIX = ".myopenid.com";
@@ -37,7 +37,7 @@ public class App implements EntryPoint {
     private static final String BELAY_USER_QUERY_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/identity/query";
     private static final String BELAY_ASSOCIATE_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/identity/associate";
     private static final String BELAY_MAKE_PRIMARY_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/identity/makePrimary";
-    private static final String BELAY_AUTH_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/login";
+    private static final String BELAY_AUTH_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/authorise";
     private static final String BELAY_CLIENT_ID = "pressgang_belay_id";
 
     private static String currentToken;

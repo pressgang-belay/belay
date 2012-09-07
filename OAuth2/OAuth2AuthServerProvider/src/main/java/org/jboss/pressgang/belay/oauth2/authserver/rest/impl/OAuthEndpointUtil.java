@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_HEADER_NAME;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_SCOPE;
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.OAUTH_TOKEN_EXPIRY;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
 
 /**
  * Encapsulates logic shared across auth web services.
@@ -44,7 +44,7 @@ class OAuthEndpointUtil {
         if (issueRefreshToken) {
             tokenGrant.setRefreshToken(tokenIssuerService.refreshToken());
         }
-        tokenGrant.setAccessTokenExpiry(OAUTH_TOKEN_EXPIRY);
+        tokenGrant.setAccessTokenExpiry(oAuthTokenExpiry);
         tokenGrant.setGrantTimeStamp(new Date());
         tokenGrant.setGrantCurrent(true);
         return tokenGrant;

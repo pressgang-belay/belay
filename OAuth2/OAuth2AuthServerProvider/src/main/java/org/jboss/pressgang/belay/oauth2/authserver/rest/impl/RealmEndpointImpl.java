@@ -3,6 +3,7 @@ package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 import com.jamesmurty.utils.XMLBuilder;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.RealmEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
+import org.jboss.pressgang.belay.oauth2.authserver.util.Resources;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import javax.xml.transform.TransformerException;
 import java.util.logging.Logger;
 
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.openIdReturnUri;
 
 /**
  * Provides OpenID Relying Party XRDS document to facilitate verification by OpenID Provider.
@@ -36,7 +38,7 @@ public abstract class RealmEndpointImpl implements RealmEndpoint {
                             .e(SERVICE_TAG)
                                 .e(TYPE_TAG).t(OPENID2_RETURN_TO)
                                 .up()
-                                .e(URI_TAG).t(OAuthEndpointUtil.buildBaseUrl(request) + OPENID_RETURN_URI)
+                                .e(URI_TAG).t(OAuthEndpointUtil.buildBaseUrl(request) + openIdReturnUri)
                                 .up()
                             .up()
                         .up()

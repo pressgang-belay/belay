@@ -6,7 +6,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Path;
 
 /**
- * @author katie@codemiller.com (Katie Miller)
+ * @author kamiller@redhat.com (Katie Miller)
  */
 @RequestScoped
 @Path("/auth/token")

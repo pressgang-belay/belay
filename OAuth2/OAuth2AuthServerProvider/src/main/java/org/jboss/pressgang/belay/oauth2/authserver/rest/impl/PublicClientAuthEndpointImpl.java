@@ -9,12 +9,11 @@ import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
 import org.jboss.pressgang.belay.oauth2.authserver.request.OAuthIdRequest;
-import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.PublicClientLoginEndpoint;
+import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.PublicClientAuthEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
 import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuerService;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -36,6 +35,7 @@ import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVE
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.*;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
  * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint. The endpoint's functionality
@@ -47,7 +47,7 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public abstract class PublicClientLoginEndpointImpl implements PublicClientLoginEndpoint {
+public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
 
     @Inject
     @AuthServer
@@ -61,7 +61,7 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
 
     @Override
     public Response requestAuthenticationWithOpenId(@Context HttpServletRequest request) {
-        log.info("Processing login request");
+        log.info("Processing authentication request");
         try {
             OAuthIdRequest oauthRequest = new OAuthIdRequest(request);
             checkOAuthClientAndRedirectUri(oauthRequest.getClientId(), oauthRequest.getRedirectURI());
@@ -77,7 +77,7 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
     }
 
     @Override
-    public Response authoriseLogin(@Context HttpServletRequest request) {
+    public Response authorise(@Context HttpServletRequest request) {
         log.info("Processing authorisation attempt");
 
         String openIdClaimedId = (String) request.getAttribute(OPENID_CLAIMED_ID);
@@ -110,7 +110,7 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
             }
 
             // Check if this is part of an identity association request
-            if (clientId.equals(OAUTH_PROVIDER_ID) && redirectUri.equals(COMPLETE_ASSOCIATION_ENDPOINT)) {
+            if (clientId.equals(oAuthProviderId) && redirectUri.equals(completeAssociationEndpoint)) {
                 return createAssociationRequestResponse(request, identifier);
             }
 
@@ -136,12 +136,12 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
 
     private Response.ResponseBuilder createAuthResponse(HttpServletRequest request, String providerUrl) {
         Response.ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-        log.info("Sending request for login authentication");
+        log.info("Sending request for OpenID authentication");
         String baseUrl = buildBaseUrl(request);
         AuthorizationHeaderBuilder authHeaderBuilder = new AuthorizationHeaderBuilder()
                 .forIdentifier(providerUrl)
-                .usingRealm(baseUrl + OPENID_REALM)
-                .returnTo(baseUrl + OPENID_RETURN_URI)
+                .usingRealm(baseUrl + openIdRealm)
+                .returnTo(baseUrl + openIdReturnUri)
                 .includeStandardAttributes();
         addRequiredAttributes(authHeaderBuilder);
         String authHeader = authHeaderBuilder.buildHeader();
@@ -176,8 +176,8 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
             if (! clientFound.isPresent()) {
                 log.warning("Invalid OAuth2 client with id '" + clientId + "' in login request");
                 error = INVALID_CLIENT;
-            } else if (! clientRedirectUriMatches(decode(redirectUri, UTF_ENCODING), clientFound.get())) {
-                log.warning("Invalid OAuth2 redirect URI in login request: " + decode(redirectUri, UTF_ENCODING));
+            } else if (! clientRedirectUriMatches(decode(redirectUri, urlEncoding), clientFound.get())) {
+                log.warning("Invalid OAuth2 redirect URI in login request: " + decode(redirectUri, urlEncoding));
                 error = INVALID_REDIRECT_URI;
             } else {
                 return;
@@ -194,7 +194,7 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
         String providerUrl = request.getParameter(OPENID_PROVIDER);
         String decodedProviderUrl;
         try {
-            decodedProviderUrl = decode(providerUrl, UTF_ENCODING);
+            decodedProviderUrl = decode(providerUrl, urlEncoding);
         } catch (UnsupportedEncodingException e) {
             log.severe("Could not decode provider URL: " + providerUrl);
             throw OAuthEndpointUtil.createOAuthProblemException(URL_DECODING_ERROR, oAuthRequest.getRedirectURI());
@@ -209,6 +209,7 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
         if (providerFound.isPresent()) {
             request.getSession().setAttribute(OPENID_PROVIDER, providerFound.get().getProviderUrl());
         } else {
+            log.warning("Invalid OpenID provider: " + providerUrl);
             throw OAuthEndpointUtil.createOAuthProblemException(INVALID_PROVIDER, oAuthRequest.getRedirectURI());
         }
         return providerUrl;
@@ -299,7 +300,7 @@ public abstract class PublicClientLoginEndpointImpl implements PublicClientLogin
 
     private Response createAssociationRequestResponse(HttpServletRequest request, String identifier) {
         request.getSession().setAttribute(OPENID_IDENTIFIER, identifier);
-        StringBuilder uriBuilder = new StringBuilder(COMPLETE_ASSOCIATION_ENDPOINT);
+        StringBuilder uriBuilder = new StringBuilder(completeAssociationEndpoint);
         String accessToken = (String) request.getSession().getAttribute(OAuth.OAUTH_TOKEN);
         if (accessToken != null) {
             log.info("Setting OAuth token for redirect");

@@ -13,13 +13,11 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import java.util.logging.Logger;
 
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.OAUTH_TOKEN_EXPIRY;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
 
 /**
  * Provides authorisation information for resource servers, which are confidential clients.
@@ -63,7 +61,7 @@ public abstract class AuthInfoEndpointImpl implements AuthInfoEndpoint {
             if (tokenGrantFound.isPresent() && tokenGrantFound.get().getGrantCurrent()) {
                 TokenGrant tokenGrant = tokenGrantFound.get();
                 int expirySeconds = Integer.parseInt(tokenGrant.getAccessTokenExpiry());
-                int extensionSeconds = Integer.parseInt(OAUTH_TOKEN_EXPIRY);
+                int extensionSeconds = Integer.parseInt(oAuthTokenExpiry);
                 Period newExpiryPeriod = new Period(new DateTime(tokenGrant.getGrantTimeStamp()),
                         DateTime.now().plusSeconds(extensionSeconds), PeriodType.seconds());
                 int extension = newExpiryPeriod.getSeconds() - expirySeconds;
@@ -71,7 +69,7 @@ public abstract class AuthInfoEndpointImpl implements AuthInfoEndpoint {
                 String newExpiryString = Integer.toString(newExpiryPeriod.getSeconds());
                 tokenGrant.setAccessTokenExpiry(newExpiryString);
                 authService.updateGrant(tokenGrant);
-                return new AccessTokenExpiryInfo(newExpiryString, OAUTH_TOKEN_EXPIRY);
+                return new AccessTokenExpiryInfo(newExpiryString, oAuthTokenExpiry);
             }
         } catch (OAuthSystemException e) {
             log.warning("OAuthSystemException thrown while extending access token expiry: " + e);

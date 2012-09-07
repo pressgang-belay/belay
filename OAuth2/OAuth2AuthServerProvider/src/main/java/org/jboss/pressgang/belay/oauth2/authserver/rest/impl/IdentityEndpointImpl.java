@@ -17,12 +17,9 @@ import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuerService;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -43,6 +40,7 @@ import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUP
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.*;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
  * Provides identity services for client applications, such as associating another identity with the currently
@@ -96,7 +94,7 @@ public abstract class IdentityEndpointImpl implements IdentityEndpoint {
             oAuthRedirectUri = oAuthRequest.getRedirectURI();
             accessToken = getTokenGrantFromAccessToken(request, oAuthRedirectUri).getAccessToken();
             log.info("First identifier is: " + userPrincipal.getName() + ". Redirecting to login");
-            // Store initial request details in session
+            // Record initial request details
             request.getSession().setAttribute(FIRST_IDENTIFIER, userPrincipal.getName());
             request.getSession().setAttribute(NEW_IDENTITY_PRIMARY, newIsPrimary == null ? false : newIsPrimary);
             request.getSession().setAttribute(STORED_OAUTH_REDIRECT_URI, oAuthRedirectUri);
@@ -344,13 +342,13 @@ public abstract class IdentityEndpointImpl implements IdentityEndpoint {
     }
 
     private String createNewRedirectUri(String provider) {
-        return new StringBuilder(LOGIN_ENDPOINT).append(QUERY_STRING_MARKER)
+        return new StringBuilder(authEndpoint).append(QUERY_STRING_MARKER)
                 .append(OPENID_PROVIDER).append(KEY_VALUE_SEPARATOR)
                 .append(provider).append(PARAMETER_SEPARATOR)
                 .append(OAuth.OAUTH_CLIENT_ID).append(KEY_VALUE_SEPARATOR)
-                .append(OAUTH_PROVIDER_ID).append(PARAMETER_SEPARATOR)
+                .append(oAuthProviderId).append(PARAMETER_SEPARATOR)
                 .append(OAUTH_REDIRECT_URI).append(KEY_VALUE_SEPARATOR)
-                .append(COMPLETE_ASSOCIATION_ENDPOINT).append(PARAMETER_SEPARATOR)
+                .append(completeAssociationEndpoint).append(PARAMETER_SEPARATOR)
                 .append(OAuth.OAUTH_RESPONSE_TYPE).append(KEY_VALUE_SEPARATOR)
                 .append(ResponseType.TOKEN)
                 .toString();

@@ -1,19 +1,32 @@
 package org.jboss.pressgang.belay.oauth2.authserver.util;
 
+import org.jboss.seam.solder.resourceLoader.Resource;
+
+import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
+import java.lang.reflect.Field;
+import java.util.Properties;
 import java.util.logging.Logger;
+
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.ONE_HOUR;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.PROPERTIES_FILEPATH;
 
 /**
  * This class uses CDI to alias Java EE resources, such as the persistence context, to CDI beans.
+ *
+ * @author kamiller@redhat.com (Katie Miller)
  */
 public class Resources {
+    @SuppressWarnings("unused")
+    @Inject
+    @Resource(PROPERTIES_FILEPATH)
+    private Properties authServerConfig;
 
-	// use @SuppressWarnings to tell IDE to ignore warnings about field not
-	// being referenced directly
 	@SuppressWarnings("unused")
 	@Produces
     @AuthServer
@@ -26,4 +39,30 @@ public class Resources {
 		return Logger.getLogger(injectionPoint.getMember().getDeclaringClass()
 				.getName());
 	}
+
+    @PostConstruct
+    private void initialise() {
+        if (authServerConfig != null) {
+            for (Field field : Resources.class.getFields()) {
+                String propertyValue = (String) authServerConfig.get(field.getName());
+                if (propertyValue != null && (! propertyValue.isEmpty())) {
+                    try {
+                        field.set(this, propertyValue);
+                        log.info("Set AuthServer " + field.getName() + " property to: " + propertyValue);
+                    } catch (IllegalAccessException e) {
+                        log.severe("Could not set AuthServer property: " + field.getName());
+                    }
+                }
+            }
+        }
+    }
+
+    private Logger log = Logger.getLogger(Resources.class.getName());
+    public static String oAuthTokenExpiry = ONE_HOUR;
+    public static String urlEncoding = "UTF-8";
+    public static String openIdRealm = "/OAuth2AuthServer/rest/auth/";
+    public static String authEndpoint = "/auth/authorise";
+    public static String completeAssociationEndpoint = "/auth/identity/completeAssociation";
+    public static String openIdReturnUri = "/OAuth2AuthServer/rest" + authEndpoint;
+    public static String oAuthProviderId = "OAuth2AuthServer";
 }

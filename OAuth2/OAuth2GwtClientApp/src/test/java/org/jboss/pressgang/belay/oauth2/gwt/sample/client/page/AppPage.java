@@ -133,7 +133,7 @@ public class AppPage extends BasePage {
 
     public AppPage associateYahooIdentity(String username, String password, boolean isLoginPersistent) throws Exception {
         inputTextBox.clear();
-        inputTextBox.sendKeys("yahoo.com");
+        inputTextBox.sendKeys("me.yahoo.com");
         associateProviderIdentityButton.click();
         Optional<Alert> alert = waitToSeeIfAlertPresent(getDriver(), TWENTY_SECONDS);
         if (alert.isPresent()) {
