@@ -29,7 +29,6 @@
     </modules>
 
     <properties>
-        <belay.version>1.0-SNAPSHOT</belay.version>
         <oauth2authserver.project.name>OAuth2AuthServer</oauth2authserver.project.name>
         <securedrestapp.project.name>OAuth2SecuredRestApp</securedrestapp.project.name>
         <openidprovider.project.name>OpenIdProvider</openidprovider.project.name>
@@ -38,7 +37,9 @@
         <junit.version>4.9</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
         <skipTests>false</skipTests>
+        <skipFindbugs>false</skipFindbugs>
         <skipGwtTests>true</skipGwtTests>
+        <findbugs.failonerror>false</findbugs.failonerror>
         <jboss.bom.version>1.0.1.CR2</jboss.bom.version>
         <jboss.jaxrs.api.version>1.0.0.Final</jboss.jaxrs.api.version>
         <jboss.annotations.api.version>1.0.1.Final</jboss.annotations.api.version>
@@ -79,6 +80,7 @@
         <jarplugin.version>2.4</jarplugin.version>
         <jbossplugin.version>7.1.1.Final</jbossplugin.version>
         <xmlplugin.version>1.0</xmlplugin.version>
+        <findbugsplugin.version>2.5.2</findbugsplugin.version>
         <surefireplugin.version>2.12.2</surefireplugin.version>
         <checkstyleplugin.version>2.6</checkstyleplugin.version>
         <coberturaplugin.version>2.5.1</coberturaplugin.version>
@@ -198,6 +200,25 @@
                         </archive>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugsplugin.version}</version>
+                    <configuration>
+                        <xmlOutput>true</xmlOutput>
+                        <xmlOutputDirectory>target/site</xmlOutputDirectory>
+                        <skip>${skipFindbugs}</skip>
+                        <failOnError>${findbugs.failonerror}</failOnError>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>findbugs</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -226,6 +247,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>${findbugsplugin.version}</version>
+            </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>${findbugsplugin.version}</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
