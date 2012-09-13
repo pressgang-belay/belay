@@ -127,7 +127,8 @@ public class ClientApplication implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("clientIdentifier", clientIdentifier)
+        return new ToStringBuilder(this)
+                .append("clientIdentifier", clientIdentifier)
                 .append("clientName", clientName)
                 .append("clientRedirectUri", clientRedirectUri)
                 .append("clientSecret", clientSecret)

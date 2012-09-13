@@ -24,8 +24,6 @@ public class IdentityInfo implements Serializable {
     private String country;
     private String openIdProviderUrl;
     private Boolean primaryIdentity;
-    private Set<String> userIdentifiers;
-    private Set<String> identityScopes;
 
     IdentityInfo() {
     }
@@ -40,8 +38,6 @@ public class IdentityInfo implements Serializable {
         this.country = builder.country;
         this.openIdProviderUrl = builder.openIdProviderUrl;
         this.primaryIdentity = builder.primaryIdentity;
-        this.userIdentifiers = builder.userIdentifiers;
-        this.identityScopes = builder.identityScopes;
     }
 
     public String getIdentifier() {
@@ -80,14 +76,6 @@ public class IdentityInfo implements Serializable {
         return primaryIdentity;
     }
 
-    public Set<String> getUserIdentifiers() {
-        return userIdentifiers;
-    }
-
-    public Set<String> getIdentityScopes() {
-        return identityScopes;
-    }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -120,14 +108,6 @@ public class IdentityInfo implements Serializable {
         this.primaryIdentity = primaryIdentity;
     }
 
-    public void setUserIdentifiers(Set<String> userIdentifiers) {
-        this.userIdentifiers = userIdentifiers;
-    }
-
-    public void setIdentityScopes(Set<String> identityScopes) {
-        this.identityScopes = identityScopes;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -145,7 +125,8 @@ public class IdentityInfo implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("identifier", identifier)
+        return new ToStringBuilder(this)
+                .append("identifier", identifier)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
                 .append("fullName", fullName)
@@ -154,8 +135,6 @@ public class IdentityInfo implements Serializable {
                 .append("country", country)
                 .append("openIdProviderUrl", openIdProviderUrl)
                 .append("isPrimaryIdentity", primaryIdentity)
-                .append("userIdentifiers", userIdentifiers)
-                .append("identityScopes", identityScopes)
                 .toString();
     }
 
@@ -172,8 +151,6 @@ public class IdentityInfo implements Serializable {
         private String country;
         private String openIdProviderUrl;
         private boolean primaryIdentity;
-        private Set<String> userIdentifiers;
-        private Set<String> identityScopes;
 
         IdentityInfoBuilder() {
         }
@@ -221,16 +198,6 @@ public class IdentityInfo implements Serializable {
 
         public IdentityInfoBuilder setPrimaryIdentity(boolean isPrimaryUser) {
             this.primaryIdentity = isPrimaryUser;
-            return this;
-        }
-
-        public IdentityInfoBuilder setUserIdentifiers(Set<String> userIdentifiers) {
-            this.userIdentifiers = userIdentifiers;
-            return this;
-        }
-
-        public IdentityInfoBuilder setIdentityScopes(Set<String> identityScopes) {
-            this.identityScopes = identityScopes;
             return this;
         }
 

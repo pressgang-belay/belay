@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Set;
 
+import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+
 /**
  * Persistence logic for a group of Users that all represent the same end user.
  *
@@ -21,9 +23,12 @@ public class User implements Serializable {
     private static final long serialVersionUID = 6622976631392573530L;
 
     private BigInteger userId;
-    private String username;
     private Identity primaryIdentity;
-    private Set<Identity> userIdentities;
+    private String username;
+    private Set<Identity> userIdentities = newHashSet();
+    private Set<TokenGrant> tokenGrants = newHashSet();
+    private Set<Scope> userScopes = newHashSet();
+    private Set<ClientApproval> clientApprovals = newHashSet();
 
     public User() {
     }
@@ -47,9 +52,26 @@ public class User implements Serializable {
         return primaryIdentity;
     }
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
     public Set<Identity> getUserIdentities() {
         return userIdentities;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantUser", fetch = FetchType.EAGER)
+    public Set<TokenGrant> getTokenGrants() {
+        return tokenGrants;
+    }
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "OPENID_USER_SCOPE", joinColumns = { @JoinColumn(name = "USER_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
+    public Set<Scope> getUserScopes() {
+        return userScopes;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "approver", fetch = FetchType.EAGER)
+    public Set<ClientApproval> getClientApprovals() {
+        return clientApprovals;
     }
 
     public void setUserId(BigInteger userId) {
@@ -66,6 +88,19 @@ public class User implements Serializable {
 
     public void setUserIdentities(Set<Identity> userIdentities) {
         this.userIdentities = userIdentities;
+    }
+
+
+    public void setTokenGrants(Set<TokenGrant> tokenGrants) {
+        this.tokenGrants = tokenGrants;
+    }
+
+    public void setUserScopes(Set<Scope> userScopes) {
+        this.userScopes = userScopes;
+    }
+
+    public void setClientApprovals(Set<ClientApproval> clientApprovals) {
+        this.clientApprovals = clientApprovals;
     }
 
     @Override
@@ -89,9 +124,13 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("primaryIdentity", primaryIdentity)
+        return new ToStringBuilder(this)
+                .append("primaryIdentity", primaryIdentity)
                 .append("username", username)
                 .append("userIdentities", userIdentities)
+                .append("tokenGrants", tokenGrants)
+                .append("userScopes", userScopes)
+                .append("clientApprovals", clientApprovals)
                 .toString();
     }
 }

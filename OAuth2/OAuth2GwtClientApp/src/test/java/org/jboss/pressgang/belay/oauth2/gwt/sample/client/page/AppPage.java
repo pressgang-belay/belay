@@ -26,7 +26,7 @@ public class AppPage extends BasePage {
     private WebElement getPersonButton;
     private WebElement associateProviderIdentityButton;
     private WebElement makeIdentityPrimaryButton;
-    private WebElement getIdentityInfoButton;
+    private WebElement getUserInfoButton;
     private WebElement clearStoredTokensButton;
     private WebElement inputTextBox;
 
@@ -160,8 +160,8 @@ public class AppPage extends BasePage {
         return getAlertText(THIRTY_SECONDS);
     }
 
-    public String getIdentityInfo() {
-        getIdentityInfoButton.click();
+    public String getUserInfo() {
+        getUserInfoButton.click();
         return getAlertText(THIRTY_SECONDS);
     }
 

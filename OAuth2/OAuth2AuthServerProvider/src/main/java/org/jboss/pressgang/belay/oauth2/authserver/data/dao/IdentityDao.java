@@ -72,26 +72,6 @@ public class IdentityDao {
                     .setLanguage(identity.getLanguage())
                     .setOpenIdProviderUrl(identity.getOpenIdProvider().getProviderUrl())
                     .setPrimaryIdentity(identity.getUser().getPrimaryIdentity().equals(identity));
-
-            // Transform identity scopes to a set of scope names
-            Set<String> identityScopes = copyOf(transform(identity.getIdentityScopes(),
-                    new Function<Scope, String>() {
-                        @Override
-                        public String apply(Scope scope) {
-                            return scope.getScopeName();
-                        }
-                    }));
-            builder.setIdentityScopes(identityScopes);
-
-            // Transform group users to a set of identity identifiers
-            Set<String> userIdentifiers = copyOf(transform(identity.getUser().getUserIdentities(),
-                    new Function<Identity, String>() {
-                        @Override
-                        public String apply(Identity groupUser) {
-                            return groupUser.getIdentifier();
-                        }
-                    }));
-            builder.setUserIdentifiers(userIdentifiers);
             log.fine("Returning IdentityInfo with identifier " + identifier);
             return Optional.of(builder.build());
         }

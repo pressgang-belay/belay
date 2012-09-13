@@ -1,10 +1,8 @@
 package org.jboss.pressgang.belay.oauth2.gwt.sample.client;
 
 import org.jboss.pressgang.belay.oauth2.gwt.sample.client.page.AppPage;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
 import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriverUtil.*;
 import static org.junit.Assert.assertThat;
@@ -91,7 +89,7 @@ public class AppTest extends BaseAppTest {
 
         // Then the identities are associated
         doWait(THIRTY_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
-        String result = appPage.getIdentityInfo();
+        String result = appPage.getUserInfo();
         assertThat(result, containsString("https://me.yahoo.com"));
         assertThat(result, containsString("/OpenIdProvider/openid/provider?id="));
     }
@@ -103,18 +101,18 @@ public class AppTest extends BaseAppTest {
         assertLoggedInWithRedHat();
         appPage.associateGoogleIdentity(testUsers.get("googleUser"), testUsers.get("googlePassword"), false, false);
         doWait(THIRTY_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
-        String identityInfo = appPage.getIdentityInfo();
-        String newPrimaryIdentifier = identityInfo.substring(identityInfo.indexOf("https://www.google.com")); // Trim start
+        String userInfo = appPage.getUserInfo();
+        String newPrimaryIdentifier = userInfo.substring(userInfo.indexOf("https://www.google.com")); // Trim start
         newPrimaryIdentifier = newPrimaryIdentifier.substring(0, newPrimaryIdentifier.indexOf("\"],\"identityScopes")); // Trim end
 
         // When the other identity is made primary
         String result = appPage.makeIdentityPrimary(newPrimaryIdentifier);
-        identityInfo = appPage.getIdentityInfo();
+        userInfo = appPage.getUserInfo();
 
         // Then the second identity becomes the primary, logged in identity and a new token is returned
         assertThat(result, containsString("Result"));
-        assertThat(identityInfo, containsString("\"identifier\":\"" + newPrimaryIdentifier));
-        assertThat(identityInfo, containsString("\"primaryIdentity\":true"));
+        assertThat(userInfo, containsString("\"identifier\":\"" + newPrimaryIdentifier));
+        assertThat(userInfo, containsString("\"primaryIdentity\":true"));
     }
 
     @Test
@@ -124,7 +122,7 @@ public class AppTest extends BaseAppTest {
         assertLoggedInWithRedHat();
 
         // When a call is made to get identity info
-        String result = appPage.getIdentityInfo();
+        String result = appPage.getUserInfo();
 
         // Then info is returned
         assertThat(result, containsString("Result: {\"identifier\""));

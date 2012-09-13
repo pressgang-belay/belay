@@ -21,7 +21,7 @@ public class TokenGrantInfo implements Serializable {
     private String accessToken;
     private String accessTokenExpiry;
     private Boolean hasRefreshToken;
-    private String grantIdentityIdentifier;
+    private String grantUserPrimaryIdentifier;
     private String grantClientIdentifier;
     private Date grantTimeStamp; // In seconds, from time granted
     private Boolean grantCurrent;
@@ -34,7 +34,7 @@ public class TokenGrantInfo implements Serializable {
         this.accessToken = builder.accessToken;
         this.accessTokenExpiry = builder.accessTokenExpiry;
         this.hasRefreshToken = builder.hasRefreshToken;
-        this.grantIdentityIdentifier = builder.grantIdentityIdentifier;
+        this.grantUserPrimaryIdentifier = builder.grantUserPrimaryIdentifier;
         this.grantClientIdentifier = builder.grantClientIdentifier;
         this.grantTimeStamp = builder.grantTimeStamp;
         this.grantCurrent = builder.grantCurrent;
@@ -45,8 +45,8 @@ public class TokenGrantInfo implements Serializable {
         return grantClientIdentifier;
     }
 
-    public String getGrantIdentityIdentifier() {
-        return grantIdentityIdentifier;
+    public String getGrantUserPrimaryIdentifier() {
+        return grantUserPrimaryIdentifier;
     }
 
     public String getAccessToken() {
@@ -84,7 +84,7 @@ public class TokenGrantInfo implements Serializable {
                 .append(accessToken, that.getAccessToken())
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())
                 .append(hasRefreshToken, that.getHasRefreshToken())
-                .append(grantIdentityIdentifier, that.getGrantIdentityIdentifier())
+                .append(grantUserPrimaryIdentifier, that.getGrantUserPrimaryIdentifier())
                 .append(grantClientIdentifier, that.getGrantClientIdentifier())
                 .append(grantTimeStamp, that.getGrantTimeStamp())
                 .append(grantCurrent, that.getGrantCurrent())
@@ -98,7 +98,7 @@ public class TokenGrantInfo implements Serializable {
                 .append(accessToken)
                 .append(accessTokenExpiry)
                 .append(hasRefreshToken)
-                .append(grantIdentityIdentifier)
+                .append(grantUserPrimaryIdentifier)
                 .append(grantClientIdentifier)
                 .append(grantTimeStamp)
                 .append(grantCurrent)
@@ -108,10 +108,11 @@ public class TokenGrantInfo implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("accessToken", accessToken)
+        return new ToStringBuilder(this)
+                .append("accessToken", accessToken)
                 .append("accessTokenExpiry", accessTokenExpiry)
                 .append("hasRefreshToken", hasRefreshToken)
-                .append("grantIdentityIdentifier", grantIdentityIdentifier)
+                .append("grantUserPrimaryIdentifier", grantUserPrimaryIdentifier)
                 .append("grantClientIdentifier", grantClientIdentifier)
                 .append("grantTimeStamp", grantTimeStamp)
                 .append("grantCurrent", grantCurrent)
@@ -126,7 +127,7 @@ public class TokenGrantInfo implements Serializable {
         private String accessToken;
         private String accessTokenExpiry;
         private boolean hasRefreshToken;
-        private String grantIdentityIdentifier;
+        private String grantUserPrimaryIdentifier;
         private String grantClientIdentifier;
         private Date grantTimeStamp;
         private boolean grantCurrent;
@@ -151,8 +152,8 @@ public class TokenGrantInfo implements Serializable {
             return this;
         }
 
-        public TokenGrantInfoBuilder setGrantIdentityIdentifier(String grantIdentityIdentifier) {
-            this.grantIdentityIdentifier = grantIdentityIdentifier;
+        public TokenGrantInfoBuilder setGrantUserPrimaryIdentifier(String grantUserPrimaryIdentifier) {
+            this.grantUserPrimaryIdentifier = grantUserPrimaryIdentifier;
             return this;
         }
 

@@ -3,6 +3,7 @@ package org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo;
+import org.jboss.pressgang.belay.oauth2.shared.data.model.UserInfo;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -20,27 +21,20 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.NEW_IDE
 /**
  * @author kamiller@redhat.com (Katie Miller)
  */
-public interface IdentityEndpoint {
-
+public interface UserManagementEndpoint {
     @GET
-    @Path("/associate")
-    Response associateUser(@Context HttpServletRequest request,
-                                  @QueryParam(NEW_IDENTITY_PRIMARY) Boolean newIsPrimary) throws URISyntaxException;
-
-    @GET
-    @Path("/completeAssociation")
-    Response completeAssociation(@Context HttpServletRequest request) throws OAuthProblemException,
-            OAuthSystemException;
+    @Path("/makeIdentityPrimary")
+    Response makeIdentityPrimary(@Context HttpServletRequest request,
+                                 @QueryParam(IDENTIFIER) String identifier);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/query")
-    IdentityInfo getPrimaryUserInfo(@Context HttpServletRequest request,
-                                           @QueryParam(IDENTIFIER) String identifier);
+    @Path("/queryIdentity")
+    IdentityInfo getIdentityInfo(@Context HttpServletRequest request,
+                                 @QueryParam(IDENTIFIER) String identifier);
 
     @GET
-    @Path("/makePrimary")
-    Response makeIdentityPrimary(@Context HttpServletRequest request,
-                                        @QueryParam(IDENTIFIER) String identifier);
-
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/queryUser")
+    UserInfo getUserInfo(@Context HttpServletRequest request);
 }

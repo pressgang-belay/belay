@@ -24,7 +24,7 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTo
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public abstract class AuthInfoEndpointImpl implements AuthInfoEndpoint {
+public class AuthInfoEndpointImpl implements AuthInfoEndpoint {
 
     @Inject
     @AuthServer

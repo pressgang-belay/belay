@@ -48,7 +48,7 @@ public class Resources {
                 if (propertyValue != null && (! propertyValue.isEmpty())) {
                     try {
                         field.set(this, propertyValue);
-                        log.info("Set AuthServer " + field.getName() + " property to: " + propertyValue);
+                        log.fine("Set AuthServer " + field.getName() + " property to: " + propertyValue);
                     } catch (IllegalAccessException e) {
                         log.severe("Could not set AuthServer property: " + field.getName());
                     }
@@ -62,7 +62,12 @@ public class Resources {
     public static String urlEncoding = "UTF-8";
     public static String openIdRealm = "/OAuth2AuthServer/rest/auth/";
     public static String authEndpoint = "/auth/authorise";
-    public static String completeAssociationEndpoint = "/auth/identity/completeAssociation";
-    public static String openIdReturnUri = "/OAuth2AuthServer/rest" + authEndpoint;
+    public static String restEndpointBasePath = "/OAuth2AuthServer/rest";
+    public static String completeAssociationEndpoint = "/auth/user/associate/completeAssociation";
+    public static String openIdReturnUri = restEndpointBasePath + authEndpoint;
     public static String authServerOAuthClientId = "OAuth2AuthServer";
+    public static String defaultScopeName = "DEFAULT";
+    public static String promptEndUserToApproveClientAppOnEveryLogin = "false";
+    public static String endUserConsentUri = "/auth/consent";
+    public static String endUserConsentFormCssLocation = "";
 }

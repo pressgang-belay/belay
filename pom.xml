@@ -69,6 +69,7 @@
         <slf4j.version>1.6.4</slf4j.version>
         <resteasy.version>2.3.4.Final</resteasy.version>
         <hibernate.version>3.6.3.Final</hibernate.version>
+        <jatl.version>0.2.2</jatl.version>
         <jbossarquillian.version>7.1.1.Final</jbossarquillian.version>
         <guava.version>13.0-rc1</guava.version>
         <gwt.version>1.5.3</gwt.version>
@@ -236,7 +237,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyleplugin.version}</version>
                 <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
+                    <configLocation>https://raw.github.com/codemiller/checkstyle/master/checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                 </configuration>
                 <executions>

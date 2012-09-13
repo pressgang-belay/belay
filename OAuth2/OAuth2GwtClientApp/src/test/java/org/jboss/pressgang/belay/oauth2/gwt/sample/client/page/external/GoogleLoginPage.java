@@ -1,6 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.gwt.sample.client.page.external;
 
 import org.jboss.pressgang.belay.oauth2.gwt.sample.client.page.AppPage;
+import org.jboss.pressgang.belay.oauth2.gwt.sample.client.page.UserConsentPage;
 import org.jboss.pressgang.belay.util.test.functional.webdriver.page.BasePage;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -41,11 +42,15 @@ public class GoogleLoginPage extends BasePage {
         setCheckbox(persistentLoginCheckbox, isLoginPersistent);
         loginButton.click();
         GoogleApprovalPage approvalPage = new GoogleApprovalPage(getDriver());
+        UserConsentPage consentPage = new UserConsentPage(getDriver());
         // Workaround for WebDriver bug
         verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, AppPage.getExpectedLoginResultText());
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.setApprovalPersistence(isOpenIdApprovalPersistent)
                         .approve();
+        }
+        if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, consentPage).isPresent()) {
+            consentPage.makeConsentDecision(true).submitDecision();
         }
         return this;
     }

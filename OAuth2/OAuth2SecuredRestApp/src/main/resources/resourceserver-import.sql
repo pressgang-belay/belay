@@ -1,4 +1,4 @@
-insert into RS_SCOPE (SCOPE_ID, SCOPE_NAME) values (-1, 'default')
+insert into RS_SCOPE (SCOPE_ID, SCOPE_NAME) values (-1, 'DEFAULT')
 
 insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-1, 'https://localhost:8443/OAuth2SecuredRestApp/rest/people', 'GET')
 insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-2, 'https://localhost:8443/OAuth2SecuredRestApp/rest/people/[0-9]+', 'GET')

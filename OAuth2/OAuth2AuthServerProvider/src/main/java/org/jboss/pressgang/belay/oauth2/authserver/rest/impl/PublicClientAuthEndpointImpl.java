@@ -11,8 +11,9 @@ import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
 import org.jboss.pressgang.belay.oauth2.authserver.request.OAuthIdRequest;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.PublicClientAuthEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
-import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuerService;
+import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
+import org.jboss.pressgang.belay.oauth2.authserver.util.Resources;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.Boolean.parseBoolean;
 import static java.net.URLDecoder.decode;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
@@ -42,12 +44,11 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
  * is closest to OAuth2's implicit authorisation flow, however, depending on the app settings the resource owner may
  * not be prompted to authorise the access, as in cases where the client application, authorisation server and resource
  * server are all operating as one application, this may be inappropriate. This endpoint is for use by public clients.
- *
- * //TODO add Authorisation Code flow for confidential clients
+ * <p/>
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
+public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
 
     @Inject
     @AuthServer
@@ -57,7 +58,7 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
     private AuthService authService;
 
     @Inject
-    private TokenIssuerService tokenIssuerService;
+    private TokenIssuer tokenIssuer;
 
     @Override
     public Response requestAuthenticationWithOpenId(@Context HttpServletRequest request) {
@@ -83,55 +84,98 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
         String openIdClaimedId = (String) request.getAttribute(OPENID_CLAIMED_ID);
         String openIdIdentifier = (String) request.getAttribute(OPENID_IDENTIFIER);
         String identifier = (openIdClaimedId != null) ? openIdClaimedId : openIdIdentifier;
-        String clientId = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_CLIENT_ID, "OAuth client id");
-        String redirectUri = getStringAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_REDIRECT_URI, "OAuth redirect URI");
-        Set<String> scopes = getStringSetAttributeFromSessionAndRemove(request, log, OAuth.OAUTH_SCOPE, "Scopes requested");
-        String providerUrl = getStringAttributeFromSessionAndRemove(request, log, OPENID_PROVIDER, "OpenId provider");
+        String clientId = getStringAttributeFromSession(request, log, OAuth.OAUTH_CLIENT_ID, "OAuth client id");
+        if (clientId.equals(authServerOAuthClientId)) {
+            clientId = getStringAttributeFromSession(request, log, STORED_OAUTH_CLIENT_ID, "Stored OAuth client id");
+        }
+        String redirectUri = getStringAttributeFromSession(request, log, OAuth.OAUTH_REDIRECT_URI, "OAuth redirect URI");
+        Set<String> scopes = getStringSetAttributeFromSession(request, log, OAuth.OAUTH_SCOPE, "Scopes requested");
+        String providerUrl = getStringAttributeFromSession(request, log, OPENID_PROVIDER, "OpenId provider");
+        Boolean alwaysPromptUserToApproveClientApp = parseBoolean(promptEndUserToApproveClientAppOnEveryLogin);
+        Optional<Boolean> endUserConsentResult = getEndUserConsent(request);
+        ClientApplication client;
+        User user;
 
         try {
             if (clientId == null || redirectUri == null || providerUrl == null) {
+                log.severe("Invalid session: Key session attribute/s null");
                 throw createOAuthProblemException(INVALID_SESSION, null);
             }
-            if (identifier == null) {
-                log.warning("No OpenID identifier received");
-                throw createOAuthProblemException(INVALID_IDENTIFIER, redirectUri);
-            }
-            log.info("User has been authenticated as: " + identifier);
-
-            // Check if this is a known identity or new identity
-            Optional<Identity> identityFound = authService.getIdentity(identifier);
-            Identity identity;
-
-            if (identityFound.isPresent()) {
-                identity = identityFound.get();
-                updateIdentity(providerUrl, identity, request);
+            client = setClientApplication(clientId, redirectUri);
+            if (endUserConsentResult.isPresent() && userDeniedAccess(endUserConsentResult)) {
+                log.warning("End-user has refused client application access");
+                throw OAuthEndpointUtil.createOAuthProblemException(USER_CONSENT_DENIED, redirectUri);
+            } else if (endUserConsentResult.isPresent() && userApprovedAccess(endUserConsentResult)) {
+                log.info("User has consented to client application access");
+                user = (User) request.getSession().getAttribute(OAUTH2_USER);
+                identifier = user.getPrimaryIdentity().getIdentifier();
+                saveUserApproval(redirectUri, scopes, user, client);
             } else {
-                identity = addNewIdentity(identifier, providerUrl, request);
+                // User consent has not been given yet
+                if (identifier == null) {
+                    log.warning("No OpenID identifier received");
+                    throw createOAuthProblemException(INVALID_IDENTIFIER, redirectUri);
+                }
+                log.info("User has been authenticated as: " + identifier);
+
+                // Check if this is a known identity or new identity
+                Optional<Identity> identityFound = authService.getIdentity(identifier);
+
+                Identity identity;
+                boolean previouslyApprovedAllRequestedScopesForClient = false;
+                if (identityFound.isPresent()) {
+                    identity = identityFound.get();
+                    updateIdentity(providerUrl, identity, request);
+                    Set<Scope> requestScopes = checkScopes(authService, scopes, identity.getUser().getUserScopes(), redirectUri);
+                    Optional<ClientApproval> clientApprovalFound = getClientApprovalForClientFromSet(log, identity.getUser().getClientApprovals(), client);
+                    if (clientApprovalFound.isPresent() && (requestScopes.isEmpty() || clientApprovalFound.get().getApprovedScopes().containsAll(requestScopes))) {
+                        log.info("End-user has previously approved requested scopes");
+                        previouslyApprovedAllRequestedScopesForClient = true;
+                    }
+                } else {
+                    identity = addNewIdentity(identifier, providerUrl, request);
+                    checkScopes(authService, scopes, identity.getUser().getUserScopes(), redirectUri);
+                }
+                user = identity.getUser();
+
+                if (alwaysPromptUserToApproveClientApp || (!previouslyApprovedAllRequestedScopesForClient)) {
+                    request.getSession().setAttribute(OAUTH2_USER, user);
+                    String clientName = authService.getClient(clientId).get().getClientName();
+                    request.getSession().setAttribute(CLIENT_NAME, clientName);
+                    log.info("Redirecting end-user to approve scopes for client appplication " + clientName);
+                    return Response.temporaryRedirect(URI.create(Resources.endUserConsentUri)).build();
+                }
             }
 
-            // Check if this is part of an identity association request
-            if (clientId.equals(authServerOAuthClientId) && redirectUri.equals(completeAssociationEndpoint)) {
+            // Redirect identity association request
+            if (redirectUri.equals(completeAssociationEndpoint)) {
                 return createAssociationRequestResponse(request, identifier);
             }
 
-            //TODO add logic to prompt user to accept client app request to access resource with scopes
-            // based on whether or not property is set
-
-            // Check if identity already has current grant/s; if so, make them invalid
-            Set<TokenGrant> grants = identity.getTokenGrants();
+            // Check if user already has current grant/s for this client; if so, make them invalid
+            Set<TokenGrant> grants = user.getTokenGrants();
             if (grants != null) {
-                makeGrantsNonCurrent(authService, grants);
+                makeGrantsNonCurrent(authService, filterGrantsByClient(grants, clientId));
             }
 
             OAuthTokenResponseBuilder oAuthTokenResponseBuilder =
-                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, identity, redirectUri, false), SC_FOUND);
+                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, user, redirectUri, false), SC_FOUND);
             OAuthResponse response = oAuthTokenResponseBuilder.location(redirectUri).buildQueryMessage();
+            request.getSession().invalidate();
             return Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
             return handleOAuthProblemException(log, e);
         } catch (OAuthSystemException e) {
             return handleOAuthSystemException(log, e, redirectUri, SERVER_ERROR);
         }
+    }
+
+    private ClientApplication setClientApplication(String clientId, String redirectUri) throws OAuthProblemException {
+        Optional<ClientApplication> clientFound = authService.getClient(clientId);
+        if (!clientFound.isPresent()) {
+            throw createOAuthProblemException(INVALID_CLIENT, redirectUri);
+        }
+        return clientFound.get();
     }
 
     private Response.ResponseBuilder createAuthResponse(HttpServletRequest request, String providerUrl) {
@@ -155,14 +199,14 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
         authHeaderBuilder.requireAttribute(FULLNAME_TITLE_CASE, "http://axschema.org/namePerson");
     }
 
-    private TokenGrant createTokenGrant(String clientId, Set<String> scopes, Identity identity, String redirectUri,
+    private TokenGrant createTokenGrant(String clientId, Set<String> scopes, User user, String redirectUri,
                                         boolean issueRefreshToken)
             throws OAuthProblemException, OAuthSystemException {
-        TokenGrant tokenGrant = OAuthEndpointUtil.createTokenGrantWithDefaults(tokenIssuerService, authService, identity,
+        TokenGrant tokenGrant = OAuthEndpointUtil.createTokenGrantWithDefaults(tokenIssuer, authService, user,
                 authService.getClient(clientId).get(), issueRefreshToken);
         // If specific grant scopes requested, check these are valid and add to token grant
         if (scopes != null) {
-            Set<Scope> grantScopes = OAuthEndpointUtil.checkScopes(authService, scopes, identity.getIdentityScopes(), redirectUri);
+            Set<Scope> grantScopes = checkScopes(authService, scopes, user.getUserScopes(), redirectUri);
             tokenGrant.setGrantScopes(grantScopes);
         }
         authService.addGrant(tokenGrant);
@@ -173,10 +217,10 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
         Optional<ClientApplication> clientFound = authService.getClient(clientId);
         String error;
         try {
-            if (! clientFound.isPresent()) {
+            if (!clientFound.isPresent()) {
                 log.warning("Invalid OAuth2 client with id '" + clientId + "' in login request");
                 error = INVALID_CLIENT;
-            } else if (! clientRedirectUriMatches(decode(redirectUri, urlEncoding), clientFound.get())) {
+            } else if (!clientRedirectUriMatches(decode(redirectUri, urlEncoding), clientFound.get())) {
                 log.warning("Invalid OAuth2 redirect URI in login request: " + decode(redirectUri, urlEncoding));
                 error = INVALID_REDIRECT_URI;
             } else {
@@ -197,7 +241,7 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
             decodedProviderUrl = decode(providerUrl, urlEncoding);
         } catch (UnsupportedEncodingException e) {
             log.severe("Could not decode provider URL: " + providerUrl);
-            throw OAuthEndpointUtil.createOAuthProblemException(URL_DECODING_ERROR, oAuthRequest.getRedirectURI());
+            throw createOAuthProblemException(URL_DECODING_ERROR, oAuthRequest.getRedirectURI());
         }
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(decodedProviderUrl);
         if ((!providerFound.isPresent()) && getPossibleDomains(decodedProviderUrl).isPresent()) {
@@ -242,7 +286,6 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
         log.info("Creating new identity and associated user");
         Identity newIdentity = new Identity();
         newIdentity.setIdentifier(identifier);
-        newIdentity.setIdentityScopes(newHashSet(authService.getDefaultScope()));
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(providerUrl);
         newIdentity.setOpenIdProvider(providerFound.get());
         // Set extra attributes if available
@@ -251,6 +294,7 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
         User newUser = authService.createUnassociatedUser();
         newIdentity.setUser(newUser);
         newUser.setPrimaryIdentity(newIdentity);
+        newUser.setUserScopes(newHashSet(authService.getDefaultScope()));
         authService.updateIdentity(newIdentity);
         return newIdentity;
     }
@@ -311,5 +355,40 @@ public abstract class PublicClientAuthEndpointImpl implements PublicClientAuthEn
         }
         log.info("Redirecting back to: " + uriBuilder.toString());
         return Response.seeOther(URI.create(uriBuilder.toString())).build();
+    }
+
+    private Optional<Boolean> getEndUserConsent(HttpServletRequest request) {
+        String endUserConsent = request.getParameter(USER_CONSENT);
+        if (endUserConsent != null) {
+            return Optional.of(parseBoolean(endUserConsent));
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    private Boolean userApprovedAccess(Optional<Boolean> endUserConsentResult) {
+        return endUserConsentResult.get();
+    }
+
+    private boolean userDeniedAccess(Optional<Boolean> endUserConsentResult) {
+        return !endUserConsentResult.get();
+    }
+
+    private void saveUserApproval(String redirectUri, Set<String> scopes, User user, ClientApplication client) throws OAuthProblemException {
+        Optional<ClientApproval> clientApprovalFound = getClientApprovalForClientFromSet(log, user.getClientApprovals(), client);
+        Set<Scope> approvedScopes = checkScopes(authService, scopes, user.getUserScopes(), redirectUri);
+        if (clientApprovalFound.isPresent()) {
+            clientApprovalFound.get().getApprovedScopes().addAll(approvedScopes);
+            authService.updateClientApproval(clientApprovalFound.get());
+        } else {
+            ClientApproval clientApproval = new ClientApproval();
+            clientApproval.setClientApplication(client);
+            authService.addClientApproval(clientApproval);
+            user.getClientApprovals().add(clientApproval);
+            authService.updateUser(user);
+            clientApproval.setApprover(user);
+            clientApproval.setApprovedScopes(approvedScopes);
+            authService.updateClientApproval(clientApproval);
+        }
     }
 }

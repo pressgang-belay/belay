@@ -30,7 +30,7 @@ public class TokenGrant implements Serializable {
     private String accessTokenExpiry; // In seconds, from time granted
     private Date grantTimeStamp;
     private ClientApplication grantClient;
-    private Identity grantIdentity;
+    private User grantUser;
     private Boolean grantCurrent;
     private Set<Scope> grantScopes = newHashSet();
 
@@ -76,9 +76,9 @@ public class TokenGrant implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "OPENID_IDENTITY_IDENTITY_ID")
-    public Identity getGrantIdentity() {
-        return grantIdentity;
+    @JoinColumn(name = "OPENID_USER_USER_ID")
+    public User getGrantUser() {
+        return grantUser;
     }
 
     @NotNull
@@ -87,8 +87,9 @@ public class TokenGrant implements Serializable {
         return grantCurrent;
     }
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "SCOPE_SCOPE_ID")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "TOKEN_GRANT_SCOPE", joinColumns = { @JoinColumn(name = "TOKEN_GRANT_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
     public Set<Scope> getGrantScopes() {
         return grantScopes;
     }
@@ -117,8 +118,8 @@ public class TokenGrant implements Serializable {
         this.grantClient = grantClient;
     }
 
-    public void setGrantIdentity(Identity grantIdentity) {
-        this.grantIdentity = grantIdentity;
+    public void setGrantUser(User grantUser) {
+        this.grantUser = grantUser;
     }
 
     public void setGrantCurrent(Boolean grantCurrent) {
@@ -142,7 +143,7 @@ public class TokenGrant implements Serializable {
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())
                 .append(grantTimeStamp, that.getGrantTimeStamp())
                 .append(grantClient, that.getGrantClient())
-                .append(grantIdentity, that.getGrantIdentity())
+                .append(grantUser, that.getGrantUser())
                 .append(grantCurrent, that.getGrantCurrent())
                 .isEquals();
     }
@@ -155,19 +156,20 @@ public class TokenGrant implements Serializable {
                 .append(accessTokenExpiry)
                 .append(grantTimeStamp)
                 .append(grantClient)
-                .append(grantIdentity)
+                .append(grantUser)
                 .append(grantCurrent)
                 .toHashCode();
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("accessToken", accessToken)
+        return new ToStringBuilder(this)
+                .append("accessToken", accessToken)
                 .append("refreshToken", refreshToken)
                 .append("accessTokenExpiry", accessTokenExpiry)
                 .append("grantTimeStamp", grantTimeStamp)
                 .append("grantClient", grantClient)
-                .append("grantIdentity", grantIdentity)
+                .append("grantUser", grantUser)
                 .append("grantCurrent", grantCurrent)
                 .append("grantScopes", grantScopes)
                 .toString();

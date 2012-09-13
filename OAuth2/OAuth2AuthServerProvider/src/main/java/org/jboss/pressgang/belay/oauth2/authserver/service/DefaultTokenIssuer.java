@@ -14,14 +14,14 @@ import javax.inject.Inject;
 import java.util.logging.Logger;
 
 /**
- * Service class wraps an OAuthIssuer. Its job is to ensure no tokens are generated that
+ * Class wraps an OAuthIssuer implementation. Its job is to ensure no tokens are generated that
  * happen to match those of a current TokenGrant, to avoid any token collisions where one
  * user is thought to be another. It does not provide an authorisation code service.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Stateless
-public class TokenIssuerService {
+public class DefaultTokenIssuer implements TokenIssuer {
 
     @Inject
     @AuthServer
@@ -32,6 +32,7 @@ public class TokenIssuerService {
 
     private static OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
 
+    @Override
     public String accessToken() throws OAuthSystemException {
         String accessToken = oAuthIssuer.accessToken();
         Optional<TokenGrant> grant = tokenGrantDao.getTokenGrantFromAccessToken(accessToken);
@@ -43,6 +44,7 @@ public class TokenIssuerService {
         return accessToken;
     }
 
+    @Override
     public String refreshToken() throws OAuthSystemException {
         String refreshToken = oAuthIssuer.refreshToken();
         Optional<TokenGrant> grant = tokenGrantDao.getTokenGrantFromRefreshToken(refreshToken);
@@ -52,5 +54,10 @@ public class TokenIssuerService {
         }
         log.fine("Supplying refresh token: " + refreshToken);
         return refreshToken;
+    }
+
+    @Override
+    public String authorizationCode() throws OAuthSystemException {
+        return oAuthIssuer.authorizationCode();
     }
 }

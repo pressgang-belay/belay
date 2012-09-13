@@ -22,7 +22,7 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.openIdR
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public abstract class RealmEndpointImpl implements RealmEndpoint {
+public class RealmEndpointImpl implements RealmEndpoint {
 
     @Inject
     @AuthServer

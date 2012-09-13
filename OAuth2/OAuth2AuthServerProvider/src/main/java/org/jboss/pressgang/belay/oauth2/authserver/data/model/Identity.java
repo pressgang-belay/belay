@@ -36,8 +36,6 @@ public class Identity implements Serializable {
     private String country;
     private OpenIdProvider openIdProvider;
     private User user;
-    private Set<TokenGrant> tokenGrants = newHashSet();
-    private Set<Scope> identityScopes = newHashSet();
 
     public Identity() {
     }
@@ -89,7 +87,6 @@ public class Identity implements Serializable {
         return country;
     }
 
-    //@NotNull
     @ManyToOne
     @JoinTable(name="OPENID_IDENTITY_OPENID_PROVIDER", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
             inverseJoinColumns = { @JoinColumn(name = "PROVIDER_ID") })
@@ -97,23 +94,11 @@ public class Identity implements Serializable {
         return openIdProvider;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name="OPENID_IDENTITY_OPENID_USER", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
             inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
     public User getUser() {
         return user;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantIdentity", fetch = FetchType.EAGER)
-    public Set<TokenGrant> getTokenGrants() {
-        return tokenGrants;
-    }
-
-    @ManyToMany
-    @JoinTable(name = "OPENID_IDENTITY_SCOPE", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
-    public Set<Scope> getIdentityScopes() {
-        return identityScopes;
     }
 
     public void setIdentityId(BigInteger identityId) {
@@ -156,14 +141,6 @@ public class Identity implements Serializable {
         this.user = user;
     }
 
-    public void setTokenGrants(Set<TokenGrant> tokenGrants) {
-        this.tokenGrants = tokenGrants;
-    }
-
-    public void setIdentityScopes(Set<Scope> identityScopes) {
-        this.identityScopes = identityScopes;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -199,7 +176,8 @@ public class Identity implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("identifier", identifier)
+        return new ToStringBuilder(this)
+                .append("identifier", identifier)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
                 .append("fullName", fullName)
@@ -208,8 +186,6 @@ public class Identity implements Serializable {
                 .append("language", language)
                 .append("openIdProvider", openIdProvider)
                 .append("user", user)
-                .append("tokenGrants", tokenGrants)
-                .append("identityScopes", identityScopes)
                 .toString();
     }
 }

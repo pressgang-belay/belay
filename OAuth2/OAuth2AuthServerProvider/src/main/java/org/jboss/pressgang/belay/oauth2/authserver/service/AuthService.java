@@ -1,16 +1,23 @@
 package org.jboss.pressgang.belay.oauth2.authserver.service;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgang.belay.oauth2.authserver.data.dao.*;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.TokenGrantInfo;
+import org.jboss.pressgang.belay.oauth2.shared.data.model.UserInfo;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import static com.google.common.collect.Collections2.filter;
 
 /**
  * Service class wraps calls to DAOs.
@@ -42,6 +49,9 @@ public class AuthService {
     @Inject
     private UserDao userDao;
 
+    @Inject
+    private ClientApprovalDao clientApprovalDao;
+
     public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) throws OAuthSystemException {
         return tokenGrantDao.getTokenGrantFromAccessToken(accessToken);
     }
@@ -58,8 +68,17 @@ public class AuthService {
         return identityDao.getIdentityFromIdentifier(identifier);
     }
 
-    public Optional<IdentityInfo> getUserInfo(String identifier) {
+    public Optional<IdentityInfo> getIdentityInfo(String identifier) {
         return identityDao.getIdentityInfoFromIdentifier(identifier);
+    }
+
+    public Optional<UserInfo> getUserInfo(String identifier) {
+        Optional<Identity> identityFound = getIdentity(identifier);
+        if (! identityFound.isPresent()) {
+            log.warning("Could not find UserInfo for identifier " + identifier);
+            return Optional.absent();
+        }
+        return userDao.getUserInfoFromUser(identityFound.get().getUser());
     }
 
     public boolean isIdentityAssociatedWithUser(String identifier, User user) {
@@ -110,5 +129,13 @@ public class AuthService {
 
     public void updateGrant(TokenGrant tokenGrant) {
         tokenGrantDao.updateTokenGrant(tokenGrant);
+    }
+
+    public void addClientApproval(ClientApproval clientApproval) {
+        clientApprovalDao.addClientApproval(clientApproval);
+    }
+
+    public void updateClientApproval(ClientApproval clientApproval) {
+        clientApprovalDao.update(clientApproval);
     }
 }

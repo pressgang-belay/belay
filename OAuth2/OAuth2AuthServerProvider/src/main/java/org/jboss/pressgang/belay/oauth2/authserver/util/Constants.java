@@ -26,6 +26,9 @@ public class Constants {
     public static final String QUERY_STRING_MARKER = "?";
     public static final String PARAMETER_SEPARATOR = "&";
     public static final String KEY_VALUE_SEPARATOR = "=";
+    public static final String USER_CONSENT = "user_consent";
+    public static final String OAUTH2_USER = "oauth2_user";
+    public static final String CLIENT_NAME = "client_name";
 
     // Errors
     public static final String INVALID_IDENTIFIER = "invalid_identifier";
@@ -39,8 +42,10 @@ public class Constants {
     public static final String IDENTITIES_ASSOCIATED_ERROR = "Identities already associated";
     public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query identity";
     public static final String IDENTITY_QUERY_ERROR = "Could not obtain identity information";
+    public static final String USER_QUERY_ERROR = "Could not obtain user information";
     public static final String URL_DECODING_ERROR = "url_decoding_error";
     public static final String INVALID_SESSION = "invalid_session";
+    public static final String USER_CONSENT_DENIED = "user_consent_denied";
 
     // General
     public static final String ONE_HOUR = "3600";

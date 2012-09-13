@@ -2,7 +2,6 @@ package org.jboss.pressgang.belay.oauth2.authserver.data.dao;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.TokenGrant;
@@ -88,7 +87,7 @@ public class TokenGrantDao {
             TokenGrantInfo.TokenGrantInfoBuilder builder = tokenGrantInfoBuilder(tokenGrant.getAccessToken())
                     .setAccessTokenExpiry(tokenGrant.getAccessTokenExpiry())
                     .setHasRefreshToken(tokenGrant.getRefreshToken() != null)
-                    .setGrantIdentityIdentifier(tokenGrant.getGrantIdentity().getIdentifier())
+                    .setGrantUserPrimaryIdentifier(tokenGrant.getGrantUser().getPrimaryIdentity().getIdentifier())
                     .setGrantClientIdentifier(tokenGrant.getGrantClient().getClientIdentifier())
                     .setGrantCurrent(tokenGrant.getGrantCurrent())
                     .setGrantTimeStamp(tokenGrant.getGrantTimeStamp());

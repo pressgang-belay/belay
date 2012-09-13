@@ -58,7 +58,7 @@ public class OAuth2RSDecision implements OAuthDecision {
             log.info("Found match for token " + token);
             TokenGrantInfo tokenGrantInfo = tokenGrantInfoFound.get();
             this.oAuthClient = new OAuth2RSClient(tokenGrantInfo.getGrantClientIdentifier());
-            this.principal = new OAuth2RSPrincipal(tokenGrantInfo.getGrantIdentityIdentifier());
+            this.principal = new OAuth2RSPrincipal(tokenGrantInfo.getGrantUserPrimaryIdentifier());
             setAuthorisation(tokenGrantInfo, request, response);
         } else {
             log.info("Invalid token " + token);

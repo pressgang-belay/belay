@@ -21,6 +21,7 @@
         <class>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSScope</class>
         <class>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSEndpoint</class>
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.ClientApplication</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.ClientApproval</class>
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.Identity</class>
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.OpenIdProvider</class>
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope</class>

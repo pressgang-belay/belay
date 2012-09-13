@@ -80,7 +80,8 @@ public class OpenIdProvider implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("providerName", providerName)
+        return new ToStringBuilder(this)
+                .append("providerName", providerName)
                 .append("providerUrl", providerUrl)
                 .toString();
     }

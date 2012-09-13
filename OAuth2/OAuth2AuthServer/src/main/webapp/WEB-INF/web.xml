@@ -6,8 +6,7 @@
 
     <!-- Used to override Guice binding in the openid-filter library -->
     <listener>
-        <listener-class>org.jboss.pressgang.belay.oauth2.authserver.openid.GuiceOverrideServletContextListener
-        </listener-class>
+        <listener-class>org.jboss.pressgang.belay.oauth2.authserver.openid.GuiceOverrideServletContextListener</listener-class>
     </listener>
 
     <!-- The OpenID Filter handles identity authentication -->
@@ -30,7 +29,7 @@
 
     <filter-mapping>
         <filter-name>OAuth Filter</filter-name>
-        <url-pattern>/rest/auth/identity/*</url-pattern>
+        <url-pattern>/rest/auth/user/*</url-pattern>
     </filter-mapping>
 
     <context-param>
@@ -48,7 +47,7 @@
         <param-value>/rest/auth/authorise</param-value>
     </context-param>
 
-    <!-- Allowing query-style params on requests, required for identity service endpoints -->
+    <!-- Allowing query-style params on requests, required for user/identity service endpoints -->
     <context-param>
         <param-name>oauth.rs.tokens</param-name>
         <param-value>QUERY,HEADER</param-value>

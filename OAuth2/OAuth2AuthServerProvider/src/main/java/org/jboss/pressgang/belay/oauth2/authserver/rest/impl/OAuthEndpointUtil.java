@@ -1,27 +1,29 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.inject.internal.ImmutableSet;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
-import org.jboss.pressgang.belay.oauth2.authserver.data.model.ClientApplication;
-import org.jboss.pressgang.belay.oauth2.authserver.data.model.Identity;
-import org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope;
-import org.jboss.pressgang.belay.oauth2.authserver.data.model.TokenGrant;
+import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
-import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuerService;
+import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.filter;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_HEADER_NAME;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_SCOPE;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
@@ -33,16 +35,16 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTo
  */
 class OAuthEndpointUtil {
 
-    static TokenGrant createTokenGrantWithDefaults(TokenIssuerService tokenIssuerService, AuthService authService,
-                                                   Identity identity, ClientApplication client, boolean issueRefreshToken)
-                                                        throws OAuthSystemException {
+    static TokenGrant createTokenGrantWithDefaults(TokenIssuer tokenIssuer, AuthService authService,
+                                                   User user, ClientApplication client, boolean issueRefreshToken)
+            throws OAuthSystemException {
         TokenGrant tokenGrant = new TokenGrant();
-        tokenGrant.setGrantIdentity(identity);
+        tokenGrant.setGrantUser(user);
         tokenGrant.setGrantClient(client);
         tokenGrant.setGrantScopes(newHashSet(authService.getDefaultScope()));
-        tokenGrant.setAccessToken(tokenIssuerService.accessToken());
+        tokenGrant.setAccessToken(tokenIssuer.accessToken());
         if (issueRefreshToken) {
-            tokenGrant.setRefreshToken(tokenIssuerService.refreshToken());
+            tokenGrant.setRefreshToken(tokenIssuer.refreshToken());
         }
         tokenGrant.setAccessTokenExpiry(oAuthTokenExpiry);
         tokenGrant.setGrantTimeStamp(new Date());
@@ -82,7 +84,7 @@ class OAuthEndpointUtil {
 
     static void makeGrantNonCurrent(AuthService authService, TokenGrant grant) {
         // Make current grant non-current, as long as its expiry time is not set to 0 (used for non-expiring tokens)
-        if (grant.getGrantCurrent() && (! grant.getAccessTokenExpiry().equals("0"))) {
+        if (grant.getGrantCurrent() && (!grant.getAccessTokenExpiry().equals("0"))) {
             grant.setGrantCurrent(false);
             authService.updateGrant(grant);
         }
@@ -97,28 +99,25 @@ class OAuthEndpointUtil {
         return builder;
     }
 
-    static String getStringAttributeFromSessionAndRemove(HttpServletRequest request, Logger log, String attributeKey,
-                                                         String attributeName) {
+    static String getStringAttributeFromSession(HttpServletRequest request, Logger log, String attributeKey,
+                                                String attributeName) {
         String attribute = (String) request.getSession().getAttribute(attributeKey);
         log.info(attributeName + " is: " + attribute);
-        request.getSession().removeAttribute(attributeKey);
         return attribute;
     }
 
     @SuppressWarnings("unchecked")
-    static Set<String> getStringSetAttributeFromSessionAndRemove(HttpServletRequest request, Logger log,
-                                                                 String attributeKey, String attributeName) {
+    static Set<String> getStringSetAttributeFromSession(HttpServletRequest request, Logger log,
+                                                        String attributeKey, String attributeName) {
         Set<String> attribute = (Set<String>) request.getSession().getAttribute(attributeKey);
         log.info(attributeName + " is: " + attribute);
-        request.getSession().removeAttribute(attributeKey);
         return attribute;
     }
 
-    static Boolean getBooleanAttributeFromSessionAndRemove(HttpServletRequest request, Logger log,
-                                                                 String attributeKey, String attributeName) {
+    static Boolean getBooleanAttributeFromSession(HttpServletRequest request, Logger log,
+                                                  String attributeKey, String attributeName) {
         Boolean attribute = (Boolean) request.getSession().getAttribute(attributeKey);
         log.info(attributeName + " is: " + attribute);
-        request.getSession().removeAttribute(attributeKey);
         return attribute;
     }
 
@@ -141,7 +140,7 @@ class OAuthEndpointUtil {
         log.severe("OAuthSystemException thrown: " + e.getMessage());
         Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_FOUND);
         responseBuilder.entity((error != null) ? error : e.getMessage());
-        if (! OAuthUtils.isEmpty(redirectUri)) {
+        if (!OAuthUtils.isEmpty(redirectUri)) {
             return responseBuilder.location(URI.create(redirectUri)).build();
         } else {
             throw new WebApplicationException(responseBuilder.build());
@@ -168,5 +167,32 @@ class OAuthEndpointUtil {
 
     static String buildBaseUrl(HttpServletRequest request) {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+    }
+
+    static Set<TokenGrant> filterGrantsByClient(Set<TokenGrant> grants, final String clientId) {
+        return ImmutableSet.copyOf(filter(grants, new Predicate<TokenGrant>() {
+            @Override
+            public boolean apply(TokenGrant grant) {
+                return grant.getGrantClient().getClientId().equals(clientId);
+            }
+        }));
+    }
+
+    static Optional<ClientApproval> getClientApprovalForClientFromSet(Logger log, Set<ClientApproval> clientApprovals, final ClientApplication client) {
+        Collection<ClientApproval> matchingApprovals = Collections2.filter(clientApprovals, new Predicate<ClientApproval>() {
+            @Override
+            public boolean apply(ClientApproval approval) {
+                return approval.getClientApplication().getClientIdentifier().equals(client.getClientIdentifier());
+            }
+        });
+        if (matchingApprovals.isEmpty()) {
+            log.fine("Could not find Client Approval for client application " + client.getClientName());
+            return Optional.absent();
+        }
+        if (matchingApprovals.size() > 1) {
+            log.warning("Found " + matchingApprovals.size() + " user Client Approvals for client application " + client.getClientName());
+        }
+        log.fine("Found Client Approval for client application " + client.getClientName());
+        return Optional.of(matchingApprovals.iterator().next());
     }
 }
