@@ -57,7 +57,7 @@ public class User implements Serializable {
         return userIdentities;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "grantUser", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "grantUser", fetch = FetchType.EAGER)
     public Set<TokenGrant> getTokenGrants() {
         return tokenGrants;
     }
@@ -69,7 +69,7 @@ public class User implements Serializable {
         return userScopes;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "approver", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "approver", fetch = FetchType.EAGER)
     public Set<ClientApproval> getClientApprovals() {
         return clientApprovals;
     }

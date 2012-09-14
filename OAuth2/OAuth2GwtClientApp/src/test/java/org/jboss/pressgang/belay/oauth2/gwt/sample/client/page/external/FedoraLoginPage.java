@@ -40,12 +40,12 @@ public class FedoraLoginPage extends BasePage {
         passwordInputField.sendKeys(password);
         loginButton.click();
         FedoraApprovalPage approvalPage = new FedoraApprovalPage(getDriver());
-        UserConsentPage consentPage = new UserConsentPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
+        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.approve();
         }
+        UserConsentPage consentPage = new UserConsentPage(getDriver());
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, consentPage).isPresent()) {
             consentPage.makeConsentDecision(true).submitDecision();
         }

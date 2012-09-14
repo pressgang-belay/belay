@@ -32,7 +32,7 @@ public class UserConsentEndpointImpl implements UserConsentEndpoint {
         StringWriter stringWriter = new StringWriter();
         new Html(stringWriter) {{
             html();
-            head().title(header);
+            head().title().text(header);
                 if (endUserConsentFormCssLocation != null && (! endUserConsentFormCssLocation.isEmpty())) {
                     link().href(endUserConsentFormCssLocation).rel("stylesheet").type("text/css");
                 }

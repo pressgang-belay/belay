@@ -4,6 +4,7 @@ import com.google.code.openid.AuthorizationHeaderBuilder;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import org.apache.amber.oauth2.common.OAuth;
+import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
@@ -108,7 +109,11 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
             } else if (endUserConsentResult.isPresent() && userApprovedAccess(endUserConsentResult)) {
                 log.info("User has consented to client application access");
                 user = (User) request.getSession().getAttribute(OAUTH2_USER);
-                identifier = user.getPrimaryIdentity().getIdentifier();
+                if (user != null && user.getPrimaryIdentity() != null) {
+                    identifier = user.getPrimaryIdentity().getIdentifier();
+                } else {
+                    throw OAuthEndpointUtil.createOAuthProblemException(OAuthError.CodeResponse.SERVER_ERROR, redirectUri);
+                }
                 saveUserApproval(redirectUri, scopes, user, client);
             } else {
                 // User consent has not been given yet

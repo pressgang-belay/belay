@@ -40,14 +40,14 @@ public class MyOpenIdLoginPage extends BasePage {
         setCheckbox(persistentLoginCheckbox, isLoginPersistent);
         loginButton.click();
         MyOpenIdApprovalPage approvalPage = new MyOpenIdApprovalPage(getDriver());
-        UserConsentPage consentPage = new UserConsentPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
+        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.setApprovalPersistence(isOpenIdApprovalPersistent)
                         .approve();
         }
-        if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, consentPage).isPresent()) {
+        UserConsentPage consentPage = new UserConsentPage(getDriver());
+        if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, consentPage).isPresent()) {
             consentPage.makeConsentDecision(true).submitDecision();
         }
         return this;

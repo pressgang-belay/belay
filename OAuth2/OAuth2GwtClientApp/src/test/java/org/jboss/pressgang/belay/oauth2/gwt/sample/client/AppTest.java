@@ -85,12 +85,12 @@ public class AppTest extends BaseAppTest {
         assertLoggedInWithRedHat();
 
         // When a request is made to associate another identity
-        appPage.associateYahooIdentity(testUsers.get("yahooUser"), testUsers.get("yahooPassword"), false);
+        appPage.associateMyOpenIdIdentity(testUsers.get("myOpenIdUser"), testUsers.get("myOpenIdPassword"), false, false);
 
         // Then the identities are associated
         doWait(THIRTY_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
         String result = appPage.getUserInfo();
-        assertThat(result, containsString("https://me.yahoo.com"));
+        assertThat(result, containsString("myopenid.com"));
         assertThat(result, containsString("/OpenIdProvider/openid/provider?id="));
     }
 
@@ -102,12 +102,13 @@ public class AppTest extends BaseAppTest {
         appPage.associateGoogleIdentity(testUsers.get("googleUser"), testUsers.get("googlePassword"), false, false);
         doWait(THIRTY_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
         String userInfo = appPage.getUserInfo();
+        log.info("UserInfo: " + userInfo);
         String newPrimaryIdentifier = userInfo.substring(userInfo.indexOf("https://www.google.com")); // Trim start
-        newPrimaryIdentifier = newPrimaryIdentifier.substring(0, newPrimaryIdentifier.indexOf("\"],\"identityScopes")); // Trim end
+        newPrimaryIdentifier = newPrimaryIdentifier.substring(0, newPrimaryIdentifier.indexOf("\"],\"firstNames")); // Trim end
 
         // When the other identity is made primary
         String result = appPage.makeIdentityPrimary(newPrimaryIdentifier);
-        userInfo = appPage.getUserInfo();
+        userInfo = appPage.getIdentityInfo();
 
         // Then the second identity becomes the primary, logged in identity and a new token is returned
         assertThat(result, containsString("Result"));
@@ -122,7 +123,7 @@ public class AppTest extends BaseAppTest {
         assertLoggedInWithRedHat();
 
         // When a call is made to get identity info
-        String result = appPage.getUserInfo();
+        String result = appPage.getIdentityInfo();
 
         // Then info is returned
         assertThat(result, containsString("Result: {\"identifier\""));

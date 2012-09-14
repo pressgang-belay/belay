@@ -1,7 +1,8 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 
+import com.google.appengine.repackaged.com.google.common.collect.ImmutableSet;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
@@ -29,6 +30,8 @@ import java.security.Principal;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static com.google.appengine.repackaged.com.google.common.collect.ImmutableSet.copyOf;
+import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Sets.newHashSet;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REDIRECT_URI;
@@ -36,12 +39,8 @@ import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.*;
-import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.addTokenGrantResponseParams;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.IDENTITIES_ASSOCIATED_ERROR;
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.authEndpoint;
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.authServerOAuthClientId;
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.completeAssociationEndpoint;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
  * @author kamiller@redhat.com (Katie Miller)
@@ -200,20 +199,51 @@ public class PublicClientAssociationAuthEndpointImpl implements PublicClientAsso
         }
     }
 
-    private User mergeUserAttributes(User oldUser, User newUser) {
-        for (Identity identity : oldUser.getUserIdentities()) {
-            identity.setUser(newUser);
-            authService.updateIdentity(identity);
-        }
+    private User mergeUserAttributes(final User oldUser, final User newUser) {
         if (isNullOrEmpty(newUser.getUsername()) && (! isNullOrEmpty(oldUser.getUsername()))) {
             newUser.setUsername(oldUser.getUsername());
         }
-        newUser.getTokenGrants().addAll(newHashSet(oldUser.getTokenGrants()));
+        newUser.getUserIdentities().addAll(updateIdentities(oldUser, newUser));
+        newUser.getTokenGrants().addAll(updateOldTokenGrants(oldUser, newUser));
         newUser.getUserScopes().addAll(newHashSet(oldUser.getUserScopes()));
-        newUser.getClientApprovals().addAll(newHashSet(oldUser.getClientApprovals()));
+        newUser.getClientApprovals().addAll(updateOldClientApprovals(oldUser, newUser));
+
         authService.updateUser(newUser);
         authService.deleteUser(oldUser);
         return newUser;
+    }
+
+    private ImmutableSet<Identity> updateIdentities(User oldUser, final User newUser) {
+        return copyOf(transform(oldUser.getUserIdentities(), new Function<Identity, Identity>() {
+            @Override
+            public Identity apply(Identity identity) {
+                identity.setUser(newUser);
+                authService.updateIdentity(identity);
+                return identity;
+            }
+        }));
+    }
+
+    private ImmutableSet<ClientApproval> updateOldClientApprovals(User oldUser, final User newUser) {
+        return copyOf(transform(oldUser.getClientApprovals(), new Function<ClientApproval, ClientApproval>() {
+            @Override
+            public ClientApproval apply(ClientApproval clientApproval) {
+                clientApproval.setApprover(newUser);
+                authService.updateClientApproval(clientApproval);
+                return clientApproval;
+            }
+        }));
+    }
+
+    private ImmutableSet<TokenGrant> updateOldTokenGrants(User oldUser, final User newUser) {
+        return copyOf(transform(oldUser.getTokenGrants(), new Function<TokenGrant, TokenGrant>() {
+            @Override
+            public TokenGrant apply(TokenGrant tokenGrant) {
+                tokenGrant.setGrantUser(newUser);
+                authService.updateGrant(tokenGrant);
+                return tokenGrant;
+            }
+        }));
     }
 
     private boolean isNullOrEmpty(String str) {
@@ -234,13 +264,17 @@ public class PublicClientAssociationAuthEndpointImpl implements PublicClientAsso
     }
 
     private Response createTokenGrantResponseForUser(String oAuthRedirectUri, ClientApplication client,
-                                                     Set<Scope> grantScopes, User user,
+                                                     Set<Scope> requestedGrantScopes, User user,
                                                      boolean issueRefreshToken) {
         TokenGrant newTokenGrant;
         try {
             newTokenGrant = createTokenGrantWithDefaults(tokenIssuer, authService,
                     user, client, issueRefreshToken);
-            if (grantScopes != null) {
+            if (requestedGrantScopes != null) {
+                Set<Scope> grantScopes = newTokenGrant.getGrantScopes();
+                for (Scope grantScope : requestedGrantScopes) {
+                    grantScopes.add(grantScope);
+                }
                 newTokenGrant.setGrantScopes(grantScopes);
             }
             authService.addGrant(newTokenGrant);

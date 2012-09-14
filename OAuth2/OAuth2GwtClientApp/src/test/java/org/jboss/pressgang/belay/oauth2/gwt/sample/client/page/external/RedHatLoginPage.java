@@ -40,13 +40,13 @@ public class RedHatLoginPage extends BasePage {
         passwordInputField.sendKeys(password);
         loginButton.click();
         RedHatApprovalPage approvalPage = new RedHatApprovalPage(getDriver());
-        UserConsentPage consentPage = new UserConsentPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
+        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.approve();
         }
-        if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, consentPage).isPresent()) {
+        UserConsentPage consentPage = new UserConsentPage(getDriver());
+        if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, consentPage).isPresent()) {
             consentPage.makeConsentDecision(true).submitDecision();
         }
         return this;

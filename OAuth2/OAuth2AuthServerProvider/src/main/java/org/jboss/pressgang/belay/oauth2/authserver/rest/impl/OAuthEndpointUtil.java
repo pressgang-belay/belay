@@ -65,12 +65,14 @@ class OAuthEndpointUtil {
                                   String redirectUri)
             throws OAuthProblemException {
         Set<Scope> grantScopes = newHashSet(authService.getDefaultScope());
-        for (String scopeName : requestedScopes) {
-            Optional<Scope> scopeFound = authService.getScopeByName(scopeName);
-            if ((!scopeFound.isPresent()) || (!userScopes.contains(scopeFound.get()))) {
-                throw createOAuthProblemException(INVALID_SCOPE, redirectUri);
-            } else {
-                grantScopes.add(scopeFound.get());
+        if (requestedScopes != null) {
+            for (String scopeName : requestedScopes) {
+                Optional<Scope> scopeFound = authService.getScopeByName(scopeName);
+                if ((!scopeFound.isPresent()) || (!userScopes.contains(scopeFound.get()))) {
+                    throw createOAuthProblemException(INVALID_SCOPE, redirectUri);
+                } else {
+                    grantScopes.add(scopeFound.get());
+                }
             }
         }
         return grantScopes;

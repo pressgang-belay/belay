@@ -82,6 +82,7 @@ public class WebDriverUtil {
             @Override
             public Optional<T> checkWaitCondition() {
                 if (page.isPageLoaded()) {
+                    log.info("Page loaded: " + page.getExpectedPageTitle());
                     return Optional.of(page);
                 } else {
                     return Optional.absent();

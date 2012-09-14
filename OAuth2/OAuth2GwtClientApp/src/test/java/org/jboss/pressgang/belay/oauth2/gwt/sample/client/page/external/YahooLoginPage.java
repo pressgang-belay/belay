@@ -42,13 +42,16 @@ public class YahooLoginPage extends BasePage {
         setCheckbox(persistentLoginCheckbox, isLoginPersistent);
         loginButton.click();
         YahooApprovalPage approvalPage = new YahooApprovalPage(getDriver());
-        UserConsentPage consentPage = new UserConsentPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, ONE_MINUTE, AppPage.getExpectedLoginResultText());
+        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE,
+                AppPage.getExpectedLoginResultText());
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
+            getDriver().switchTo().window(approvalPage.getExpectedPageTitle());
             approvalPage.approve();
         }
-        if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, consentPage).isPresent()) {
+        UserConsentPage consentPage = new UserConsentPage(getDriver());
+        if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, consentPage).isPresent()) {
+            getDriver().switchTo().window(consentPage.getExpectedPageTitle());
             consentPage.makeConsentDecision(true).submitDecision();
         }
         return this;

@@ -48,7 +48,7 @@ public class Resources {
                 if (propertyValue != null && (! propertyValue.isEmpty())) {
                     try {
                         field.set(this, propertyValue);
-                        log.fine("Set AuthServer " + field.getName() + " property to: " + propertyValue);
+                        log.info("Set AuthServer " + field.getName() + " property to: " + propertyValue);
                     } catch (IllegalAccessException e) {
                         log.severe("Could not set AuthServer property: " + field.getName());
                     }

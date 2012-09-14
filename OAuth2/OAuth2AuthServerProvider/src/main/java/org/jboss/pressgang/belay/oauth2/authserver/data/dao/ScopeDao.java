@@ -16,6 +16,8 @@ import javax.persistence.criteria.Root;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.defaultScopeName;
+
 /**
  * Scope DAO.
  *
@@ -39,7 +41,7 @@ public class ScopeDao {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Scope> criteria = cb.createQuery(Scope.class);
         Root<Scope> scope = criteria.from(Scope.class);
-        criteria.select(scope).where(cb.equal(scope.get("scopeName"), Resources.defaultScopeName));
+        criteria.select(scope).where(cb.equal(scope.get("scopeName"), defaultScopeName));
         log.fine("Returning default Scope");
         return em.createQuery(criteria).getSingleResult();
     }
