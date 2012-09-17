@@ -10,30 +10,42 @@ insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-6, 'Fedora Account System', 'admin.fedoraproject.org')
 
 insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-1, 'https://localhost:8443/OpenIdProvider/openid/provider?id=user')
-insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-2, 'https://me.yahoo.com/a/1ZfO6j08s57hH1f0aHxpsHE9YoAqa1J1eKA-#8254d')
+-- insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-2, 'https://me.yahoo.com/a/1ZfO6j08s57hH1f0aHxpsHE9YoAqa1J1eKA-#8254d')
 insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-3, 'https://www.google.com/accounts/o8/id?id=AItOawlu2J4UUb2RUlQnfbSZH2rdSZ0VQABj3I0')
+insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-4, 'https://pressgangccms.myopenid.com/')
+insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-5, 'https://admin.fedoraproject.org/accounts/openid/id/pressgangccms')
 
 insert into OPENID_USER (USER_ID, OPENID_IDENTITY_IDENTITY_ID) values (-1, -1)
-insert into OPENID_USER (USER_ID, OPENID_IDENTITY_IDENTITY_ID) values (-2, -2)
+-- insert into OPENID_USER (USER_ID, OPENID_IDENTITY_IDENTITY_ID) values (-2, -2)
 insert into OPENID_USER (USER_ID, OPENID_IDENTITY_IDENTITY_ID) values (-3, -3)
+insert into OPENID_USER (USER_ID, OPENID_IDENTITY_IDENTITY_ID) values (-4, -4)
+insert into OPENID_USER (USER_ID, OPENID_IDENTITY_IDENTITY_ID) values (-5, -5)
 
 insert into OPENID_IDENTITY_OPENID_USER (IDENTITY_ID, USER_ID) values (-1, -1)
-insert into OPENID_IDENTITY_OPENID_USER (IDENTITY_ID, USER_ID) values (-2, -2)
+-- insert into OPENID_IDENTITY_OPENID_USER (IDENTITY_ID, USER_ID) values (-2, -2)
 insert into OPENID_IDENTITY_OPENID_USER (IDENTITY_ID, USER_ID) values (-3, -3)
+insert into OPENID_IDENTITY_OPENID_USER (IDENTITY_ID, USER_ID) values (-4, -4)
+insert into OPENID_IDENTITY_OPENID_USER (IDENTITY_ID, USER_ID) values (-5, -5)
 
 insert into OPENID_IDENTITY_OPENID_PROVIDER (PROVIDER_ID, IDENTITY_ID) values (-2, -1)
-insert into OPENID_IDENTITY_OPENID_PROVIDER (PROVIDER_ID, IDENTITY_ID) values (-3, -2)
+-- insert into OPENID_IDENTITY_OPENID_PROVIDER (PROVIDER_ID, IDENTITY_ID) values (-3, -2)
 insert into OPENID_IDENTITY_OPENID_PROVIDER (PROVIDER_ID, IDENTITY_ID) values (-1, -3)
+insert into OPENID_IDENTITY_OPENID_PROVIDER (PROVIDER_ID, IDENTITY_ID) values (-5, -4)
+insert into OPENID_IDENTITY_OPENID_PROVIDER (PROVIDER_ID, IDENTITY_ID) values (-6, -5)
 
 insert into SCOPE (SCOPE_ID, SCOPE_NAME) values (-1, 'DEFAULT')
 insert into SCOPE (SCOPE_ID, SCOPE_NAME) values (-2, 'PERFORM_USER_MANAGEMENT')
 
 insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-1, -1)
 insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-1, -2)
-insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-2, -1)
-insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-2, -2)
+-- insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-2, -1)
+-- insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-2, -2)
 insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-3, -1)
 insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-3, -2)
+insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-4, -1)
+insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-4, -2)
+insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-5, -1)
+insert into OPENID_USER_SCOPE (USER_ID, SCOPE_ID) values (-5, -2)
 
 
 insert into RS_SCOPE (SCOPE_ID, SCOPE_NAME) values (-1, 'DEFAULT')

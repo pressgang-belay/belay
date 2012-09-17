@@ -7,6 +7,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.concurrent.FutureTask;
+
 import static org.jboss.pressgang.belay.oauth2.gwt.sample.client.page.AppPage.getWindowHandle;
 import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriverUtil.*;
 
@@ -36,24 +38,22 @@ public class YahooLoginPage extends BasePage {
         return usernameInputField.isDisplayed();
     }
 
-    public YahooLoginPage doLogin(String email, String password, boolean isLoginPersistent) throws Exception {
+    public FutureTask<String> doLogin(String email, String password, boolean isLoginPersistent) throws Exception {
         usernameInputField.sendKeys(email);
         passwordInputField.sendKeys(password);
         setCheckbox(persistentLoginCheckbox, isLoginPersistent);
         loginButton.click();
         YahooApprovalPage approvalPage = new YahooApprovalPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE,
-                AppPage.getExpectedLoginResultText());
+        FutureTask<String> resultCheck = createFutureTaskToGetLoginResultFromAlert(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE);
+        new Thread(resultCheck).start();
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
-            getDriver().switchTo().window(approvalPage.getExpectedPageTitle());
             approvalPage.approve();
         }
         UserConsentPage consentPage = new UserConsentPage(getDriver());
-        if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, consentPage).isPresent()) {
-            getDriver().switchTo().window(consentPage.getExpectedPageTitle());
+        if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, consentPage).isPresent()) {
             consentPage.makeConsentDecision(true).submitDecision();
         }
-        return this;
+        return resultCheck;
     }
 }

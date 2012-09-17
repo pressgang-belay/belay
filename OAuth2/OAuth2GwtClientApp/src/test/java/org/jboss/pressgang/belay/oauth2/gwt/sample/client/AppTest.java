@@ -88,7 +88,6 @@ public class AppTest extends BaseAppTest {
         appPage.associateMyOpenIdIdentity(testUsers.get("myOpenIdUser"), testUsers.get("myOpenIdPassword"), false, false);
 
         // Then the identities are associated
-        doWait(THIRTY_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
         String result = appPage.getUserInfo();
         assertThat(result, containsString("myopenid.com"));
         assertThat(result, containsString("/OpenIdProvider/openid/provider?id="));
@@ -97,16 +96,15 @@ public class AppTest extends BaseAppTest {
     @Test
     public void makeIdentityPrimary() throws Exception {
         // Given a valid user is logged in and has two identities, with the logged in identity the primary
-        appPage.loginWithRedHat(testUsers.get("redHatUser"), testUsers.get("redHatPassword"));
-        assertLoggedInWithRedHat();
+        appPage.loginWithFedora(testUsers.get("fedoraUser"), testUsers.get("fedoraPassword"));
+        String loginResult = appPage.getResultFromFedoraLoginClick();
+        assertThat(loginResult, containsString("Result"));
         appPage.associateGoogleIdentity(testUsers.get("googleUser"), testUsers.get("googlePassword"), false, false);
-        doWait(THIRTY_SECONDS); // Allow some time for catch-up after login workaround thread does its thing
         String userInfo = appPage.getUserInfo();
         log.info("UserInfo: " + userInfo);
-        String newPrimaryIdentifier = userInfo.substring(userInfo.indexOf("https://www.google.com")); // Trim start
-        newPrimaryIdentifier = newPrimaryIdentifier.substring(0, newPrimaryIdentifier.indexOf("\"],\"firstNames")); // Trim end
 
         // When the other identity is made primary
+        String newPrimaryIdentifier = "https://www.google.com/accounts/o8/id?id=AItOawlu2J4UUb2RUlQnfbSZH2rdSZ0VQABj3I0";
         String result = appPage.makeIdentityPrimary(newPrimaryIdentifier);
         userInfo = appPage.getIdentityInfo();
 

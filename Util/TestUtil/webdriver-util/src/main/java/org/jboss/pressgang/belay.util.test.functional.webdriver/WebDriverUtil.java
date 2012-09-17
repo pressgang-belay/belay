@@ -4,9 +4,12 @@ import com.google.common.base.Optional;
 import org.jboss.pressgang.belay.util.test.functional.webdriver.page.BasePage;
 import org.openqa.selenium.*;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
 
 import static java.lang.System.currentTimeMillis;
+import static org.apache.commons.lang.StringUtils.join;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -42,6 +45,7 @@ public class WebDriverUtil {
     private static <T> T waitForCondition(long maxWaitMillis, WaitCondition<T> waitCondition) {
         final long maxTime = currentTimeMillis() + maxWaitMillis;
         do {
+            doWait(100);
             Optional<T> result = waitCondition.checkWaitCondition();
             if (result.isPresent()) {
                 return result.get();
@@ -81,26 +85,31 @@ public class WebDriverUtil {
         return waitForCondition(maxWaitMillis, new WaitCondition<T>() {
             @Override
             public Optional<T> checkWaitCondition() {
-                if (page.isPageLoaded()) {
-                    log.info("Page loaded: " + page.getExpectedPageTitle());
-                    return Optional.of(page);
-                } else {
-                    return Optional.absent();
+                try {
+                    if (page.isPageLoaded()) {
+                        log.info("Page loaded: " + page.getExpectedPageTitle());
+                        return Optional.of(page);
+                    }
+                } catch (Throwable t) {
+                    log.fine("Exception during isPageLoaded check: " + t.getMessage());
                 }
+                return Optional.absent();
             }
 
             @Override
             public T handleTimeout() {
-                log.warning("Page failed to load:" + page.getExpectedPageTitle());
+                log.warning("Page failed to load: " + page.getExpectedPageTitle());
                 throw new WebDriverException("Page failed to load:" + page.getExpectedPageTitle());
             }
         });
     }
 
-    public static <T extends BasePage> Optional<T> waitToSeeIfPageDisplayed(WebDriver driver, long maxWaitMillis, T page) {
+    public static <T extends BasePage> Optional<T> waitToSeeIfPageDisplayed(final WebDriver driver, final long maxWaitMillis, final T page) {
+        log.info("Waiting to see if page displayed: " + page.getExpectedPageTitle());
         try {
             return Optional.of(waitUntilPageDisplayed(driver, maxWaitMillis, page));
-        } catch (Exception e) {
+        } catch (WebDriverException e) {
+            log.info("Page was not displayed: " + page.getExpectedPageTitle() + ". " + e.getMessage());
             return Optional.absent();
         }
     }
@@ -170,19 +179,26 @@ public class WebDriverUtil {
     /**
      * Used as workaround for WebDriver bug.
      */
-    public static void verifyAlertInParallelThreadAfterWait(final WebDriver driver, final String windowHandle,
-                                                            final long waitMillis, final long timeout,
-                                                            final String expectedAlertText) throws Exception {
-        new Thread(new Runnable() {
-
+    public static FutureTask<String> createFutureTaskToGetLoginResultFromAlert(final WebDriver driver, final String windowHandle,
+                                                      final long waitMillis, final long timeout) {
+        return new FutureTask<String>(new Callable<String>() {
             @Override
-            public void run() {
-                doWait(waitMillis);
-                log.info("Switching window and verifying alert in parallel thread");
-                driver.switchTo().window(windowHandle);
-                verifyAlertText(driver, expectedAlertText, timeout);
+            public String call() throws Exception {
+                try {
+                    doWait(waitMillis);
+                    log.info("Switching window and verifying alert in parallel thread");
+                    driver.switchTo().window(windowHandle);
+                    Alert alert = waitUntilAlertPresent(driver, timeout);
+                    String alertText = alert.getText();
+                    log.info("Alert text: " + alertText);
+                    alert.accept();
+                    return alertText;
+                } catch (RuntimeException e) {
+                    log.severe("Result verification failed: " + e.getMessage() + "\n" + join(e.getStackTrace(), '\n'));
+                    throw (e);
+                }
             }
-        }).start();
+        });
     }
 
     public static Optional<String> getWindowHandleByTitle(WebDriver driver, String title) {

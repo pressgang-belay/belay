@@ -12,7 +12,7 @@ import org.openqa.selenium.support.FindBy;
  */
 public class FedoraApprovalPage extends BasePage {
 
-    @FindBy(id = "yes") private WebElement approveButton;
+    @FindBy(name = "yes") private WebElement approveButton;
 
     protected FedoraApprovalPage(WebDriver driver) {
         super(driver);

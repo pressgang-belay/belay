@@ -6,7 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import static org.jboss.pressgang.belay.oauth2.gwt.sample.client.page.AppPage.getExpectedLoginResultText;
+import java.util.concurrent.FutureTask;
+
 import static org.jboss.pressgang.belay.oauth2.gwt.sample.client.page.AppPage.getWindowHandle;
 import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriverUtil.*;
 
@@ -35,13 +36,14 @@ public class MyOpenIdLoginPage extends BasePage {
         return passwordInputField.isDisplayed();
     }
 
-    public MyOpenIdLoginPage doLogin(String password, boolean isLoginPersistent, boolean isOpenIdApprovalPersistent) throws Exception {
+    public FutureTask<String> doLogin(String password, boolean isLoginPersistent, boolean isOpenIdApprovalPersistent) throws Exception {
         passwordInputField.sendKeys(password);
         setCheckbox(persistentLoginCheckbox, isLoginPersistent);
         loginButton.click();
         MyOpenIdApprovalPage approvalPage = new MyOpenIdApprovalPage(getDriver());
         // Workaround for WebDriver bug
-        verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE, getExpectedLoginResultText());
+        FutureTask<String> resultCheck = createFutureTaskToGetLoginResultFromAlert(getDriver(), getWindowHandle(), TWENTY_SECONDS, ONE_MINUTE);
+        new Thread(resultCheck).start();
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.setApprovalPersistence(isOpenIdApprovalPersistent)
                         .approve();
@@ -50,6 +52,6 @@ public class MyOpenIdLoginPage extends BasePage {
         if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, consentPage).isPresent()) {
             consentPage.makeConsentDecision(true).submitDecision();
         }
-        return this;
+        return resultCheck;
     }
 }

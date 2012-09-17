@@ -107,7 +107,7 @@ public class App implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 final AuthorisationRequest request = OpenIdRequestUtil.openIdAuthorisationRequest(BELAY_AUTH_URL,
-                        BELAY_CLIENT_ID, YAHOO_PROVIDER_URL).withScopes("PERFORM_USER_MANAGEMENT");
+                        BELAY_CLIENT_ID, YAHOO_PROVIDER_URL);
                 AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });

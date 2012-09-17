@@ -7,7 +7,12 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+
+import static org.hamcrest.Matchers.containsString;
 import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriverUtil.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Page object representing the (only) page in the demo Application.
@@ -33,7 +38,7 @@ public class AppPage extends BasePage {
 
     // These are only exposed to assist with WebDriver bug workaround
     private static String windowHandle;
-    private static String expectedLoginResultText = "Result";
+    private final static String EXPECTED_LOGIN_RESULT_TEXT = "Result";
 
     public AppPage(WebDriver driver) {
         super(driver);
@@ -42,7 +47,7 @@ public class AppPage extends BasePage {
 
     @Override
     public String getExpectedPageTitle() {
-        return "GwT OAuth Client";
+        return "GWT OAuth Client";
     }
 
     @Override
@@ -53,11 +58,6 @@ public class AppPage extends BasePage {
     // This is only provided to assist with WebDriver bug workaround
     public static String getWindowHandle() {
         return windowHandle;
-    }
-
-    // This is only provided to assist with WebDriver bug workaround
-    public static String getExpectedLoginResultText() {
-        return expectedLoginResultText;
     }
 
     public AppPage loginWithGoogle(String email, String password, boolean isLoginPersistent,
@@ -72,7 +72,7 @@ public class AppPage extends BasePage {
         String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, yahooLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TWENTY_SECONDS, yahooLoginPage);
-        yahooLoginPage.doLogin(username, password, isLoginPersistent);
+        verifyLoginResult(yahooLoginPage.doLogin(username, password, isLoginPersistent));
         return this;
     }
 
@@ -84,7 +84,7 @@ public class AppPage extends BasePage {
         String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, fedoraLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TWENTY_SECONDS, fedoraLoginPage);
-        fedoraLoginPage.doLogin(username, password);
+        verifyLoginResult(fedoraLoginPage.doLogin(username, password));
         return this;
     }
 
@@ -102,15 +102,17 @@ public class AppPage extends BasePage {
         Optional<String> approvalPopupHandle = waitToSeeIfPopupPresent(getDriver(), TEN_SECONDS, approvalPage.getExpectedPageTitle());
         if (approvalPopupHandle.isPresent()) {
             getDriver().switchTo().window(approvalPopupHandle.get());
-            verifyAlertInParallelThreadAfterWait(getDriver(), getWindowHandle(), THREE_SECONDS, TWENTY_SECONDS, getExpectedLoginResultText());
+            FutureTask<String> resultCheck = createFutureTaskToGetLoginResultFromAlert(getDriver(), getWindowHandle(), THREE_SECONDS, TWENTY_SECONDS);
+            new Thread(resultCheck).start();
             approvalPage.approve();
+            verifyLoginResult(resultCheck);
             return this;
         }
         RedHatLoginPage redHatLoginPage = new RedHatLoginPage(getDriver());
         String loginPopupHandle = waitUntilPopupPresent(getDriver(), TEN_SECONDS, redHatLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(loginPopupHandle);
         waitUntilPageDisplayed(getDriver(), THIRTY_SECONDS, redHatLoginPage);
-        redHatLoginPage.doLogin(username, password);
+        verifyLoginResult(redHatLoginPage.doLogin(username, password));
         return this;
     }
 
@@ -156,6 +158,11 @@ public class AppPage extends BasePage {
         return getAlertText(THIRTY_SECONDS);
     }
 
+    public String getResultFromFedoraLoginClick() throws Exception {
+        fedoraLoginButton.click();
+        return getAlertText(THIRTY_SECONDS);
+    }
+
     public String getAllPeople() {
         getAllPeopleButton.click();
         return getAlertText(THIRTY_SECONDS);
@@ -176,7 +183,7 @@ public class AppPage extends BasePage {
         String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, googleLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TWENTY_SECONDS, googleLoginPage);
-        googleLoginPage.doLogin(email, password, isLoginPersistent, isOpenIdApprovalPersistent);
+        verifyLoginResult(googleLoginPage.doLogin(email, password, isLoginPersistent, isOpenIdApprovalPersistent));
         return this;
     }
 
@@ -185,7 +192,7 @@ public class AppPage extends BasePage {
         String popupHandle = waitUntilPopupPresent(getDriver(), THIRTY_SECONDS, myOpenIdLoginPage.getExpectedPageTitle());
         getDriver().switchTo().window(popupHandle);
         waitUntilPageDisplayed(getDriver(), TWENTY_SECONDS, myOpenIdLoginPage);
-        myOpenIdLoginPage.doLogin(password, isLoginPersistent, isOpenIdApprovalPersistent);
+        verifyLoginResult((myOpenIdLoginPage.doLogin(password, isLoginPersistent, isOpenIdApprovalPersistent)));
         return this;
     }
 
@@ -193,5 +200,10 @@ public class AppPage extends BasePage {
         Alert alert = waitUntilAlertPresent(getDriver(), timeout);
         alert.accept();
         return alert.getText();
+    }
+
+    private void verifyLoginResult(FutureTask<String> result) throws Exception {
+        String alertText = result.get(ONE_MINUTE, TimeUnit.SECONDS);
+        assertThat(alertText, containsString(EXPECTED_LOGIN_RESULT_TEXT));
     }
 }
