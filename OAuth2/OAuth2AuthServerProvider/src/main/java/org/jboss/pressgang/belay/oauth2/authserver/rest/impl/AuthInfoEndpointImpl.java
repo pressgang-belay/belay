@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
 
 /**
- * Provides authorisation information for resource servers, which are confidential clients.
+ * Provides authorization information for resource servers, which are confidential clients.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */

@@ -49,12 +49,10 @@ public class UserDao {
         return user.getUserIdentities().contains(identity);
     }
 
-    public User createNewUser() {
-        log.info("Creating new user");
-        User user = new User();
+    public void addUser(User user) {
+        log.info("Adding user");
         em.persist(user);
         userEventSrc.fire(user);
-        return user;
     }
 
     public void updateUser(User user) {
@@ -69,11 +67,12 @@ public class UserDao {
     }
 
     public Optional<UserInfo> getUserInfoFromUser(final User user) {
-        if (user == null) {
+        if (user == null || (user.getUsername() == null && user.getPrimaryIdentity().getIdentifier() == null)) {
             log.fine("Could not return UserInfo");
             return Optional.absent();
         } else {
-            UserInfo.UserInfoBuilder builder = UserInfo.UserInfoBuilder.identityInfoBuilder(user.getPrimaryIdentity().getIdentifier());
+            UserInfo.UserInfoBuilder builder = UserInfo.UserInfoBuilder.identityInfoBuilder(user.getUsername());
+            builder.setPrimaryIdentifier(user.getPrimaryIdentity().getIdentifier());
             Set<Identity> nonPrimaryIdentities = copyOf(filter(user.getUserIdentities(), new Predicate<Identity>() {
                 @Override
                 public boolean apply(Identity identity) {

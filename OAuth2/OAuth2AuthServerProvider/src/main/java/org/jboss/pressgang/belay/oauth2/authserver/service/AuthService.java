@@ -1,8 +1,6 @@
 package org.jboss.pressgang.belay.oauth2.authserver.service;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgang.belay.oauth2.authserver.data.dao.*;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
@@ -13,11 +11,7 @@ import org.jboss.pressgang.belay.oauth2.shared.data.model.UserInfo;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Set;
 import java.util.logging.Logger;
-
-import static com.google.common.collect.Collections2.filter;
 
 /**
  * Service class wraps calls to DAOs.
@@ -111,8 +105,8 @@ public class AuthService {
         identityDao.updateIdentity(identity);
     }
 
-    public User createUnassociatedUser() {
-        return userDao.createNewUser();
+    public void addUser(User user) {
+        userDao.addUser(user);
     }
 
     public void updateUser(User user) {

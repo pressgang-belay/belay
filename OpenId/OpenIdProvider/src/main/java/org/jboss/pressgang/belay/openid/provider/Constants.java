@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-class Common {
+class Constants {
 
     //  Request parameters
     static final String ACTION = "_action";
@@ -30,7 +30,7 @@ class Common {
     static final String CHECKID_IMMEDIATE = "checkid_immediate";
 
     // Errors
-    static final String NO_OPENID_PARAMS_ERROR = "No OpenId parameters found";
+    static final String NO_OPENID_PARAMS_ERROR = "No OpenID parameters found";
     static final String UNKNOWN_REQUEST_ERROR = "Unknown request";
     static final String USER_ENDPOINT_ERROR = "Could not perform discovery on user identifier";
 

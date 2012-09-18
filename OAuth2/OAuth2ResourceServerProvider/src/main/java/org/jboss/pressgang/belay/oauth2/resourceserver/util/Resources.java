@@ -36,7 +36,7 @@ public class Resources {
     private static EntityManager em;
 
     @PostConstruct
-    private void initialise() {
+    private void initialize() {
         entityManagerFactoryJndiAddress = (String) resourceServerConfig.get("entityManagerFactoryJndiAddress");
         log.fine("Found entityManagerFactoryJndiAddress property: " + entityManagerFactoryJndiAddress);
 

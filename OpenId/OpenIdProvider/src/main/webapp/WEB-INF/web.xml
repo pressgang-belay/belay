@@ -3,7 +3,7 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-    <display-name>PressGang Belay OpenId Provider Example</display-name>
+    <display-name>PressGang Belay OpenID Provider Example</display-name>
 
     <security-constraint>
         <display-name>Secure Page</display-name>

@@ -99,7 +99,7 @@ public class WebDriverUtil {
             @Override
             public T handleTimeout() {
                 log.warning("Page failed to load: " + page.getExpectedPageTitle());
-                throw new WebDriverException("Page failed to load:" + page.getExpectedPageTitle());
+                throw new WebDriverException("Page failed to load: " + page.getExpectedPageTitle());
             }
         });
     }
@@ -186,7 +186,7 @@ public class WebDriverUtil {
             public String call() throws Exception {
                 try {
                     doWait(waitMillis);
-                    log.info("Switching window and verifying alert in parallel thread");
+                    log.info("Switching window and accepting alert in parallel thread");
                     driver.switchTo().window(windowHandle);
                     Alert alert = waitUntilAlertPresent(driver, timeout);
                     String alertText = alert.getText();

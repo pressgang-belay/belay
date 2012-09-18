@@ -17,13 +17,13 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
- * Provides tests for {@link org.jboss.pressgang.belay.oauth2.gwt.client.AuthorisationRequest} class.
+ * Provides tests for {@link AuthorizationRequest} class.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AuthorisationRequestTest extends BaseUnitTest {
+public class AuthorizationRequestTest extends BaseUnitTest {
 
-    private AuthorisationRequest authRequest;
+    private AuthorizationRequest authRequest;
     private String scopeDelimiter = ":";
     @ArbitraryString(type = ALPHA)
     private String url;
@@ -36,12 +36,12 @@ public class AuthorisationRequestTest extends BaseUnitTest {
     @Arbitrary
     private boolean forceNew;
     @Mock
-    private Authoriser.UrlCodex urlCodex;
+    private Authorizer.UrlCodex urlCodex;
 
 
     @Before
     public void setUp() {
-        authRequest = new AuthorisationRequest(url, clientId)
+        authRequest = new AuthorizationRequest(url, clientId)
                 .withScopes(scope, anotherScope)
                 .withScopeDelimiter(scopeDelimiter)
                 .forceNewRequest(forceNew);
@@ -49,9 +49,9 @@ public class AuthorisationRequestTest extends BaseUnitTest {
 
     @Test
     public void testCreateAuthRequest() {
-        // Given a set of AuthorisationRequest parameters
+        // Given a set of AuthorizationRequest parameters
 
-        // When an AuthorisationRequest is created with these parameters
+        // When an AuthorizationRequest is created with these parameters
 
         // Then these parameters are set as expected
         assertThat(authRequest.isForceNewRequest(), is(forceNew));
@@ -60,7 +60,7 @@ public class AuthorisationRequestTest extends BaseUnitTest {
 
     @Test
     public void testCreateAuthUrl() {
-        // Given a set of AuthorisationRequest parameters and a URL encoder that just returns the argument
+        // Given a set of AuthorizationRequest parameters and a URL encoder that just returns the argument
         when(urlCodex.encode(anyString())).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {

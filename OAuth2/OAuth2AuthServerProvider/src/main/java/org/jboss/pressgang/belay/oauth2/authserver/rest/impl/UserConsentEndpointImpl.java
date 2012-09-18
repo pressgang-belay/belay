@@ -28,7 +28,7 @@ public class UserConsentEndpointImpl implements UserConsentEndpoint {
         final Set<String> requestedScopes = OAuthEndpointUtil.getStringSetAttributeFromSession(request, log, OAUTH_SCOPE, "Requested scopes");
         log.info("Serving end-user approval form for client application " + clientName);
 
-        final String header = "Authorisation Required";
+        final String header = "Authorization Required";
         StringWriter stringWriter = new StringWriter();
         new Html(stringWriter) {{
             html();

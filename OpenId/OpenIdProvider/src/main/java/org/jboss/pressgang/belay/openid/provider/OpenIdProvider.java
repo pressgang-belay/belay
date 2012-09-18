@@ -16,7 +16,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.logging.Logger;
 
-import static org.jboss.pressgang.belay.openid.provider.Common.*;
+import static org.jboss.pressgang.belay.openid.provider.Constants.*;
 import static org.jboss.pressgang.belay.openid.provider.OpenIdProviderManager.OpenIdMessage;
 
 /**
@@ -126,7 +126,7 @@ public class OpenIdProvider {
 
         String mode = requestParameters.hasParameter(OPENID_MODE) ?
                 requestParameters.getParameterValue(OPENID_MODE) : null;
-        log.info("OpenId mode is: " + mode);
+        log.info("OpenID mode is: " + mode);
 
         OpenIdMessage responseMessage;
         String responseText;
@@ -156,15 +156,15 @@ public class OpenIdProvider {
             } else {
                 log.info("User has been authenticated");
                 userSelectedClaimedId = (String) session.getAttribute(OPENID_IDENTITY);
-                log.info("OpenId identity: " + userSelectedClaimedId);
+                log.info("OpenID identity: " + userSelectedClaimedId);
                 userSelectedId = (String) session.getAttribute(OPENID_CLAIMED);
-                log.info("Claimed Id: " + userSelectedId);
+                log.info("Claimed ID: " + userSelectedId);
                 authenticatedAndApproved = (Boolean) session.getAttribute(AUTHENTICATED_APPROVED);
                 Principal user = request.getUserPrincipal();
                 if (userSelectedId == null && user != null && user.getName() != null) {
                     String userIdentifier = providerManager.getEndPoint() + QUERY_STRING_MARKER + ID
                             + KEY_VALUE_SEPARATOR + user.getName();
-                    log.info("Setting OpenId identity to: " + userIdentifier);
+                    log.info("Setting OpenID identity to: " + userIdentifier);
                     userSelectedClaimedId = userIdentifier;
                     userSelectedId = userIdentifier;
                 } else {

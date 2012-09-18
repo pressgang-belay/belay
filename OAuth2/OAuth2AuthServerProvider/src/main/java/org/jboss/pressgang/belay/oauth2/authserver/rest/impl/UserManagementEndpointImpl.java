@@ -1,7 +1,6 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 
 import com.google.common.base.Optional;
-import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.UserManagementEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
@@ -42,7 +41,7 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
     private TokenIssuer tokenIssuer;
 
     /**
-     * This endpoint sets an identity of the currently authorised user as the user's primary identity. The endpoint
+     * This endpoint sets an identity of the currently authorized user as the user's primary identity. The endpoint
      * will return successfully even if the identity is already the user's primary identity.
      *
      * @param request    The servlet request
@@ -53,7 +52,7 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
     public Response makeIdentityPrimary(@Context HttpServletRequest request,
                                         @QueryParam(IDENTIFIER) String identifier) {
         log.info("Processing request to make " + identifier + " primary identity");
-        checkIdentityAssociatedWithAuthorisedUser(request, identifier);
+        checkIdentityAssociatedWithAuthorizedUser(request, identifier);
         Identity newPrimaryIdentity = authService.getIdentity(identifier).get();
         User user = newPrimaryIdentity.getUser();
         user.setPrimaryIdentity(newPrimaryIdentity);
@@ -63,10 +62,10 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
     }
 
     /**
-     * This endpoint provides information about identities associated with the authorised user. If an identifier is
-     * provided and the identity represented by that identifier is associated with the authorised user, information
+     * This endpoint provides information about identities associated with the authorized user. If an identifier is
+     * provided and the identity represented by that identifier is associated with the authorized user, information
      * will be provided about that identity. Otherwise, information will be returned on the primary identity associated
-     * with the authorised user.
+     * with the authorized user.
      *
      * @param request    The servlet request
      * @param identifier Identifier of the identity to return information about
@@ -81,7 +80,7 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
         if (identifier == null) {
             identifierToQuery = userPrincipal.getName();
         } else {
-            checkIdentityAssociatedWithAuthorisedUser(request, identifier);
+            checkIdentityAssociatedWithAuthorizedUser(request, identifier);
             identifierToQuery = identifier;
         }
         Optional<IdentityInfo> identityInfoFound = authService.getIdentityInfo(identifierToQuery);
@@ -94,7 +93,7 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
     }
 
     /**
-     * This endpoint provides information about the authorised user.
+     * This endpoint provides information about the authorized user.
      *
      * @param request The servlet request
      * @return User information in JSON format
@@ -111,13 +110,13 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
         return userInfoFound.get();
     }
 
-    private void checkIdentityAssociatedWithAuthorisedUser(HttpServletRequest request, String identifier) {
+    private void checkIdentityAssociatedWithAuthorizedUser(HttpServletRequest request, String identifier) {
         Optional<Identity> primaryIdentity = authService.getIdentity(request.getUserPrincipal().getName());
         if ((!primaryIdentity.isPresent() || (!authService.isIdentityAssociatedWithUser(identifier,
                 primaryIdentity.get().getUser())))) {
             log.warning("Could not process request related to identity " + identifier
-                    + " ; user unauthorised or identity not found");
-            throw createWebApplicationException(UNAUTHORISED_QUERY_ERROR + " " + identifier,
+                    + " ; user unauthorized or identity not found");
+            throw createWebApplicationException(UNAUTHORIZED_QUERY_ERROR + " " + identifier,
                     HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

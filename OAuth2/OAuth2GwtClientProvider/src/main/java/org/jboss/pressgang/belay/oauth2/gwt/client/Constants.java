@@ -11,7 +11,7 @@ class Constants {
     static final String PARAMETER_SEPARATOR = "&";
     static final String KEY_VALUE_SEPARATOR = "=";
     static final String SEPARATOR = "-----";
-    static final String AUTHORISATION_HEADER = "Authorization";
+    static final String AUTHORIZATION_HEADER = "Authorization";
     static final String OAUTH_HEADER_NAME = "Bearer";
     static final String TOKEN = "token";
     static final String OAUTH_TOKEN = "oauth_token";

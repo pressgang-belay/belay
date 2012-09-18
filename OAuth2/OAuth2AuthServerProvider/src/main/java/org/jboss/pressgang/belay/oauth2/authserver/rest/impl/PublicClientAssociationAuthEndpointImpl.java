@@ -101,7 +101,7 @@ public class PublicClientAssociationAuthEndpointImpl implements PublicClientAsso
             if (oAuthRequest.getScopes() != null) {
                 request.getSession().setAttribute(OAuth.OAUTH_SCOPE, oAuthRequest.getScopes());
             }
-            log.info("Redirecting to authorise second identifier");
+            log.info("Redirecting to authorize second identifier");
             return Response.temporaryRedirect(URI.create(createNewRedirectUri(oAuthRequest.getParam(OPENID_PROVIDER)))).build();
         } catch (OAuthProblemException e) {
             return handleOAuthProblemException(log, e);

@@ -41,9 +41,9 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
- * Serves as an endpoint to prompt OpenID login and an OAuth authorisation endpoint. The endpoint's functionality
- * is closest to OAuth2's implicit authorisation flow, however, depending on the app settings the resource owner may
- * not be prompted to authorise the access, as in cases where the client application, authorisation server and resource
+ * Serves as an endpoint to prompt OpenID login and an OAuth authorization endpoint. The endpoint's functionality
+ * is closest to OAuth2's implicit authorization flow, however, depending on the app settings the resource owner may
+ * not be prompted to authorize the access, as in cases where the client application, authorization server and resource
  * server are all operating as one application, this may be inappropriate. This endpoint is for use by public clients.
  * <p/>
  *
@@ -79,8 +79,8 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
     }
 
     @Override
-    public Response authorise(@Context HttpServletRequest request) {
-        log.info("Processing authorisation attempt");
+    public Response authorize(@Context HttpServletRequest request) {
+        log.info("Processing authorization attempt");
 
         String openIdClaimedId = (String) request.getAttribute(OPENID_CLAIMED_ID);
         String openIdIdentifier = (String) request.getAttribute(OPENID_IDENTIFIER);
@@ -293,14 +293,13 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
         newIdentity.setIdentifier(identifier);
         Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(providerUrl);
         newIdentity.setOpenIdProvider(providerFound.get());
-        // Set extra attributes if available
         setExtraIdentityAttributes(request, newIdentity);
-        authService.addIdentity(newIdentity);
-        User newUser = authService.createUnassociatedUser();
+        User newUser = new User();
         newIdentity.setUser(newUser);
+        authService.addIdentity(newIdentity);
         newUser.setPrimaryIdentity(newIdentity);
         newUser.setUserScopes(newHashSet(authService.getDefaultScope()));
-        authService.updateIdentity(newIdentity);
+        authService.updateUser(newUser);
         return newIdentity;
     }
 
@@ -388,10 +387,10 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
         } else {
             ClientApproval clientApproval = new ClientApproval();
             clientApproval.setClientApplication(client);
+            clientApproval.setApprover(user);
             authService.addClientApproval(clientApproval);
             user.getClientApprovals().add(clientApproval);
             authService.updateUser(user);
-            clientApproval.setApprover(user);
             clientApproval.setApprovedScopes(approvedScopes);
             authService.updateClientApproval(clientApproval);
         }

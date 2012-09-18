@@ -87,6 +87,7 @@ public class TokenGrant implements Serializable {
         return grantCurrent;
     }
 
+    @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "TOKEN_GRANT_SCOPE", joinColumns = { @JoinColumn(name = "TOKEN_GRANT_ID") },
             inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })

@@ -43,16 +43,12 @@ public class ClientApplication implements Serializable {
     }
 
     @NotNull
-    @Size(min = 10, max = 35)
-    @Pattern(regexp = "[A-Za-z0-9!_]*", message = "must contain only letters, numbers or the characters ! or _")
     @Column(name = "CLIENT_IDENTIFIER")
     public String getClientIdentifier() {
         return clientIdentifier;
     }
 
     @NotNull
-    @Size(min = 1, max = 20)
-    @Pattern(regexp = "[A-Za-z ]*", message = "must contain only letters and spaces")
     @Column(name = "CLIENT_NAME")
     public String getClientName() {
         return clientName;

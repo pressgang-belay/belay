@@ -48,19 +48,16 @@ public class Identity implements Serializable {
     }
 
     @NotNull
-    @Size(min = 1, max = 100)
     @Column(name = "IDENTIFIER")
     public String getIdentifier() {
         return identifier;
     }
 
-    @Pattern(regexp = "[A-Za-z'-]*", message = "must contain only letters, hyphens or apostrophes")
     @Column(name = "IDENTITY_FIRST_NAME")
     public String getFirstName() {
         return firstName;
     }
 
-    @Pattern(regexp = "[A-Za-z'-]*", message = "must contain only letters, hyphens or apostrophes")
     @Column(name = "IDENTITY_LAST_NAME")
     public String getLastName() {
         return lastName;
@@ -87,6 +84,7 @@ public class Identity implements Serializable {
         return country;
     }
 
+    @NotNull
     @ManyToOne
     @JoinTable(name="OPENID_IDENTITY_OPENID_PROVIDER", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
             inverseJoinColumns = { @JoinColumn(name = "PROVIDER_ID") })
@@ -94,7 +92,8 @@ public class Identity implements Serializable {
         return openIdProvider;
     }
 
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @NotNull
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(name="OPENID_IDENTITY_OPENID_USER", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
             inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
     public User getUser() {

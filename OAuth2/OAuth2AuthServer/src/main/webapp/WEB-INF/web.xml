@@ -18,7 +18,7 @@
     <!-- This defines the URL that requires OpenID authentication -->
     <filter-mapping>
         <filter-name>OpenID Filter</filter-name>
-        <url-pattern>/rest/auth/authorise</url-pattern>
+        <url-pattern>/rest/auth/authorize</url-pattern>
     </filter-mapping>
 
     <!-- The OAuth Filter handles auth for identity services -->
@@ -44,7 +44,7 @@
 
     <context-param>
         <param-name>oauth.provider.tokens.access</param-name>
-        <param-value>/rest/auth/authorise</param-value>
+        <param-value>/rest/auth/authorize</param-value>
     </context-param>
 
     <!-- Allowing query-style params on requests, required for user/identity service endpoints -->

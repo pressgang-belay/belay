@@ -5,7 +5,7 @@ import com.google.gwt.http.client.*;
 import static org.jboss.pressgang.belay.oauth2.gwt.client.Constants.*;
 
 /**
- * Wraps standard GWT RequestBuilder for the creation of authorised requests.
+ * Wraps standard GWT RequestBuilder for the creation of authorized requests.
  * Designed for use with OAuthHandler.
  *
  * @author kamiller@redhat.com (Katie Miller)
@@ -53,14 +53,14 @@ public class OAuthRequest {
         return builder.getRequestData();
     }
 
-    void sendRequest(final String token, final OAuthHandler handler, final AuthorisationRequest authorisation,
+    void sendRequest(final String token, final OAuthHandler handler, final AuthorizationRequest authorization,
                      final RequestCallback callback)
             throws RequestException {
         setOAuthHeader(token);
         builder.sendRequest(builder.getRequestData(), new RequestCallback() {
             @Override
             public void onResponseReceived(Request request, Response response) {
-                handler.processOAuthRequestResponse(request, response, authorisation, callback);
+                handler.processOAuthRequestResponse(request, response, authorization, callback);
             }
 
             @Override
@@ -71,7 +71,7 @@ public class OAuthRequest {
     }
 
     void setOAuthHeader(String token) {
-        builder.setHeader(AUTHORISATION_HEADER, buildOAuthRequestString(token));
+        builder.setHeader(AUTHORIZATION_HEADER, buildOAuthRequestString(token));
     }
 
     String buildOAuthRequestString(String token) {

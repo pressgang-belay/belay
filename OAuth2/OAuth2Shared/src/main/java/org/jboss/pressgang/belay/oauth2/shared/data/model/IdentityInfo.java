@@ -150,7 +150,7 @@ public class IdentityInfo implements Serializable {
         private String language;
         private String country;
         private String openIdProviderUrl;
-        private boolean primaryIdentity;
+        private Boolean primaryIdentity;
 
         IdentityInfoBuilder() {
         }
@@ -203,8 +203,8 @@ public class IdentityInfo implements Serializable {
 
         @Override
         public IdentityInfo build() {
-            if (identifier == null) {
-                throw new java.lang.IllegalArgumentException("Identity identifier cannot be null");
+            if (identifier == null || primaryIdentity == null || openIdProviderUrl == null) {
+                throw new java.lang.IllegalArgumentException("Required UserInfo attribute set to null");
             }
             return new IdentityInfo(this);
         }

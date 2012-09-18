@@ -9,7 +9,7 @@ package org.jboss.pressgang.belay.oauth2.gwt.client;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AuthorisationRequest {
+public class AuthorizationRequest {
     private final String authUrl;
     private final String clientId;
     private String[] scopes;
@@ -20,7 +20,7 @@ public class AuthorisationRequest {
      * @param authUrl  URL of the OAuth 2.0 provider server
      * @param clientId Your application's unique client ID
      */
-    public AuthorisationRequest(String authUrl, String clientId) {
+    public AuthorizationRequest(String authUrl, String clientId) {
         this.authUrl = authUrl;
         this.clientId = clientId;
         this.forceNewRequest = false;
@@ -29,7 +29,7 @@ public class AuthorisationRequest {
     /**
      * Set some OAuth 2.0 scopes to request access to.
      */
-    public AuthorisationRequest withScopes(String... scopes) {
+    public AuthorizationRequest withScopes(String... scopes) {
         this.scopes = scopes;
         return this;
     }
@@ -37,9 +37,9 @@ public class AuthorisationRequest {
     /**
      * Ensure request will go to OAuth provider, regardless of whether or not a valid
      * token for this request exists. Defaults to false if not set and resets to default
-     * after an authorisation attempt, regardless of the outcome.
+     * after an authorization attempt, regardless of the outcome.
      */
-    public AuthorisationRequest forceNewRequest(boolean forceNewRequest) {
+    public AuthorizationRequest forceNewRequest(boolean forceNewRequest) {
         this.forceNewRequest = forceNewRequest;
         return this;
     }
@@ -51,13 +51,13 @@ public class AuthorisationRequest {
     /**
      * Since some OAuth providers expect multiple scopes to be delimited with
      * spaces (conforming with spec), or spaces, or plus signs, you can set the
-     * scope delimiter here that will be used for this AuthorisationRequest.
+     * scope delimiter here that will be used for this AuthorizationRequest.
      *
      * By default, this will be a single space, in conformance with the latest
      * draft of the OAuth 2.0 spec.
      */
 
-    public AuthorisationRequest withScopeDelimiter(String scopeDelimiter) {
+    public AuthorizationRequest withScopeDelimiter(String scopeDelimiter) {
         this.scopeDelimiter = scopeDelimiter;
         return this;
     }
@@ -66,7 +66,7 @@ public class AuthorisationRequest {
      * Returns a URL representation of this request, appending the client ID, scopes and, if provided,
      * OpenID provider to the original authUrl.
      */
-    String toAuthUrl(Authoriser.UrlCodex urlCodex) {
+    String toAuthUrl(Authorizer.UrlCodex urlCodex) {
         return new StringBuilder(authUrl)
                 .append(authUrl.contains(Constants.QUERY_STRING_MARKER) ? Constants.PARAMETER_SEPARATOR : Constants.QUERY_STRING_MARKER)
                 .append(Constants.CLIENT_ID).append(Constants.KEY_VALUE_SEPARATOR).append(urlCodex.encode(clientId))
@@ -87,7 +87,7 @@ public class AuthorisationRequest {
      *
      * These scopes will be URL-encoded if the given codex is not null.
      */
-    private String scopesToString(Authoriser.UrlCodex urlCodex) {
+    private String scopesToString(Authorizer.UrlCodex urlCodex) {
         if (scopes == null || scopes.length == 0) {
             return "";
         }

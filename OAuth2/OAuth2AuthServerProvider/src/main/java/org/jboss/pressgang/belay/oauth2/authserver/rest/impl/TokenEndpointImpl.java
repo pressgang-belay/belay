@@ -51,7 +51,7 @@ public class TokenEndpointImpl implements TokenEndpoint {
     private TokenIssuer tokenIssuer;
 
     @Override
-    public Response authorise(@Context HttpServletRequest request) throws OAuthSystemException {
+    public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
         log.info("Processing token refresh request");
 
         try {

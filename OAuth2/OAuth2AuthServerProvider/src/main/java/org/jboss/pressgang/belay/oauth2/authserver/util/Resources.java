@@ -61,8 +61,8 @@ public class Resources {
     public static String oAuthTokenExpiry = ONE_HOUR;
     public static String urlEncoding = "UTF-8";
     public static String openIdRealm = "/OAuth2AuthServer/rest/auth/";
-    public static String authEndpoint = "/auth/authorise";
     public static String restEndpointBasePath = "/OAuth2AuthServer/rest";
+    public static String authEndpoint = "/auth/authorize";
     public static String completeAssociationEndpoint = "/auth/user/associate/completeAssociation";
     public static String openIdReturnUri = restEndpointBasePath + authEndpoint;
     public static String authServerOAuthClientId = "OAuth2AuthServer";

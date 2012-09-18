@@ -59,7 +59,7 @@ public class OAuth2RSDecision implements OAuthDecision {
             TokenGrantInfo tokenGrantInfo = tokenGrantInfoFound.get();
             this.oAuthClient = new OAuth2RSClient(tokenGrantInfo.getGrantClientIdentifier());
             this.principal = new OAuth2RSPrincipal(tokenGrantInfo.getGrantUserPrimaryIdentifier());
-            setAuthorisation(tokenGrantInfo, request, response);
+            setAuthorization(tokenGrantInfo, request, response);
         } else {
             log.info("Invalid token " + token);
             this.isAuthorized = false;
@@ -69,7 +69,7 @@ public class OAuth2RSDecision implements OAuthDecision {
         }
     }
 
-    private void setAuthorisation(TokenGrantInfo tokenGrantInfo, HttpServletRequest request, HttpServletResponse response)
+    private void setAuthorization(TokenGrantInfo tokenGrantInfo, HttpServletRequest request, HttpServletResponse response)
             throws OAuthProblemException {
         isAuthorized = false;
         checkTokenCurrentAndNotExpired(tokenGrantInfo);

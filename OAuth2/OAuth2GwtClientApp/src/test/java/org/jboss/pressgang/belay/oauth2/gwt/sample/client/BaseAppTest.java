@@ -53,7 +53,7 @@ public class BaseAppTest extends BaseWebDriverTest {
     public ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule(testProperties.get("projectBaseDir") + "/target/surefire-reports", true);
 
     @BeforeClass
-    public static void initialise() throws IOException {
+    public static void initialize() throws IOException {
         // Load test properties file
         URL url = ClassLoader.getSystemResource("functionaltest.properties");
         testProperties.load(new FileInputStream(new File(url.getFile())));
@@ -62,7 +62,7 @@ public class BaseAppTest extends BaseWebDriverTest {
             String user = (String) testProperties.get(provider + "User");
             String password = (String) testProperties.get(provider + "Password");
             if (user == null || password == null || user.isEmpty() || password.isEmpty()) {
-                throw new WebDriverException("Properties could not be initialised: " + provider + " property missing");
+                throw new WebDriverException("Properties could not be initialized: " + provider + " property missing");
             }
             testUsers.put(provider + "User", user);
             testUsers.put(provider + "Password", password);

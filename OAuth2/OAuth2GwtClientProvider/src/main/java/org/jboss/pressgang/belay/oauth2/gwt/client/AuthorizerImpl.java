@@ -32,13 +32,13 @@ import static org.jboss.pressgang.belay.oauth2.gwt.client.Constants.OAUTH_POPUP_
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-class AuthoriserImpl extends Authoriser {
+class AuthorizerImpl extends Authorizer {
 
-    static final AuthoriserImpl INSTANCE = new AuthoriserImpl();
+    static final AuthorizerImpl INSTANCE = new AuthorizerImpl();
 
     private Window window;
 
-    AuthoriserImpl() {
+    AuthorizerImpl() {
         super(getTokenStore(), new RealClock(), new RealUrlCodex(), Scheduler.get(),
                 GWT.getModuleBaseURL() + OAUTH_POPUP_NAME);
         register();
@@ -61,7 +61,7 @@ class AuthoriserImpl extends Authoriser {
             $wnd.oauth2win = {};
         }
         $wnd.oauth2win.__doAuthLogin = $entry(function(hash) {
-          self.@org.jboss.pressgang.belay.oauth2.gwt.client.Authoriser::finish(Ljava/lang/String;)(hash);
+          self.@org.jboss.pressgang.belay.oauth2.gwt.client.Authorizer::finish(Ljava/lang/String;)(hash);
         });
     }-*/;
 

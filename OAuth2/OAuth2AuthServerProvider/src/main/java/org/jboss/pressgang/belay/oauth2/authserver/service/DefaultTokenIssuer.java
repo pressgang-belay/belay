@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 /**
  * Class wraps an OAuthIssuer implementation. Its job is to ensure no tokens are generated that
  * happen to match those of a current TokenGrant, to avoid any token collisions where one
- * user is thought to be another. It does not provide an authorisation code service.
+ * user is thought to be another. It does not provide an authorization code service.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */

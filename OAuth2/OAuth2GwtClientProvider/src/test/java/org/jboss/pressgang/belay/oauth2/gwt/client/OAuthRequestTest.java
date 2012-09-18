@@ -10,7 +10,7 @@ import org.junit.Test;
 import static net.sf.ipsedixit.core.StringType.ALPHA;
 import static net.sf.ipsedixit.core.StringType.ALPHANUMERIC;
 import static org.hamcrest.CoreMatchers.is;
-import static org.jboss.pressgang.belay.oauth2.gwt.client.Constants.AUTHORISATION_HEADER;
+import static org.jboss.pressgang.belay.oauth2.gwt.client.Constants.AUTHORIZATION_HEADER;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -65,6 +65,6 @@ public class OAuthRequestTest extends BaseUnitTest {
         oAuthRequest.setOAuthHeader(token);
 
         // The result conforms to expectations
-        assertThat(oAuthRequest.getHeader(AUTHORISATION_HEADER), is("Bearer " + token));
+        assertThat(oAuthRequest.getHeader(AUTHORIZATION_HEADER), is("Bearer " + token));
     }
 }

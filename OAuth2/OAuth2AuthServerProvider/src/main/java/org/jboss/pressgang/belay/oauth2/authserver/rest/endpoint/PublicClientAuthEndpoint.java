@@ -15,5 +15,5 @@ public interface PublicClientAuthEndpoint {
     Response requestAuthenticationWithOpenId(@Context HttpServletRequest request);
 
     @POST
-    Response authorise(@Context HttpServletRequest request);
+    Response authorize(@Context HttpServletRequest request);
 }

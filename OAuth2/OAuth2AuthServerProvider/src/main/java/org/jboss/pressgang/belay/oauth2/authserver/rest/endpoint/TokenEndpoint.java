@@ -18,5 +18,5 @@ public interface TokenEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    Response authorise(@Context HttpServletRequest request) throws OAuthSystemException;
+    Response authorize(@Context HttpServletRequest request) throws OAuthSystemException;
 }

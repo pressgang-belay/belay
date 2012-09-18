@@ -59,7 +59,7 @@ public class OAuth2RSAuthService {
     }
 
     @PostConstruct
-    private void initialise () {
+    private void initialize() {
         authServerUsername = (String) resourceServerConfig.get("authServerUsername");
         authServerPassword = (String) resourceServerConfig.get("authServerPassword");
         authServerInfoUrl = (String) resourceServerConfig.get("authServerInfoUrl");

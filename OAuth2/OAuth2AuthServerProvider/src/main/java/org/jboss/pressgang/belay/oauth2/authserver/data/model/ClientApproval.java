@@ -45,6 +45,7 @@ public class ClientApproval implements Serializable {
         return clientApplication;
     }
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "OPENID_USER_USER_ID")
     public User getApprover() {

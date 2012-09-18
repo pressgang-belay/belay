@@ -19,7 +19,7 @@ public class UserConsentPage extends BasePage {
 
     @Override
     public String getExpectedPageTitle() {
-        return "Authorisation Required";
+        return "Authorization Required";
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Set;
@@ -45,7 +46,6 @@ public class User implements Serializable {
         return username;
     }
 
-    // @NotNull
     @OneToOne
     @JoinColumn(name = "OPENID_IDENTITY_IDENTITY_ID")
     public Identity getPrimaryIdentity() {

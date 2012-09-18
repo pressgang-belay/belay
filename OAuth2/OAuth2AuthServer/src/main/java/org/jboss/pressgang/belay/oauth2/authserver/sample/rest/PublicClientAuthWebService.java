@@ -9,6 +9,6 @@ import javax.ws.rs.Path;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RequestScoped
-@Path("/auth/authorise")
+@Path("/auth/authorize")
 public class PublicClientAuthWebService extends PublicClientAuthEndpointImpl {
 }

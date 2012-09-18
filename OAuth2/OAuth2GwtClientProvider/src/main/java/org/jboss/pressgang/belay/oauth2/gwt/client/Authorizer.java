@@ -14,16 +14,16 @@ import com.google.gwt.core.client.Scheduler;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public abstract class Authoriser {
+public abstract class Authorizer {
 
-    AuthorisationRequest lastAuthRequest;
+    AuthorizationRequest lastAuthRequest;
     Callback<String, Throwable> lastCallback;
 
     /**
-     * Instance of the {@link Authoriser} to use in a GWT application.
+     * Instance of the {@link Authorizer} to use in a GWT application.
      */
-    public static Authoriser get() {
-        return AuthoriserImpl.INSTANCE;
+    public static Authorizer get() {
+        return AuthorizerImpl.INSTANCE;
     }
 
     private final UrlCodex urlCodex;
@@ -32,7 +32,7 @@ public abstract class Authoriser {
     final Scheduler scheduler;
     String oAuthWindowUrl;
 
-    Authoriser(OAuthTokenStore tokenStore, Clock clock, UrlCodex urlCodex, Scheduler scheduler,
+    Authorizer(OAuthTokenStore tokenStore, Clock clock, UrlCodex urlCodex, Scheduler scheduler,
                String oAuthWindowUrl) {
         this.tokenStore = tokenStore;
         this.clock = clock;
@@ -59,7 +59,7 @@ public abstract class Authoriser {
      * @param request  Request for authentication.
      * @param callback Callback to pass the token to when access has been granted.
      */
-    public void authorise(AuthorisationRequest request, final Callback<String, Throwable> callback) {
+    public void authorize(AuthorizationRequest request, final Callback<String, Throwable> callback) {
         lastAuthRequest = request;
         lastCallback = callback;
 
@@ -120,7 +120,7 @@ public abstract class Authoriser {
      * Called by the {@code doAuthLogin()} method which is registered as a global
      * variable on the page.
      */
-    // This method is called via a global method defined in AuthoriserImpl.register()
+    // This method is called via a global method defined in AuthorizerImpl.register()
     @SuppressWarnings("unused")
     void finish(String hash) {
         TokenInfo info = new TokenInfo();
@@ -194,24 +194,24 @@ public abstract class Authoriser {
      */
     static interface UrlCodex {
         /**
-         * URL-encode a string. This is abstract so that the Authoriser class can be
+         * URL-encode a string. This is abstract so that the Authorizer class can be
          * tested.
          */
         String encode(String url);
 
         /**
-         * URL-decode a string. This is abstract so that the Authoriser class can be
+         * URL-decode a string. This is abstract so that the Authorizer class can be
          * tested.
          */
         String decode(String url);
     }
 
-    TokenInfo getToken(AuthorisationRequest req) {
+    TokenInfo getToken(AuthorizationRequest req) {
         String tokenStr = tokenStore.get(req.asString());
         return tokenStr != null ? TokenInfo.fromString(tokenStr) : null;
     }
 
-    void setToken(AuthorisationRequest req, TokenInfo info) {
+    void setToken(AuthorizationRequest req, TokenInfo info) {
         tokenStore.set(req.asString(), info.asString());
     }
 
@@ -220,7 +220,7 @@ public abstract class Authoriser {
      * <p/>
      * <p>
      * This will result in subsequent calls to
-     * {@link #authorise} displaying a popup to the user. If
+     * {@link #authorize} displaying a popup to the user. If
      * the user has already granted access, that popup will immediately close.
      * </p>
      */
@@ -254,7 +254,7 @@ public abstract class Authoriser {
     * @return The number of milliseconds until the token expires, or negative
     *         infinity if no token was found.
     */
-    public double expiresIn(AuthorisationRequest req) {
+    public double expiresIn(AuthorizationRequest req) {
         String val = tokenStore.get(req.asString());
         return val == null ? Double.NEGATIVE_INFINITY :
                 Double.valueOf(TokenInfo.fromString(val).expires) - clock.now();
@@ -265,7 +265,7 @@ public abstract class Authoriser {
      *
      * Usage (in JavaScript):
      * <code>
-     * oauth2win.authorise({
+     * oauth2win.authorize({
      * "authUrl": "..." // the auth URL to use
      * "tokenUrl": "..." // the token URL to use
      * "clientId": "..." // the client ID for this app
@@ -281,25 +281,25 @@ public abstract class Authoriser {
         if (!$wnd.oauth2win) {
           $wnd.oauth2win = {};
         }
-        $wnd.oauth2win.authorise = $entry(function(req, success, failure) {
-          @org.jboss.pressgang.belay.oauth2.gwt.client.Authoriser::nativeLogin(*)(req, success, failure);
+        $wnd.oauth2win.authorize = $entry(function(req, success, failure) {
+          @org.jboss.pressgang.belay.oauth2.gwt.client.Authorizer::nativeLogin(*)(req, success, failure);
         });
 
         $wnd.oauth2win.expiresIn = $entry(function(req) {
-          return @org.jboss.pressgang.belay.oauth2.gwt.client.Authoriser::nativeExpiresIn(*)(req);
+          return @org.jboss.pressgang.belay.oauth2.gwt.client.Authorizer::nativeExpiresIn(*)(req);
         });
     }-*/;
 
     private static void nativeLogin(AuthRequestJso req, JsFunction success, JsFunction failure) {
-        AuthoriserImpl.INSTANCE.authorise(fromJso(req), CallbackWrapper.create(success, failure));
+        AuthorizerImpl.INSTANCE.authorize(fromJso(req), CallbackWrapper.create(success, failure));
     }
 
     private static double nativeExpiresIn(AuthRequestJso req) {
-        return AuthoriserImpl.INSTANCE.expiresIn(fromJso(req));
+        return AuthorizerImpl.INSTANCE.expiresIn(fromJso(req));
     }
 
-    private static AuthorisationRequest fromJso(AuthRequestJso jso) {
-        return new AuthorisationRequest(jso.getAuthUrl(), jso.getClientId())
+    private static AuthorizationRequest fromJso(AuthRequestJso jso) {
+        return new AuthorizationRequest(jso.getAuthUrl(), jso.getClientId())
                 .withScopes(jso.getScopes())
                 .withScopeDelimiter(jso.getScopeDelimiter());
     }

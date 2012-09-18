@@ -8,7 +8,25 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>PressGangBelayParent</name>
-
+    <description>Facilitates RESTful web service security using OAuth2 and OpenID.</description>
+    <url>http://github.com/codemiller/belay</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>GNU Lesser General Public License, Version 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git@github.com:codemiller/belay.git</connection>
+        <developerConnection>scm:git:git@github.com:codemiller/belay.git</developerConnection>
+        <url>git@github.com:codemiller/belay.git</url>
+    </scm>
     <developers>
         <developer>
             <name>Katie Miller</name>
@@ -29,6 +47,7 @@
     </modules>
 
     <properties>
+        <skipSigning>true</skipSigning>
         <oauth2authserver.project.name>OAuth2AuthServer</oauth2authserver.project.name>
         <securedrestapp.project.name>OAuth2SecuredRestApp</securedrestapp.project.name>
         <openidprovider.project.name>OpenIdProvider</openidprovider.project.name>
@@ -83,6 +102,7 @@
         <xmlplugin.version>1.0</xmlplugin.version>
         <findbugsplugin.version>2.5.2</findbugsplugin.version>
         <surefireplugin.version>2.12.2</surefireplugin.version>
+        <gpgplugin.version>1.4</gpgplugin.version>
         <checkstyleplugin.version>2.6</checkstyleplugin.version>
         <coberturaplugin.version>2.5.1</coberturaplugin.version>
         <cobertura.totalbranchrate>75</cobertura.totalbranchrate>
@@ -91,6 +111,7 @@
         <author.name>Katie Miller (kamiller@redhat.com)</author.name>
     </properties>
 
+    <!-- TODO REMOVE -->
     <repositories>
         <repository>
             <id>jboss-repo</id>
@@ -252,6 +273,23 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>${findbugsplugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${gpgplugin.version}</version>
+                <configuration>
+                    <skip>${skipSigning}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

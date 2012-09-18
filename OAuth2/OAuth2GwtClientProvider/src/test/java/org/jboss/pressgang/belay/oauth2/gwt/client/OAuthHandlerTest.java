@@ -6,7 +6,6 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import net.sf.ipsedixit.annotation.Arbitrary;
 import net.sf.ipsedixit.annotation.ArbitraryString;
-import org.hamcrest.CoreMatchers;
 import org.jboss.pressgang.belay.util.test.unit.gwt.BaseUnitTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +15,7 @@ import org.mockito.Mock;
 import static java.lang.Integer.toString;
 import static net.sf.ipsedixit.core.StringType.ALPHA;
 import static org.hamcrest.CoreMatchers.is;
-import static org.jboss.pressgang.belay.oauth2.gwt.client.Authoriser.TokenInfo;
+import static org.jboss.pressgang.belay.oauth2.gwt.client.Authorizer.TokenInfo;
 import static org.jboss.pressgang.belay.oauth2.gwt.client.Constants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -33,11 +32,11 @@ import static org.mockito.Mockito.when;
 public class OAuthHandlerTest extends BaseUnitTest {
 
     @Mock
-    private Authoriser authoriser;
+    private Authorizer authorizer;
     @Mock
     private OAuthRequest oAuthRequest;
     @Mock
-    private AuthorisationRequest authRequest;
+    private AuthorizationRequest authRequest;
     @Mock
     private TokenInfo tokenInfo;
     @Mock
@@ -67,28 +66,28 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        handler = new OAuthHandler(authoriser);
+        handler = new OAuthHandler(authorizer);
     }
 
     @Test
-    public void testAuthorisation() throws Exception {
-        // Given an OAuthHandler and an AuthorisationRequest
+    public void testAuthorization() throws Exception {
+        // Given an OAuthHandler and an AuthorizationRequest
 
-        // When authorise is called
+        // When authorize is called
         handler.sendAuthRequest(authRequest, callback);
 
-        // Then the authoriser is called to authorise the request
-        verify(authoriser).authorise(any(AuthorisationRequest.class), any(Callback.class));
-        // And the authorisation request is recorded
+        // Then the authorizer is called to authorize the request
+        verify(authorizer).authorize(any(AuthorizationRequest.class), any(Callback.class));
+        // And the authorization request is recorded
         assertThat(handler.lastAuthRequest.equals(authRequest), is(true));
     }
 
     @Test
-    public void testSendRequestBeforeAuthorisation() throws Exception {
-        // Given a call to authorise has not been made
+    public void testSendRequestBeforeAuthorization() throws Exception {
+        // Given a call to authorize has not been made
         handler.lastAuthRequest = null;
 
-        // When an attempt to authorise is made
+        // When an attempt to authorize is made
         // Then the callback's error branch is taken
         handler.sendRequest(oAuthRequest, new RequestCallback() {
             @Override
@@ -98,29 +97,29 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
             @Override
             public void onError(Request request, Throwable exception) {
-                assertThat(exception.getMessage(), is("You must be authorised before making requests"));
+                assertThat(exception.getMessage(), is("You must be authorized before making requests"));
             }
         });
     }
 
     @Test
-    public void testSendRequestAfterAuthorisation() throws Exception {
+    public void testSendRequestAfterAuthorization() throws Exception {
         // Given the user has logged in previously
         handler.lastAuthRequest = authRequest;
 
         // When an attempt to send an OAuth request is made
         handler.sendRequest(oAuthRequest, requestCallback);
 
-        // Then an attempt to authorise the request will be made
-        verify(authoriser).authorise(any(AuthorisationRequest.class), any(Callback.class));
+        // Then an attempt to authorize the request will be made
+        verify(authorizer).authorize(any(AuthorizationRequest.class), any(Callback.class));
     }
 
     @Test
     public void testSendRequestWhenTokenInvalid() throws Exception {
         // Given a user has logged in previously but a valid token cannot be retrieved
         handler.lastAuthRequest = authRequest;
-        CallbackMockStubber.callFailureWith(exception).when(authoriser)
-                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+        CallbackMockStubber.callFailureWith(exception).when(authorizer)
+                .authorize(any(AuthorizationRequest.class), any(Callback.class));
 
         // When an attempt to send an OAuth request is made
         // Then the supplied callback's error branch is taken
@@ -132,7 +131,7 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
             @Override
             public void onError(Request request, Throwable exception) {
-                assertThat(exception.getMessage(), is("Could not obtain request authorisation"));
+                assertThat(exception.getMessage(), is("Could not obtain request authorization"));
             }
         });
     }
@@ -141,8 +140,8 @@ public class OAuthHandlerTest extends BaseUnitTest {
     public void testSendRequestWhenTokenValid() throws Exception {
         // Given a user has logged in and their token has been successfully retrieved
         handler.lastAuthRequest = authRequest;
-        CallbackMockStubber.callSuccessWith(token).when(authoriser)
-                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+        CallbackMockStubber.callSuccessWith(token).when(authorizer)
+                .authorize(any(AuthorizationRequest.class), any(Callback.class));
 
         // When an attempt to send an OAuth request is made
         handler.sendRequest(oAuthRequest, requestCallback);
@@ -155,8 +154,8 @@ public class OAuthHandlerTest extends BaseUnitTest {
     public void testRequestWithResponse() throws Exception {
         // Given a user has sent a successful request
         handler.lastAuthRequest = authRequest;
-        CallbackMockStubber.callSuccessWith(token).when(authoriser)
-                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+        CallbackMockStubber.callSuccessWith(token).when(authorizer)
+                .authorize(any(AuthorizationRequest.class), any(Callback.class));
         CallbackMockStubber.callOnResponseReceivedWith(request, response).when(oAuthRequest)
                 .sendRequest(token, handler, authRequest, requestCallback);
 
@@ -171,8 +170,8 @@ public class OAuthHandlerTest extends BaseUnitTest {
     public void testRequestWithErrorResponse() throws Exception {
         // Given a user has sent a request successfully but the response is an error
         handler.lastAuthRequest = authRequest;
-        CallbackMockStubber.callSuccessWith(token).when(authoriser)
-                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+        CallbackMockStubber.callSuccessWith(token).when(authorizer)
+                .authorize(any(AuthorizationRequest.class), any(Callback.class));
         CallbackMockStubber.callOnErrorWith(request, exception).when(oAuthRequest)
                 .sendRequest(token, handler, authRequest, requestCallback);
 
@@ -190,18 +189,18 @@ public class OAuthHandlerTest extends BaseUnitTest {
         info.accessToken = token;
         info.expires = Integer.toString(expiry);
 
-        given(authoriser.getToken(authRequest)).willReturn(info);
-        given(authoriser.convertExpiresInFromSeconds(Integer.toString(newExpiry))).willReturn(Integer.toString(convertedExpiry));
-        given(response.getHeader(AUTHORISATION_HEADER)).willReturn(OAUTH_HEADER_NAME + " " + EXPIRES_IN + "='" + newExpiry + "'");
+        given(authorizer.getToken(authRequest)).willReturn(info);
+        given(authorizer.convertExpiresInFromSeconds(Integer.toString(newExpiry))).willReturn(Integer.toString(convertedExpiry));
+        given(response.getHeader(AUTHORIZATION_HEADER)).willReturn(OAUTH_HEADER_NAME + " " + EXPIRES_IN + "='" + newExpiry + "'");
 
         // When processOAuthRequestResponse is called
         handler.processOAuthRequestResponse(request, response, authRequest, requestCallback);
 
         // Then the token info is updated and the response is passed on
         verify(requestCallback).onResponseReceived(request, response);
-        ArgumentCaptor<AuthorisationRequest> authRequestArgument = ArgumentCaptor.forClass(AuthorisationRequest.class);
+        ArgumentCaptor<AuthorizationRequest> authRequestArgument = ArgumentCaptor.forClass(AuthorizationRequest.class);
         ArgumentCaptor<TokenInfo> tokenInfoArgument = ArgumentCaptor.forClass(TokenInfo.class);
-        verify(authoriser).setToken(authRequestArgument.capture(), tokenInfoArgument.capture());
+        verify(authorizer).setToken(authRequestArgument.capture(), tokenInfoArgument.capture());
         assertEquals(authRequest, authRequestArgument.getValue());
         assertEquals(Integer.toString(convertedExpiry), tokenInfoArgument.getValue().expires);
     }
@@ -213,15 +212,15 @@ public class OAuthHandlerTest extends BaseUnitTest {
         // When clearAllTokens is called
         handler.clearAllTokens();
 
-        // The authoriser is called to clear all tokens
-        verify(authoriser).clearAllTokens();
+        // The authorizer is called to clear all tokens
+        verify(authorizer).clearAllTokens();
     }
 
     @Test
     public void testGetLastTokenResult() throws Exception {
-        // Given an OAuthHandler and a prior successful authorisation
-        CallbackMockStubber.callSuccessWith(token).when(authoriser)
-                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+        // Given an OAuthHandler and a prior successful authorization
+        CallbackMockStubber.callSuccessWith(token).when(authorizer)
+                .authorize(any(AuthorizationRequest.class), any(Callback.class));
 
         handler.sendAuthRequest(authRequest, callback);
 
@@ -234,13 +233,13 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
     @Test
     public void testGetTokenForRequest() throws Exception {
-        // Given an OAuthHandler and a prior successful authorisation with a given AuthorisationRequest
-        CallbackMockStubber.callSuccessWith(token).when(authoriser)
-                .authorise(any(AuthorisationRequest.class), any(Callback.class));
+        // Given an OAuthHandler and a prior successful authorization with a given AuthorizationRequest
+        CallbackMockStubber.callSuccessWith(token).when(authorizer)
+                .authorize(any(AuthorizationRequest.class), any(Callback.class));
         TokenInfo info = new TokenInfo();
         info.accessToken = token;
         info.expires = Integer.toString(expiry);
-        given(authoriser.getToken(authRequest)).willReturn(info);
+        given(authorizer.getToken(authRequest)).willReturn(info);
 
         handler.sendAuthRequest(authRequest, callback);
 
@@ -253,14 +252,14 @@ public class OAuthHandlerTest extends BaseUnitTest {
 
     @Test
     public void testEncodeUrl() throws Exception {
-        // Given an OAuthHandler with an authoriser instance
-        when(authoriser.encodeUrl(url)).thenReturn(result);
+        // Given an OAuthHandler with an authorizer instance
+        when(authorizer.encodeUrl(url)).thenReturn(result);
 
         // When encodeUrl is called
         String encoded = handler.encodeUrl(url);
 
-        // The authoriser is called to encode the URL and the result is returned
-        verify(authoriser).encodeUrl(url);
+        // The authorizer is called to encode the URL and the result is returned
+        verify(authorizer).encodeUrl(url);
         assertThat(encoded.equals(result), is(true));
     }
 }

@@ -40,7 +40,7 @@ public class Constants {
     public static final String INVALID_REDIRECT_URI = "invalid_redirect_uri";
     public static final String REALM_ENDPOINT_ERROR = "Could not perform realm endpoint discovery on Relying Party";
     public static final String IDENTITIES_ASSOCIATED_ERROR = "Identities already associated";
-    public static final String UNAUTHORISED_QUERY_ERROR = "Unauthorised to query identity";
+    public static final String UNAUTHORIZED_QUERY_ERROR = "Unauthorized to query identity";
     public static final String IDENTITY_QUERY_ERROR = "Could not obtain identity information";
     public static final String USER_QUERY_ERROR = "Could not obtain user information";
     public static final String URL_DECODING_ERROR = "url_decoding_error";

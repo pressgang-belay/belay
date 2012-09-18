@@ -1,5 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.shared.data.model;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,6 +18,7 @@ import java.util.Set;
 public class UserInfo implements Serializable {
     private static final long serialVersionUID = 5933390681273206069L;
 
+    private String username;
     private String primaryIdentifier;
     private Set<String> userIdentifiers;
     private List<String> firstNames;
@@ -31,6 +34,7 @@ public class UserInfo implements Serializable {
     }
 
     private UserInfo(UserInfoBuilder builder) {
+        this.username = builder.username;
         this.primaryIdentifier = builder.primaryIdentifier;
         this.userIdentifiers = builder.userIdentifiers;
         this.firstNames = builder.firstNames;
@@ -41,6 +45,10 @@ public class UserInfo implements Serializable {
         this.countries = builder.countries;
         this.openIdProviderUrls = builder.openIdProviderUrls;
         this.userScopes = builder.userScopes;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     public String getPrimaryIdentifier() {
@@ -81,6 +89,10 @@ public class UserInfo implements Serializable {
 
     public Set<String> getUserScopes() {
         return userScopes;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPrimaryIdentifier(String primaryIdentifier) {
@@ -130,17 +142,36 @@ public class UserInfo implements Serializable {
 
         UserInfo that = (UserInfo) o;
 
-        return primaryIdentifier.equals(that.getPrimaryIdentifier());
+        if (this.username == null || that.username == null) {
+            return this.primaryIdentifier.equals(that.getPrimaryIdentifier());
+        }
+        if (this.primaryIdentifier == null || that.primaryIdentifier == null) {
+            return this.username.equals(that.getUsername());
+        }
+        return new EqualsBuilder()
+                .append(username, that.getUsername())
+                .append(primaryIdentifier, that.getPrimaryIdentifier())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return primaryIdentifier.hashCode();
+        if (this.username == null) {
+            return this.primaryIdentifier.hashCode();
+        }
+        if (this.primaryIdentifier == null) {
+            return this.username.hashCode();
+        }
+        return new HashCodeBuilder()
+                .append(username)
+                .append(primaryIdentifier)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .append("username", username)
                 .append("primaryIdentifier", primaryIdentifier)
                 .append("userIdentifiers", userIdentifiers)
                 .append("firstNames", firstNames)
@@ -158,6 +189,7 @@ public class UserInfo implements Serializable {
      * Builder class to assist with creating UserInfo objects. Implements builder interface.
      */
     public static class UserInfoBuilder implements Builder<UserInfo> {
+        private String username;
         private String primaryIdentifier;
         private Set<String> userIdentifiers;
         private List<String> firstNames;
@@ -172,10 +204,15 @@ public class UserInfo implements Serializable {
         UserInfoBuilder() {
         }
 
-        public static UserInfoBuilder identityInfoBuilder(String primaryIdentifier) {
+        public static UserInfoBuilder identityInfoBuilder(String username) {
             UserInfoBuilder builder = new UserInfoBuilder();
-            builder.primaryIdentifier = primaryIdentifier;
+            builder.username = username;
             return builder;
+        }
+
+        public UserInfoBuilder setPrimaryIdentifier(String primaryIdentifier) {
+            this.primaryIdentifier = primaryIdentifier;
+            return this;
         }
 
         public UserInfoBuilder setUserIdentifiers(Set<String> userIdentifiers) {
@@ -225,8 +262,8 @@ public class UserInfo implements Serializable {
 
         @Override
         public UserInfo build() {
-            if (primaryIdentifier == null) {
-                throw new IllegalArgumentException("Primary identifier cannot be null");
+            if (primaryIdentifier == null && username == null) {
+                throw new java.lang.IllegalArgumentException("Primary identifier and username cannot both be null");
             }
             return new UserInfo(this);
         }
