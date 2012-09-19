@@ -27,7 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static org.jboss.pressgang.belay.oauth2.resourceserver.util.Common.*;
+import static org.jboss.pressgang.belay.oauth2.resourceserver.util.Constants.*;
 
 /**
  * Service class wraps calls to DAOs and web services for auth information.

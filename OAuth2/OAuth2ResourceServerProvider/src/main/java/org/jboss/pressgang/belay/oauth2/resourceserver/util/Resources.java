@@ -15,7 +15,7 @@ import javax.persistence.EntityManagerFactory;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import static org.jboss.pressgang.belay.oauth2.resourceserver.util.Common.PROPERTIES_FILEPATH;
+import static org.jboss.pressgang.belay.oauth2.resourceserver.util.Constants.PROPERTIES_FILEPATH;
 
 /**
  * This class uses CDI to alias Java EE resources, such as the persistence context, to CDI beans.
@@ -28,6 +28,8 @@ public class Resources {
     private Properties resourceServerConfig;
 
     private Logger log = Logger.getLogger(Resources.class.getName());
+    private final static String DEFAULT_AUTH_SERVICE_JNDI_ADDRESS = "java:module/OAuth2RSAuthService";
+    private static String authServiceJndiAddress;
     private static String entityManagerFactoryJndiAddress;
     private static String tokenExpiryExtensionThreshold; // In seconds
     private static final String TOKEN_EXPIRY_THRESHOLD_DEFAULT = "900";
@@ -52,6 +54,9 @@ public class Resources {
             log.severe("Could not set token expiry extension threshold property");
             throw new RuntimeException("Error: Resource server properties set incorrectly");
         }
+        authServiceJndiAddress = (resourceServerConfig.get("authServiceJndiAddress") == null)
+                ? DEFAULT_AUTH_SERVICE_JNDI_ADDRESS
+                : (String) resourceServerConfig.get("authServiceJndiAddress");
     }
 
     @SuppressWarnings("unused")
@@ -86,5 +91,9 @@ public class Resources {
 
     public static int getTokenExpiryExtensionThreshold() {
         return tokenExpiryThresholdSeconds;
+    }
+
+    public static String getAuthServiceJndiAddress() {
+        return authServiceJndiAddress;
     }
 }

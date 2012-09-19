@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_HEADER_NAME;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
+import static org.jboss.pressgang.belay.oauth2.resourceserver.util.Resources.getAuthServiceJndiAddress;
 
 /**
  * Contains the core logic for decisions made by OAuthFilter.
@@ -40,18 +41,16 @@ public class OAuth2RSDecision implements OAuthDecision {
     private OAuth2RSAuthService authService;
     private Logger log = Logger.getLogger(OAuth2RSDecision.class.getName());
 
-    private static final String AUTH_SERVICE_JNDI_ADDRESS = "java:module/OAuth2RSAuthService";
-
     public OAuth2RSDecision(String realm, String token, HttpServletRequest request, HttpServletResponse response)
             throws OAuthProblemException {
         token = trimAccessToken(token);
         log.info("Processing decision on access token " + token);
         Optional<TokenGrantInfo> tokenGrantInfoFound;
         try {
-            authService = (OAuth2RSAuthService) new InitialContext().lookup(AUTH_SERVICE_JNDI_ADDRESS);
+            authService = (OAuth2RSAuthService) new InitialContext().lookup(getAuthServiceJndiAddress());
             tokenGrantInfoFound = authService.getTokenGrantInfoForAccessToken(token);
         } catch (NamingException e) {
-            log.severe("JNDI error with OAuth2RSAuthService: " + e.getMessage());
+            log.severe("JNDI error with OAuth2 Auth Service: " + e.getMessage());
             throw OAuthProblemException.error(SERVER_ERROR);
         }
         if (tokenGrantInfoFound.isPresent()) {
@@ -77,7 +76,6 @@ public class OAuth2RSDecision implements OAuthDecision {
         if (grantScopeMatchesRequest(tokenGrantInfo, requestEndpoint)) {
             log.info("Verified token " + tokenGrantInfo.getAccessToken());
             isAuthorized = true;
-            // TODO add check that non-expiring tokens are being used with particular, approved clients
             // If client has no refresh token and token is within the threshold time of expiring, push out expiry time
             if ((!tokenGrantInfo.getHasRefreshToken())
                     && tokenCloseToExpiring(tokenGrantInfo)
@@ -113,6 +111,13 @@ public class OAuth2RSDecision implements OAuthDecision {
     }
 
     private Optional<DateTime> getTokenExpiryDate(TokenGrantInfo tokenGrantInfo) throws OAuthProblemException {
+        if (! tokenGrantInfo.getAccessTokenExpires()) {
+            // Token does not expire
+            if (tokenGrantInfo.getGrantClientTokensMustExpire()) {
+                throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
+            }
+            return Optional.absent();
+        }
         int expirySeconds;
         try {
             expirySeconds = Integer.parseInt(tokenGrantInfo.getAccessTokenExpiry());
@@ -120,12 +125,7 @@ public class OAuth2RSDecision implements OAuthDecision {
             log.warning("NumberFormatException during token check: " + e);
             throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_TOKEN);
         }
-        // If expiry seconds is 0, token does not expire
-        if (expirySeconds == 0) {
-            return Optional.absent();
-        } else {
-            return Optional.of(new DateTime(tokenGrantInfo.getGrantTimeStamp()).plusSeconds(Math.abs(expirySeconds)));
-        }
+        return Optional.of(new DateTime(tokenGrantInfo.getGrantTimeStamp()).plusSeconds(Math.abs(expirySeconds)));
     }
 
     private OAuth2RSEndpoint findEndpointForRequest(HttpServletRequest request) throws OAuthProblemException {

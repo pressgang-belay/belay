@@ -85,10 +85,14 @@ public class TokenGrantDao {
         } else {
             TokenGrant tokenGrant = tokenGrantFound.get();
             TokenGrantInfo.TokenGrantInfoBuilder builder = tokenGrantInfoBuilder(tokenGrant.getAccessToken())
+                    .setAccessTokenExpires(tokenGrant.getAccessTokenExpires())
                     .setAccessTokenExpiry(tokenGrant.getAccessTokenExpiry())
                     .setHasRefreshToken(tokenGrant.getRefreshToken() != null)
                     .setGrantUserPrimaryIdentifier(tokenGrant.getGrantUser().getPrimaryIdentity().getIdentifier())
                     .setGrantClientIdentifier(tokenGrant.getGrantClient().getClientIdentifier())
+                    .setGrantClientName(tokenGrant.getGrantClient().getClientName())
+                    .setGrantClientRedirectUri(tokenGrant.getGrantClient().getClientRedirectUri())
+                    .setGrantClientTokensMustExpire(tokenGrant.getGrantClient().getTokenGrantsMustExpire())
                     .setGrantCurrent(tokenGrant.getGrantCurrent())
                     .setGrantTimeStamp(tokenGrant.getGrantTimeStamp());
 

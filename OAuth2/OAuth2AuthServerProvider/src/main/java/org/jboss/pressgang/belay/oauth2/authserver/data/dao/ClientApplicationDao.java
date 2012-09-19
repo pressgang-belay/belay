@@ -1,6 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.authserver.data.dao;
 
 import com.google.common.base.Optional;
+import org.apache.amber.oauth2.common.domain.client.ClientInfo;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.ClientApplication;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 

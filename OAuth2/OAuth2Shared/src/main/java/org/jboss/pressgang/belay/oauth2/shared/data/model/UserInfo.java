@@ -91,50 +91,6 @@ public class UserInfo implements Serializable {
         return userScopes;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPrimaryIdentifier(String primaryIdentifier) {
-        this.primaryIdentifier = primaryIdentifier;
-    }
-
-    public void setUserIdentifiers(Set<String> userIdentifiers) {
-        this.userIdentifiers = userIdentifiers;
-    }
-
-    public void setFirstNames(List<String> firstNames) {
-        this.firstNames = firstNames;
-    }
-
-    public void setLastNames(List<String> lastNames) {
-        this.lastNames = lastNames;
-    }
-
-    public void setFullNames(List<String> fullNames) {
-        this.fullNames = fullNames;
-    }
-
-    public void setEmails(List<String> emails) {
-        this.emails = emails;
-    }
-
-    public void setLanguages(List<String> languages) {
-        this.languages = languages;
-    }
-
-    public void setCountries(List<String> countries) {
-        this.countries = countries;
-    }
-
-    public void setOpenIdProviderUrls(List<String> openIdProviderUrls) {
-        this.openIdProviderUrls = openIdProviderUrls;
-    }
-
-    public void setUserScopes(Set<String> userScopes) {
-        this.userScopes = userScopes;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

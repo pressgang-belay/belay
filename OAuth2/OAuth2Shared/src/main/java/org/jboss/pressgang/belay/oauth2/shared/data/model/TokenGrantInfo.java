@@ -19,10 +19,14 @@ public class TokenGrantInfo implements Serializable {
     private static final long serialVersionUID = -2251511153184544618L;
 
     private String accessToken;
+    private Boolean accessTokenExpires;
     private String accessTokenExpiry;
     private Boolean hasRefreshToken;
     private String grantUserPrimaryIdentifier;
     private String grantClientIdentifier;
+    private String grantClientName;
+    private String grantClientRedirectUri;
+    private Boolean grantClientTokensMustExpire;
     private Date grantTimeStamp; // In seconds, from time granted
     private Boolean grantCurrent;
     private Set<String> grantScopeNames;
@@ -32,25 +36,45 @@ public class TokenGrantInfo implements Serializable {
 
     private TokenGrantInfo(TokenGrantInfoBuilder builder) {
         this.accessToken = builder.accessToken;
+        this.accessTokenExpires = builder.accessTokenExpires;
         this.accessTokenExpiry = builder.accessTokenExpiry;
         this.hasRefreshToken = builder.hasRefreshToken;
         this.grantUserPrimaryIdentifier = builder.grantUserPrimaryIdentifier;
         this.grantClientIdentifier = builder.grantClientIdentifier;
+        this.grantClientName = builder.grantClientName;
+        this.grantClientRedirectUri = builder.grantClientRedirectUri;
+        this.grantClientTokensMustExpire = builder.grantClientTokensMustExpire;
         this.grantTimeStamp = builder.grantTimeStamp;
         this.grantCurrent = builder.grantCurrent;
         this.grantScopeNames = builder.grantScopeNames;
-    }
-
-    public String getGrantClientIdentifier() {
-        return grantClientIdentifier;
     }
 
     public String getGrantUserPrimaryIdentifier() {
         return grantUserPrimaryIdentifier;
     }
 
+    public String getGrantClientIdentifier() {
+        return grantClientIdentifier;
+    }
+
+    public String getGrantClientName() {
+        return grantClientName;
+    }
+
+    public String getGrantClientRedirectUri() {
+        return grantClientRedirectUri;
+    }
+
+    public Boolean getGrantClientTokensMustExpire() {
+        return grantClientTokensMustExpire;
+    }
+
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public Boolean getAccessTokenExpires() {
+        return accessTokenExpires;
     }
 
     public String getAccessTokenExpiry() {
@@ -82,10 +106,14 @@ public class TokenGrantInfo implements Serializable {
 
         return new EqualsBuilder()
                 .append(accessToken, that.getAccessToken())
+                .append(accessTokenExpires, that.getAccessTokenExpires())
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())
                 .append(hasRefreshToken, that.getHasRefreshToken())
                 .append(grantUserPrimaryIdentifier, that.getGrantUserPrimaryIdentifier())
                 .append(grantClientIdentifier, that.getGrantClientIdentifier())
+                .append(grantClientName, that.getGrantClientName())
+                .append(grantClientRedirectUri, that.getGrantClientRedirectUri())
+                .append(grantClientTokensMustExpire, that.getGrantClientTokensMustExpire())
                 .append(grantTimeStamp, that.getGrantTimeStamp())
                 .append(grantCurrent, that.getGrantCurrent())
                 .append(grantScopeNames, that.getGrantScopeNames())
@@ -96,10 +124,14 @@ public class TokenGrantInfo implements Serializable {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(accessToken)
+                .append(accessTokenExpires)
                 .append(accessTokenExpiry)
                 .append(hasRefreshToken)
                 .append(grantUserPrimaryIdentifier)
                 .append(grantClientIdentifier)
+                .append(grantClientName)
+                .append(grantClientRedirectUri)
+                .append(grantClientTokensMustExpire)
                 .append(grantTimeStamp)
                 .append(grantCurrent)
                 .append(grantScopeNames)
@@ -110,10 +142,14 @@ public class TokenGrantInfo implements Serializable {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("accessToken", accessToken)
+                .append("accessTokenExpires", accessTokenExpires)
                 .append("accessTokenExpiry", accessTokenExpiry)
                 .append("hasRefreshToken", hasRefreshToken)
                 .append("grantUserPrimaryIdentifier", grantUserPrimaryIdentifier)
                 .append("grantClientIdentifier", grantClientIdentifier)
+                .append("grantClientName", grantClientName)
+                .append("grantClientRedirectUri", grantClientRedirectUri)
+                .append("grantClientTokensMustExpire", grantClientTokensMustExpire)
                 .append("grantTimeStamp", grantTimeStamp)
                 .append("grantCurrent", grantCurrent)
                 .append("grantScopeNames", grantScopeNames)
@@ -125,10 +161,14 @@ public class TokenGrantInfo implements Serializable {
      */
     public static class TokenGrantInfoBuilder implements Builder<TokenGrantInfo> {
         private String accessToken;
+        private boolean accessTokenExpires;
         private String accessTokenExpiry;
         private boolean hasRefreshToken;
         private String grantUserPrimaryIdentifier;
         private String grantClientIdentifier;
+        private String grantClientName;
+        private String grantClientRedirectUri;
+        private boolean grantClientTokensMustExpire;
         private Date grantTimeStamp;
         private boolean grantCurrent;
         private Set<String> grantScopeNames;
@@ -140,6 +180,11 @@ public class TokenGrantInfo implements Serializable {
             TokenGrantInfoBuilder builder = new TokenGrantInfoBuilder();
             builder.accessToken = accessToken;
             return builder;
+        }
+
+        public TokenGrantInfoBuilder setAccessTokenExpires(boolean accessTokenExpires) {
+            this.accessTokenExpires = accessTokenExpires;
+            return this;
         }
 
         public TokenGrantInfoBuilder setAccessTokenExpiry(String accessTokenExpiry) {
@@ -159,6 +204,21 @@ public class TokenGrantInfo implements Serializable {
 
         public TokenGrantInfoBuilder setGrantClientIdentifier(String grantClientIdentifier) {
             this.grantClientIdentifier = grantClientIdentifier;
+            return this;
+        }
+
+        public TokenGrantInfoBuilder setGrantClientName(String grantClientName) {
+            this.grantClientName = grantClientName;
+            return this;
+        }
+
+        public TokenGrantInfoBuilder setGrantClientRedirectUri(String grantClientRedirectUri) {
+            this.grantClientRedirectUri = grantClientRedirectUri;
+            return this;
+        }
+
+        public TokenGrantInfoBuilder setGrantClientTokensMustExpire(boolean grantClientTokensMustExpire) {
+            this.grantClientTokensMustExpire = grantClientTokensMustExpire;
             return this;
         }
 

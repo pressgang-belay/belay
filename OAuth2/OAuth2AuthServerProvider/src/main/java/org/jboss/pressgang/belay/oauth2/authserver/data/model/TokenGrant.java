@@ -27,6 +27,7 @@ public class TokenGrant implements Serializable {
     private BigInteger tokenGrantId;
     private String accessToken;
     private String refreshToken;
+    private Boolean accessTokenExpires;
     private String accessTokenExpiry; // In seconds, from time granted
     private Date grantTimeStamp;
     private ClientApplication grantClient;
@@ -53,6 +54,12 @@ public class TokenGrant implements Serializable {
     @Column(name = "REFRESH_TOKEN")
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    @NotNull
+    @Column(name = "ACCESS_TOKEN_EXPIRES")
+    public Boolean getAccessTokenExpires() {
+        return accessTokenExpires;
     }
 
     @NotNull
@@ -107,6 +114,10 @@ public class TokenGrant implements Serializable {
         this.refreshToken = refreshToken;
     }
 
+    public void setAccessTokenExpires(Boolean accessTokenExpires) {
+        this.accessTokenExpires = accessTokenExpires;
+    }
+
     public void setAccessTokenExpiry(String accessTokenExpiry) {
         this.accessTokenExpiry = accessTokenExpiry;
     }
@@ -141,6 +152,7 @@ public class TokenGrant implements Serializable {
         return new EqualsBuilder()
                 .append(accessToken, that.getAccessToken())
                 .append(refreshToken, that.getRefreshToken())
+                .append(accessTokenExpires, that.getAccessTokenExpires())
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())
                 .append(grantTimeStamp, that.getGrantTimeStamp())
                 .append(grantClient, that.getGrantClient())
@@ -154,6 +166,7 @@ public class TokenGrant implements Serializable {
         return new HashCodeBuilder()
                 .append(accessToken)
                 .append(refreshToken)
+                .append(accessTokenExpires)
                 .append(accessTokenExpiry)
                 .append(grantTimeStamp)
                 .append(grantClient)
@@ -167,6 +180,7 @@ public class TokenGrant implements Serializable {
         return new ToStringBuilder(this)
                 .append("accessToken", accessToken)
                 .append("refreshToken", refreshToken)
+                .append("accessTokenExpires", accessTokenExpires)
                 .append("accessTokenExpiry", accessTokenExpiry)
                 .append("grantTimeStamp", grantTimeStamp)
                 .append("grantClient", grantClient)

@@ -4,7 +4,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.lang.Boolean;import java.lang.Object;import java.lang.Override;import java.lang.String;import java.util.Set;
 
 /**
  * Shared domain class encapsulating identity information.
@@ -74,38 +73,6 @@ public class IdentityInfo implements Serializable {
 
     public Boolean getPrimaryIdentity() {
         return primaryIdentity;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public void setOpenIdProviderUrl(String openIdProviderUrl) {
-        this.openIdProviderUrl = openIdProviderUrl;
-    }
-
-    public void setPrimaryIdentity(Boolean primaryIdentity) {
-        this.primaryIdentity = primaryIdentity;
     }
 
     @Override

@@ -30,6 +30,7 @@ public class ClientApplication implements Serializable {
     private String clientName;
     private String clientSecret;
     private String clientRedirectUri;
+    private Boolean tokenGrantsMustExpire;
     private Set<TokenGrant> tokenGrants = newHashSet();
 
     public ClientApplication() {
@@ -65,6 +66,12 @@ public class ClientApplication implements Serializable {
         return clientSecret;
     }
 
+    @NotNull
+    @Column(name = "GRANTS_MUST_EXPIRE")
+    public Boolean getTokenGrantsMustExpire() {
+        return tokenGrantsMustExpire;
+    }
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name="CLIENT_TOKEN_GRANT", joinColumns = { @JoinColumn(name = "CLIENT_ID") },
             inverseJoinColumns = { @JoinColumn(name = "TOKEN_GRANT_ID") })
@@ -92,6 +99,10 @@ public class ClientApplication implements Serializable {
         this.clientSecret = clientSecret;
     }
 
+    public void setTokenGrantsMustExpire(Boolean tokenGrantsMustExpire) {
+        this.tokenGrantsMustExpire = tokenGrantsMustExpire;
+    }
+
     public void setTokenGrants(Set<TokenGrant> tokenGrants) {
         this.tokenGrants = tokenGrants;
     }
@@ -108,6 +119,7 @@ public class ClientApplication implements Serializable {
                 .append(clientName, that.getClientName())
                 .append(clientRedirectUri, that.getClientRedirectUri())
                 .append(clientSecret, that.getClientSecret())
+                .append(tokenGrantsMustExpire, that.getTokenGrantsMustExpire())
                 .isEquals();
     }
 
@@ -118,6 +130,7 @@ public class ClientApplication implements Serializable {
                 .append(clientName)
                 .append(clientRedirectUri)
                 .append(clientSecret)
+                .append(tokenGrantsMustExpire)
                 .toHashCode();
     }
 
@@ -128,6 +141,7 @@ public class ClientApplication implements Serializable {
                 .append("clientName", clientName)
                 .append("clientRedirectUri", clientRedirectUri)
                 .append("clientSecret", clientSecret)
+                .append("tokenGrantsMustExpire", tokenGrantsMustExpire)
                 .append("tokenGrants", tokenGrants)
                 .toString();
     }

@@ -46,6 +46,7 @@ class OAuthEndpointUtil {
         if (issueRefreshToken) {
             tokenGrant.setRefreshToken(tokenIssuer.refreshToken());
         }
+        tokenGrant.setAccessTokenExpires(true);
         tokenGrant.setAccessTokenExpiry(oAuthTokenExpiry);
         tokenGrant.setGrantTimeStamp(new Date());
         tokenGrant.setGrantCurrent(true);
