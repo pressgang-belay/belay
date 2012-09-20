@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 @Path("/people")
 @RequestScoped
-public class PersonService {
+public class PersonWebService {
 
     @Inject
     private Logger log;

@@ -28,12 +28,10 @@ public class Resources {
     private Properties resourceServerConfig;
 
     private Logger log = Logger.getLogger(Resources.class.getName());
-    private final static String DEFAULT_AUTH_SERVICE_JNDI_ADDRESS = "java:module/OAuth2RSAuthService";
-    private static String authServiceJndiAddress;
     private static String entityManagerFactoryJndiAddress;
     private static String tokenExpiryExtensionThreshold; // In seconds
     private static final String TOKEN_EXPIRY_THRESHOLD_DEFAULT = "900";
-    private static int tokenExpiryThresholdSeconds;
+    private static Integer tokenExpiryThresholdSeconds;
     private static EntityManagerFactory emf;
     private static EntityManager em;
 
@@ -54,9 +52,6 @@ public class Resources {
             log.severe("Could not set token expiry extension threshold property");
             throw new RuntimeException("Error: Resource server properties set incorrectly");
         }
-        authServiceJndiAddress = (resourceServerConfig.get("authServiceJndiAddress") == null)
-                ? DEFAULT_AUTH_SERVICE_JNDI_ADDRESS
-                : (String) resourceServerConfig.get("authServiceJndiAddress");
     }
 
     @SuppressWarnings("unused")
@@ -89,11 +84,7 @@ public class Resources {
                 .getName());
     }
 
-    public static int getTokenExpiryExtensionThreshold() {
+    public static Integer getTokenExpiryExtensionThreshold() {
         return tokenExpiryThresholdSeconds;
-    }
-
-    public static String getAuthServiceJndiAddress() {
-        return authServiceJndiAddress;
     }
 }
