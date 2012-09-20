@@ -59,12 +59,14 @@ public class Resources {
 
     private Logger log = Logger.getLogger(Resources.class.getName());
     public static String oAuthTokenExpiry = ONE_HOUR;
+    public static String oAuthCodeExpiry = ONE_HOUR;
     public static String urlEncoding = "UTF-8";
-    public static String openIdRealm = "/OAuth2AuthServer/rest/auth/";
+    public static String openIdRealm = "/OAuth2AuthServer/rest/auth";
     public static String restEndpointBasePath = "/OAuth2AuthServer/rest";
-    public static String authEndpoint = "/auth/authorize";
+    public static String publicAuthEndpoint = "/auth/authorize";
+    public static String grantEndpoint = "/auth/grant";
     public static String completeAssociationEndpoint = "/auth/user/associate/completeAssociation";
-    public static String openIdReturnUri = restEndpointBasePath + authEndpoint;
+    public static String openIdReturnUri = restEndpointBasePath + grantEndpoint;
     public static String authServerOAuthClientId = "OAuth2AuthServer";
     public static String defaultScopeName = "DEFAULT";
     public static String promptEndUserToApproveClientAppOnEveryLogin = "false";

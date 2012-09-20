@@ -16,14 +16,8 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.NEW_IDE
 /**
  * @author kamiller@redhat.com (Katie Miller)
  */
-public interface PublicClientAssociationAuthEndpoint {
+public interface AssociationEndpoint {
     @GET
-    @Path("/associateIdentity")
     Response associateIdentity(@Context HttpServletRequest request,
                                @QueryParam(NEW_IDENTITY_PRIMARY) Boolean newIsPrimary) throws URISyntaxException;
-
-    @GET
-    @Path("/completeAssociation")
-    Response completeAssociation(@Context HttpServletRequest request) throws OAuthProblemException,
-            OAuthSystemException;
 }

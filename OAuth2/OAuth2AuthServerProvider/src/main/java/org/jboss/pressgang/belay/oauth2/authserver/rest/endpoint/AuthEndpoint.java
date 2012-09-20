@@ -9,11 +9,8 @@ import javax.ws.rs.core.Response;
 /**
  * @author kamiller@redhat.com (Katie Miller)
  */
-public interface PublicClientAuthEndpoint {
+public interface AuthEndpoint {
 
     @GET
     Response requestAuthenticationWithOpenId(@Context HttpServletRequest request);
-
-    @POST
-    Response authorize(@Context HttpServletRequest request);
 }

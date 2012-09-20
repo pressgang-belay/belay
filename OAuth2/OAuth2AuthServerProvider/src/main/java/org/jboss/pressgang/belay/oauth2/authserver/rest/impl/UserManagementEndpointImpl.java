@@ -104,7 +104,7 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
         Optional<UserInfo> userInfoFound = authService.getUserInfo(identifier);
         if (!userInfoFound.isPresent()) {
             log.warning("User query failed; could not find user info for identity " + identifier);
-            throw createWebApplicationException(IDENTITY_QUERY_ERROR, HttpServletResponse.SC_NOT_FOUND);
+            throw createWebApplicationException(USER_QUERY_ERROR, HttpServletResponse.SC_NOT_FOUND);
         }
         log.info("Returning user info for " + identifier);
         return userInfoFound.get();

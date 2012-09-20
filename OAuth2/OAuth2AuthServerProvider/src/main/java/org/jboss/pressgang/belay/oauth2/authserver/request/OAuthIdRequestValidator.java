@@ -19,7 +19,6 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.INVALID
 public class OAuthIdRequestValidator extends AbstractValidator<HttpServletRequest> {
 
     public OAuthIdRequestValidator() {
-        requiredParams.add(OAuth.OAUTH_RESPONSE_TYPE);
         requiredParams.add(OAuth.OAUTH_CLIENT_ID);
         requiredParams.add(OAuth.OAUTH_REDIRECT_URI);
         requiredParams.add(Constants.OPENID_PROVIDER);

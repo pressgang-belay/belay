@@ -50,7 +50,7 @@ public class App implements EntryPoint {
         addRedHatLogin();
         addGoogleLogin();
         addYahooLogin();
-        addFacebookLogin();
+        //addFacebookLogin();
         addMyOpenIdLogin();
         addFedoraLogin();
         addGetPeople();

@@ -5,7 +5,9 @@ import org.apache.amber.oauth2.as.issuer.MD5Generator;
 import org.apache.amber.oauth2.as.issuer.OAuthIssuer;
 import org.apache.amber.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
+import org.jboss.pressgang.belay.oauth2.authserver.data.dao.CodeGrantDao;
 import org.jboss.pressgang.belay.oauth2.authserver.data.dao.TokenGrantDao;
+import org.jboss.pressgang.belay.oauth2.authserver.data.model.CodeGrant;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.TokenGrant;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 
@@ -14,9 +16,9 @@ import javax.inject.Inject;
 import java.util.logging.Logger;
 
 /**
- * Class wraps an OAuthIssuer implementation. Its job is to ensure no tokens are generated that
- * happen to match those of a current TokenGrant, to avoid any token collisions where one
- * user is thought to be another. It does not provide an authorization code service.
+ * Class wraps an OAuthIssuer implementation. Its job is to ensure no tokens or auth codes are
+ * generated that happen to match those of a current TokenGrant or CodeGrant, to avoid any token
+ * or code collisions.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -29,6 +31,9 @@ public class DefaultTokenIssuer implements TokenIssuer {
 
     @Inject
     private TokenGrantDao tokenGrantDao;
+
+    @Inject
+    private CodeGrantDao codeGrantDao;
 
     private static OAuthIssuer oAuthIssuer = new OAuthIssuerImpl(new MD5Generator());
 
@@ -58,6 +63,13 @@ public class DefaultTokenIssuer implements TokenIssuer {
 
     @Override
     public String authorizationCode() throws OAuthSystemException {
-        return oAuthIssuer.authorizationCode();
+        String authCode = oAuthIssuer.authorizationCode();
+        Optional<CodeGrant> grant = codeGrantDao.getCodeGrantFromAuthCode(authCode);
+        if (grant.isPresent() && grant.get().getGrantCurrent()) {
+            log.fine("Auth code already in use so generating another one");
+            return this.refreshToken();
+        }
+        log.fine("Supplying auth code: " + authCode);
+        return authCode;
     }
 }

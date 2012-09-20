@@ -38,6 +38,9 @@ public class AuthService {
     private TokenGrantDao tokenGrantDao;
 
     @Inject
+    private CodeGrantDao codeGrantDao;
+
+    @Inject
     private IdentityDao identityDao;
 
     @Inject
@@ -56,6 +59,26 @@ public class AuthService {
 
     public Optional<TokenGrantInfo> getTokenGrantInfoByAccessToken(String accessToken) throws OAuthSystemException {
         return tokenGrantDao.getTokenGrantInfoFromAccessToken(accessToken);
+    }
+
+    public void addTokenGrant(TokenGrant tokenGrant) {
+        tokenGrantDao.addTokenGrant(tokenGrant);
+    }
+
+    public Optional<CodeGrant> getCodeGrantByAuthCode(String authCode) throws OAuthSystemException {
+        return codeGrantDao.getCodeGrantFromAuthCode(authCode);
+    }
+
+    public void updateTokenGrant(TokenGrant tokenGrant) {
+        tokenGrantDao.updateTokenGrant(tokenGrant);
+    }
+
+    public void addCodeGrant(CodeGrant grant) {
+        codeGrantDao.addCodeGrant(grant);
+    }
+
+    public void updateCodeGrant(CodeGrant grant) {
+        codeGrantDao.updateCodeGrant(grant);
     }
 
     public Optional<Identity> getIdentity(String identifier) {
@@ -115,14 +138,6 @@ public class AuthService {
 
     public void deleteUser(User user) {
         userDao.deleteUser(user);
-    }
-
-    public void addGrant(TokenGrant tokenGrant) {
-        tokenGrantDao.addTokenGrant(tokenGrant);
-    }
-
-    public void updateGrant(TokenGrant tokenGrant) {
-        tokenGrantDao.updateTokenGrant(tokenGrant);
     }
 
     public void addClientApproval(ClientApproval clientApproval) {

@@ -28,6 +28,7 @@ public class User implements Serializable {
     private String username;
     private Set<Identity> userIdentities = newHashSet();
     private Set<TokenGrant> tokenGrants = newHashSet();
+    private Set<CodeGrant> codeGrants = newHashSet();
     private Set<Scope> userScopes = newHashSet();
     private Set<ClientApproval> clientApprovals = newHashSet();
 
@@ -62,6 +63,11 @@ public class User implements Serializable {
         return tokenGrants;
     }
 
+    @OneToMany(mappedBy = "grantUser", fetch = FetchType.EAGER)
+    public Set<CodeGrant> getCodeGrants() {
+        return codeGrants;
+    }
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "OPENID_USER_SCOPE", joinColumns = { @JoinColumn(name = "USER_ID") },
             inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
@@ -90,9 +96,12 @@ public class User implements Serializable {
         this.userIdentities = userIdentities;
     }
 
-
     public void setTokenGrants(Set<TokenGrant> tokenGrants) {
         this.tokenGrants = tokenGrants;
+    }
+
+    public void setCodeGrants(Set<CodeGrant> codeGrants) {
+        this.codeGrants = codeGrants;
     }
 
     public void setUserScopes(Set<Scope> userScopes) {
@@ -129,6 +138,7 @@ public class User implements Serializable {
                 .append("username", username)
                 .append("userIdentities", userIdentities)
                 .append("tokenGrants", tokenGrants)
+                .append("codeGrants", codeGrants)
                 .append("userScopes", userScopes)
                 .append("clientApprovals", clientApprovals)
                 .toString();

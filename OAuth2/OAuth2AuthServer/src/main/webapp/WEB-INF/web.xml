@@ -19,6 +19,8 @@
     <filter-mapping>
         <filter-name>OpenID Filter</filter-name>
         <url-pattern>/rest/auth/authorize</url-pattern>
+        <url-pattern>/auth/confidential/authorize</url-pattern>
+        <url-pattern>/rest/auth/grant</url-pattern>
     </filter-mapping>
 
     <!-- The OAuth Filter handles auth for identity services -->
@@ -55,9 +57,10 @@
 
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>ClientResources</web-resource-name>
+            <web-resource-name>ProtectedResources</web-resource-name>
             <url-pattern>/rest/auth/info</url-pattern>
             <url-pattern>/rest/auth/token</url-pattern>
+            <url-pattern>/rest/auth/confidential/*</url-pattern>
         </web-resource-collection>
 
         <auth-constraint>

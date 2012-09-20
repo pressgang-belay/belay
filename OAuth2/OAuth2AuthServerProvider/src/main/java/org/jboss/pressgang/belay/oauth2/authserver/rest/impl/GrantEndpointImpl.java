@@ -1,16 +1,15 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 
-import com.google.code.openid.AuthorizationHeaderBuilder;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
 import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
-import org.jboss.pressgang.belay.oauth2.authserver.request.OAuthIdRequest;
-import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.PublicClientAuthEndpoint;
+import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.GrantEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
 import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
@@ -20,10 +19,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -31,9 +27,7 @@ import java.util.logging.Logger;
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Boolean.parseBoolean;
-import static java.net.URLDecoder.decode;
 import static javax.servlet.http.HttpServletResponse.SC_FOUND;
-import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.*;
@@ -41,15 +35,12 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
- * Serves as an endpoint to prompt OpenID login and an OAuth authorization endpoint. The endpoint's functionality
- * is closest to OAuth2's implicit authorization flow, however, depending on the app settings the resource owner may
- * not be prompted to authorize the access, as in cases where the client application, authorization server and resource
- * server are all operating as one application, this may be inappropriate. This endpoint is for use by public clients.
- * <p/>
+ * Return endpoint for OpenID authentication requests. Completes the OAuth2 implicit or authorization code flows
+ * and grants the appropriate credentials.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
+public class GrantEndpointImpl implements GrantEndpoint {
 
     @Inject
     @AuthServer
@@ -60,23 +51,6 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
 
     @Inject
     private TokenIssuer tokenIssuer;
-
-    @Override
-    public Response requestAuthenticationWithOpenId(@Context HttpServletRequest request) {
-        log.info("Processing authentication request");
-        try {
-            OAuthIdRequest oauthRequest = new OAuthIdRequest(request);
-            checkOAuthClientAndRedirectUri(oauthRequest.getClientId(), oauthRequest.getRedirectURI());
-            storeOAuthRequestParams(request, oauthRequest);
-            String providerUrl = checkOpenIdProvider(request, oauthRequest);
-            Response.ResponseBuilder builder = createAuthResponse(request, providerUrl);
-            return builder.build();
-        } catch (OAuthProblemException e) {
-            return handleOAuthProblemException(log, e);
-        } catch (OAuthSystemException e) {
-            return handleOAuthSystemException(log, e, null, null);
-        }
-    }
 
     @Override
     public Response authorize(@Context HttpServletRequest request) {
@@ -157,15 +131,29 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
                 return createAssociationRequestResponse(request, identifier);
             }
 
-            // Check if user already has current grant/s for this client; if so, make them invalid
-            Set<TokenGrant> grants = user.getTokenGrants();
-            if (grants != null) {
-                makeGrantsNonCurrent(authService, filterGrantsByClient(grants, clientId));
+            OAuthResponse response;
+            if (client.getClientSecret() == null || client.getClientSecret().isEmpty()) {
+                // Issue Token Grant for a public client
+                // Check if user already has current token grant/s for this client; if so, make them invalid
+                Set<TokenGrant> grants = user.getTokenGrants();
+                if (grants != null) {
+                    makeTokenGrantsNonCurrent(authService, filterTokenGrantsByClient(grants, clientId));
+                }
+                OAuthASResponse.OAuthTokenResponseBuilder oAuthTokenResponseBuilder =
+                        addTokenGrantResponseParams(createTokenGrant(clientId, scopes, user, redirectUri, false), SC_FOUND);
+                response = oAuthTokenResponseBuilder.location(redirectUri).buildQueryMessage();
+            } else {
+                // Issue authorization code for confidential client
+                // Check if user already has current code grants for this client; if so, make them invalid
+                Set<CodeGrant> grants = user.getCodeGrants();
+                if (grants != null) {
+                    makeCodeGrantsNonCurrent(authService, filterCodeGrantsByClient(grants, clientId));
+                }
+                HttpServletRequest originalRequest = (HttpServletRequest)request.getSession().getAttribute(ORIGINAL_REQUEST);
+                OAuthASResponse.OAuthAuthorizationResponseBuilder oAuthAuthorizationResponseBuilder =
+                        addCodeGrantResponseParams(createCodeGrant(clientId, scopes, user, redirectUri), originalRequest, SC_FOUND);
+                response = oAuthAuthorizationResponseBuilder.location(redirectUri).buildQueryMessage();
             }
-
-            OAuthTokenResponseBuilder oAuthTokenResponseBuilder =
-                    addTokenGrantResponseParams(createTokenGrant(clientId, scopes, user, redirectUri, false), SC_FOUND);
-            OAuthResponse response = oAuthTokenResponseBuilder.location(redirectUri).buildQueryMessage();
             request.getSession().invalidate();
             return Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
         } catch (OAuthProblemException e) {
@@ -173,35 +161,6 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
         } catch (OAuthSystemException e) {
             return handleOAuthSystemException(log, e, redirectUri, SERVER_ERROR);
         }
-    }
-
-    private ClientApplication setClientApplication(String clientId, String redirectUri) throws OAuthProblemException {
-        Optional<ClientApplication> clientFound = authService.getClient(clientId);
-        if (!clientFound.isPresent()) {
-            throw createOAuthProblemException(INVALID_CLIENT, redirectUri);
-        }
-        return clientFound.get();
-    }
-
-    private Response.ResponseBuilder createAuthResponse(HttpServletRequest request, String providerUrl) {
-        Response.ResponseBuilder builder = Response.status(Response.Status.UNAUTHORIZED);
-        log.info("Sending request for OpenID authentication");
-        String baseUrl = buildBaseUrl(request);
-        AuthorizationHeaderBuilder authHeaderBuilder = new AuthorizationHeaderBuilder()
-                .forIdentifier(providerUrl)
-                .usingRealm(baseUrl + openIdRealm)
-                .returnTo(baseUrl + openIdReturnUri)
-                .includeStandardAttributes();
-        addRequiredAttributes(authHeaderBuilder);
-        String authHeader = authHeaderBuilder.buildHeader();
-        log.fine("Request auth header: " + authHeader);
-        builder.header(AUTHENTICATE_HEADER, authHeader);
-        return builder;
-    }
-
-    private void addRequiredAttributes(AuthorizationHeaderBuilder authHeaderBuilder) {
-        authHeaderBuilder.requireAttribute(FULLNAME, "http://axschema.org/namePerson");
-        authHeaderBuilder.requireAttribute(FULLNAME_TITLE_CASE, "http://axschema.org/namePerson");
     }
 
     private TokenGrant createTokenGrant(String clientId, Set<String> scopes, User user, String redirectUri,
@@ -214,77 +173,21 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
             Set<Scope> grantScopes = checkScopes(authService, scopes, user.getUserScopes(), redirectUri);
             tokenGrant.setGrantScopes(grantScopes);
         }
-        authService.addGrant(tokenGrant);
+        authService.addTokenGrant(tokenGrant);
         return tokenGrant;
     }
 
-    private void checkOAuthClientAndRedirectUri(String clientId, String redirectUri) throws OAuthProblemException {
-        Optional<ClientApplication> clientFound = authService.getClient(clientId);
-        String error;
-        try {
-            if (!clientFound.isPresent()) {
-                log.warning("Invalid OAuth2 client with id '" + clientId + "' in login request");
-                error = INVALID_CLIENT;
-            } else if (!clientRedirectUriMatches(decode(redirectUri, urlEncoding), clientFound.get())) {
-                log.warning("Invalid OAuth2 redirect URI in login request: " + decode(redirectUri, urlEncoding));
-                error = INVALID_REDIRECT_URI;
-            } else {
-                return;
-            }
-        } catch (UnsupportedEncodingException e) {
-            log.severe("Error during URL decoding: " + e);
-            error = URL_DECODING_ERROR;
+    private CodeGrant createCodeGrant(String clientId, Set<String> scopes, User user, String redirectUri)
+            throws OAuthProblemException, OAuthSystemException {
+        CodeGrant codeGrant = OAuthEndpointUtil.createCodeGrantWithDefaults(tokenIssuer, authService, user,
+                authService.getClient(clientId).get());
+        // If specific grant scopes requested, check these are valid and add to code grant
+        if (scopes != null) {
+            Set<Scope> grantScopes = checkScopes(authService, scopes, user.getUserScopes(), redirectUri);
+            codeGrant.setGrantScopes(grantScopes);
         }
-        throw createOAuthProblemException(error, null);
-    }
-
-    private String checkOpenIdProvider(HttpServletRequest request, OAuthIdRequest oAuthRequest)
-            throws OAuthProblemException {
-        String providerUrl = request.getParameter(OPENID_PROVIDER);
-        String decodedProviderUrl;
-        try {
-            decodedProviderUrl = decode(providerUrl, urlEncoding);
-        } catch (UnsupportedEncodingException e) {
-            log.severe("Could not decode provider URL: " + providerUrl);
-            throw createOAuthProblemException(URL_DECODING_ERROR, oAuthRequest.getRedirectURI());
-        }
-        Optional<OpenIdProvider> providerFound = authService.getOpenIdProvider(decodedProviderUrl);
-        if ((!providerFound.isPresent()) && getPossibleDomains(decodedProviderUrl).isPresent()) {
-            for (String domain : getPossibleDomains(decodedProviderUrl).get()) {
-                providerFound = authService.getOpenIdProvider(domain);
-                if (providerFound.isPresent()) break;
-            }
-        }
-        if (providerFound.isPresent()) {
-            request.getSession().setAttribute(OPENID_PROVIDER, providerFound.get().getProviderUrl());
-        } else {
-            log.warning("Invalid OpenID provider: " + providerUrl);
-            throw OAuthEndpointUtil.createOAuthProblemException(INVALID_PROVIDER, oAuthRequest.getRedirectURI());
-        }
-        return providerUrl;
-    }
-
-    private Optional<List<String>> getPossibleDomains(String providerUrl) {
-        try {
-            URL url = new URL(providerUrl);
-            List<String> possibleDomains = Lists.newArrayList(url.getHost());
-            if (url.getHost().split("\\.").length > 2) {
-                // Cut off the first part, which may be a user identifier
-                possibleDomains.add(url.getHost().substring(url.getHost().indexOf('.') + 1));
-            }
-            return Optional.of(possibleDomains);
-        } catch (MalformedURLException e) {
-            // Do nothing
-        }
-        return Optional.absent();
-    }
-
-    private void storeOAuthRequestParams(HttpServletRequest request, OAuthIdRequest oAuthRequest) {
-        request.getSession().setAttribute(OAuth.OAUTH_CLIENT_ID, oAuthRequest.getClientId());
-        request.getSession().setAttribute(OAuth.OAUTH_REDIRECT_URI, oAuthRequest.getRedirectURI());
-        if (oAuthRequest.getScopes() != null) {
-            request.getSession().setAttribute(OAuth.OAUTH_SCOPE, oAuthRequest.getScopes());
-        }
+        authService.addCodeGrant(codeGrant);
+        return codeGrant;
     }
 
     private Identity addNewIdentity(String identifier, String providerUrl, HttpServletRequest request) {
@@ -329,6 +232,14 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
         if (country != null) identity.setCountry(country);
     }
 
+    private ClientApplication setClientApplication(String clientId, String redirectUri) throws OAuthProblemException {
+        Optional<ClientApplication> clientFound = authService.getClient(clientId);
+        if (!clientFound.isPresent()) {
+            throw createOAuthProblemException(INVALID_CLIENT, redirectUri);
+        }
+        return clientFound.get();
+    }
+
     private String getOpenIdAttribute(HttpServletRequest request, List<String> openIdAttributeNames) {
         List<String> prefixes = Lists.newArrayList(OPENID_AX_PREFIX, OPENID_EXT_PREFIX);
         for (String prefix : prefixes) {
@@ -340,10 +251,6 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
             }
         }
         return null;
-    }
-
-    private boolean clientRedirectUriMatches(String decodedRedirectUri, ClientApplication client) {
-        return client.getClientRedirectUri().equals(decodedRedirectUri);
     }
 
     private Response createAssociationRequestResponse(HttpServletRequest request, String identifier) {
@@ -395,4 +302,5 @@ public class PublicClientAuthEndpointImpl implements PublicClientAuthEndpoint {
             authService.updateClientApproval(clientApproval);
         }
     }
+
 }

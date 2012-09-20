@@ -49,7 +49,7 @@ public class UserConsentEndpointImpl implements UserConsentEndpoint {
                 end();
             }
             p().id("userApprovalText").text("Do you approve this access?").end();
-            form().id("userConsentForm").action(restEndpointBasePath + authEndpoint).method("post")
+            form().id("userConsentForm").action(restEndpointBasePath + grantEndpoint).method("post")
                     .text("Approve").input().type("radio").name("user_consent").id("approve").value("TRUE").text(" ")
                     .text("Deny").input().type("radio").name("user_consent").id("deny").value("FALSE").checked("TRUE").p().end()
                     .button().id("submitButton").text("Submit").end();

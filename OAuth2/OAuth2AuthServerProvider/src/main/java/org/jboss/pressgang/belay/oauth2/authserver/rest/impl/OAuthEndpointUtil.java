@@ -5,9 +5,12 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.inject.internal.ImmutableSet;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
+import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
+import org.apache.amber.oauth2.common.message.types.ParameterStyle;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
+import org.apache.amber.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
 import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer;
@@ -25,7 +28,11 @@ import java.util.logging.Logger;
 import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.filter;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_HEADER_NAME;
+import static org.apache.amber.oauth2.common.OAuth.OAUTH_TOKEN;
+import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.SERVER_ERROR;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_SCOPE;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthCodeExpiry;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
 
 /**
@@ -51,6 +58,20 @@ class OAuthEndpointUtil {
         tokenGrant.setGrantTimeStamp(new Date());
         tokenGrant.setGrantCurrent(true);
         return tokenGrant;
+    }
+
+    static CodeGrant createCodeGrantWithDefaults(TokenIssuer tokenIssuer, AuthService authService,
+                                                 User user, ClientApplication client)
+            throws OAuthSystemException {
+        CodeGrant codeGrant = new CodeGrant();
+        codeGrant.setGrantUser(user);
+        codeGrant.setGrantClient(client);
+        codeGrant.setGrantScopes(newHashSet(authService.getDefaultScope()));
+        codeGrant.setAuthCode(tokenIssuer.authorizationCode());
+        codeGrant.setCodeExpiry(oAuthCodeExpiry);
+        codeGrant.setGrantTimeStamp(new Date());
+        codeGrant.setGrantCurrent(true);
+        return codeGrant;
     }
 
     /**
@@ -79,17 +100,31 @@ class OAuthEndpointUtil {
         return grantScopes;
     }
 
-    static void makeGrantsNonCurrent(AuthService authService, Set<TokenGrant> grants) {
+    static void makeTokenGrantsNonCurrent(AuthService authService, Set<TokenGrant> grants) {
         for (TokenGrant grant : grants) {
-            makeGrantNonCurrent(authService, grant);
+            makeTokenGrantNonCurrent(authService, grant);
         }
     }
 
-    static void makeGrantNonCurrent(AuthService authService, TokenGrant grant) {
+    static void makeTokenGrantNonCurrent(AuthService authService, TokenGrant grant) {
         // Make current grant non-current, as long as its expiry time is not set to 0 (used for non-expiring tokens)
-        if (grant.getGrantCurrent() && (!grant.getAccessTokenExpiry().equals("0"))) {
+        if (grant.getGrantCurrent() && grant.getAccessTokenExpires()) {
             grant.setGrantCurrent(false);
-            authService.updateGrant(grant);
+            authService.updateTokenGrant(grant);
+        }
+    }
+
+    static void makeCodeGrantsNonCurrent(AuthService authService, Set<CodeGrant> grants) {
+        for (CodeGrant grant : grants) {
+            makeCodeGrantNonCurrent(authService, grant);
+        }
+    }
+
+    static void makeCodeGrantNonCurrent(AuthService authService, CodeGrant grant) {
+        // Make current grant non-current, as long as its expiry time is not set to 0 (used for non-expiring tokens)
+        if (grant.getGrantCurrent()) {
+            grant.setGrantCurrent(false);
+            authService.updateCodeGrant(grant);
         }
     }
 
@@ -99,6 +134,13 @@ class OAuthEndpointUtil {
         builder.setAccessToken(tokenGrant.getAccessToken());
         builder.setRefreshToken(tokenGrant.getRefreshToken());
         builder.setExpiresIn(tokenGrant.getAccessTokenExpiry());
+        return builder;
+    }
+
+    static OAuthASResponse.OAuthAuthorizationResponseBuilder addCodeGrantResponseParams(CodeGrant codeGrant, HttpServletRequest request, int status) {
+        OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse.authorizationResponse(request, status);
+        builder.setCode(codeGrant.getAuthCode());
+        builder.setExpiresIn(codeGrant.getCodeExpiry());
         return builder;
     }
 
@@ -172,10 +214,19 @@ class OAuthEndpointUtil {
         return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
     }
 
-    static Set<TokenGrant> filterGrantsByClient(Set<TokenGrant> grants, final String clientId) {
+    static Set<TokenGrant> filterTokenGrantsByClient(Set<TokenGrant> grants, final String clientId) {
         return ImmutableSet.copyOf(filter(grants, new Predicate<TokenGrant>() {
             @Override
             public boolean apply(TokenGrant grant) {
+                return grant.getGrantClient().getClientId().equals(clientId);
+            }
+        }));
+    }
+
+    static Set<CodeGrant> filterCodeGrantsByClient(Set<CodeGrant> grants, final String clientId) {
+        return ImmutableSet.copyOf(filter(grants, new Predicate<CodeGrant>() {
+            @Override
+            public boolean apply(CodeGrant grant) {
                 return grant.getGrantClient().getClientId().equals(clientId);
             }
         }));
@@ -197,5 +248,37 @@ class OAuthEndpointUtil {
         }
         log.fine("Found Client Approval for client application " + client.getClientName());
         return Optional.of(matchingApprovals.iterator().next());
+    }
+
+
+    // Checks for access token as both query and header-style parameter, then retrieves corresponding token grant
+    static TokenGrant getTokenGrantFromAccessToken(Logger log, AuthService authService, HttpServletRequest request, String redirectUri)
+            throws OAuthSystemException, OAuthProblemException {
+        String accessToken = request.getParameter(OAUTH_TOKEN);
+        if (accessToken == null) {
+            OAuthAccessResourceRequest oAuthRequest = new
+                    OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
+            accessToken = trimAccessToken(oAuthRequest.getAccessToken());
+        }
+        Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByAccessToken(accessToken);
+        if (!tokenGrantFound.isPresent()) {
+            log.severe("Token grant could not be found");
+            throw OAuthEndpointUtil.createOAuthProblemException(SERVER_ERROR, redirectUri);
+        }
+        return tokenGrantFound.get();
+    }
+
+    static ClientApplication checkClient(AuthService authService, String oAuthRedirectUri, String clientId) throws OAuthProblemException {
+        Optional<ClientApplication> clientFound = authService.getClient(clientId);
+        if (!clientFound.isPresent()) {
+            throw OAuthEndpointUtil.createOAuthProblemException(INVALID_CLIENT, oAuthRedirectUri);
+        }
+        return clientFound.get();
+    }
+
+    static void checkAuthorization(boolean isAuthorized, boolean isPublicClient, String redirectUri) throws OAuthProblemException {
+        if ((! isPublicClient) && (! isAuthorized)) {
+            throw createOAuthProblemException(OAuthError.CodeResponse.UNAUTHORIZED_CLIENT, redirectUri);
+        }
     }
 }

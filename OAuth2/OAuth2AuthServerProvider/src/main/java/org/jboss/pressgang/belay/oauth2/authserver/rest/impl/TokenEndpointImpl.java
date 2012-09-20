@@ -1,19 +1,21 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import org.apache.amber.oauth2.as.request.OAuthTokenRequest;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
+import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
 import org.apache.amber.oauth2.common.message.types.GrantType;
+import org.jboss.pressgang.belay.oauth2.authserver.data.model.CodeGrant;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.TokenGrant;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.TokenEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
 import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
+import org.joda.time.DateTime;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -22,19 +24,19 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.logging.Logger;
 
-import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.amber.oauth2.as.response.OAuthASResponse.OAuthTokenResponseBuilder;
+import static org.apache.amber.oauth2.common.OAuth.OAUTH_CODE;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_REFRESH_TOKEN;
-import static org.apache.amber.oauth2.common.error.OAuthError.ResourceResponse.INVALID_TOKEN;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_CLIENT;
+import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_GRANT;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.UNSUPPORTED_GRANT_TYPE;
-import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.filterGrantsByClient;
-import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.makeGrantsNonCurrent;
+import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.filterTokenGrantsByClient;
+import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.makeTokenGrantsNonCurrent;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 
 /**
- * Serves as an OAuth token endpoint. Accepts refresh token grants only. For use by confidential clients.
+ * OAuth token endpoint. Accepts refresh token or auth code grants. For use by confidential clients only.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -62,19 +64,34 @@ public class TokenEndpointImpl implements TokenEndpoint {
                 log.warning("client_id could not be found");
                 return buildResponse(buildOAuthJsonErrorResponse(INVALID_CLIENT, INVALID_CLIENT_APPLICATION));
             }
-            // Process refresh token request
-            else if (oAuthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
+            // Process refresh token grant request
+            if (oAuthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
                     .equals(GrantType.REFRESH_TOKEN.toString())) {
                 if (isRefreshTokenValid(oAuthRequest.getParam(OAUTH_REFRESH_TOKEN),
                         oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID),
                         oAuthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET))) {
-                    TokenGrant tokenGrant = createTokenGrant(oAuthRequest, oAuthRequest.getClientId());
+                    TokenGrant tokenGrant = createTokenGrantFromOldGrant(oAuthRequest, oAuthRequest.getClientId());
                     OAuthTokenResponseBuilder oAuthTokenResponseBuilder
                             = OAuthEndpointUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK);
                     return buildResponse(oAuthTokenResponseBuilder.buildJSONMessage());
                 } else {
                     log.warning("Invalid refresh token: " + oAuthRequest.getParam(OAUTH_REFRESH_TOKEN));
-                    return buildResponse(buildOAuthJsonErrorResponse(INVALID_TOKEN, INVALID_REFRESH_TOKEN));
+                    return buildResponse(buildOAuthJsonErrorResponse(INVALID_GRANT, INVALID_REFRESH_TOKEN));
+                }
+            }
+            // Process authorization code grant request
+            if (oAuthRequest.getParam(OAuth.OAUTH_GRANT_TYPE)
+                    .equals(GrantType.AUTHORIZATION_CODE.toString())) {
+                if (isAuthCodeValid(oAuthRequest.getParam(OAUTH_CODE),
+                        oAuthRequest.getParam(OAuth.OAUTH_CLIENT_ID),
+                        oAuthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET))) {
+                    TokenGrant tokenGrant = createTokenGrantFromCodeGrant(oAuthRequest, oAuthRequest.getClientId());
+                    OAuthTokenResponseBuilder oAuthTokenResponseBuilder
+                            = OAuthEndpointUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK);
+                    return buildResponse(oAuthTokenResponseBuilder.buildJSONMessage());
+                } else {
+                    log.warning("Invalid auth code: " + oAuthRequest.getParam(OAUTH_CODE));
+                    return buildResponse(buildOAuthJsonErrorResponse(INVALID_GRANT, INVALID_AUTH_CODE));
                 }
             }
             // Anything else is invalid
@@ -85,17 +102,17 @@ public class TokenEndpointImpl implements TokenEndpoint {
         }
     }
 
-    private TokenGrant createTokenGrant(OAuthTokenRequest oAuthRequest, final String clientId)
+    private TokenGrant createTokenGrantFromOldGrant(OAuthTokenRequest oAuthRequest, final String clientId)
             throws OAuthSystemException {
         TokenGrant oldTokenGrant = authService.getTokenGrantByRefreshToken(oAuthRequest
                 .getParam(OAUTH_REFRESH_TOKEN)).get();
-        // Make sure no token grants held by the identity for the client app are marked as current before issuing new one
-        makeGrantsNonCurrent(authService, filterGrantsByClient(oldTokenGrant.getGrantUser().getTokenGrants(), clientId));
+        // Make sure no token grants held by the user for the client app are marked as current before issuing new one
+        makeTokenGrantsNonCurrent(authService, filterTokenGrantsByClient(oldTokenGrant.getGrantUser().getTokenGrants(), clientId));
         // Issue new grant
         TokenGrant newTokenGrant = OAuthEndpointUtil.createTokenGrantWithDefaults(tokenIssuer, authService,
                 oldTokenGrant.getGrantUser(), oldTokenGrant.getGrantClient(), true);
         newTokenGrant.setGrantScopes(newHashSet(oldTokenGrant.getGrantScopes()));
-        authService.addGrant(newTokenGrant);
+        authService.addTokenGrant(newTokenGrant);
         return newTokenGrant;
     }
 
@@ -106,6 +123,40 @@ public class TokenEndpointImpl implements TokenEndpoint {
                 && tokenGrantFound.get().getGrantCurrent()
                 && tokenGrantFound.get().getGrantClient().getClientIdentifier().equals(clientId)
                 && tokenGrantFound.get().getGrantClient().getClientSecret().equals(clientSecret);
+    }
+
+    private TokenGrant createTokenGrantFromCodeGrant(OAuthTokenRequest oAuthRequest, final String clientId)
+            throws OAuthSystemException {
+        CodeGrant codeGrant = authService.getCodeGrantByAuthCode(oAuthRequest.getParam(OAUTH_CODE)).get();
+        // Make sure no token grants held by the user for the client app are marked as current before issuing new one
+        makeTokenGrantsNonCurrent(authService, filterTokenGrantsByClient(codeGrant.getGrantUser().getTokenGrants(), clientId));
+        // Issue new grant
+        TokenGrant newTokenGrant = OAuthEndpointUtil.createTokenGrantWithDefaults(tokenIssuer, authService,
+                codeGrant.getGrantUser(), codeGrant.getGrantClient(), true);
+        newTokenGrant.setGrantScopes(newHashSet(codeGrant.getGrantScopes()));
+        authService.addTokenGrant(newTokenGrant);
+        return newTokenGrant;
+    }
+
+    private boolean isAuthCodeValid(String authCode, String clientId, String clientSecret)
+            throws OAuthSystemException, OAuthProblemException {
+        Optional<CodeGrant> codeGrantFound = authService.getCodeGrantByAuthCode(authCode);
+        return codeGrantFound.isPresent()
+                && codeGrantFound.get().getGrantCurrent()
+                && codeGrantFound.get().getGrantClient().getClientIdentifier().equals(clientId)
+                && codeGrantFound.get().getGrantClient().getClientSecret().equals(clientSecret)
+                && getAuthCodeExpiry(codeGrantFound.get()).isAfterNow();
+    }
+
+    private DateTime getAuthCodeExpiry(CodeGrant codeGrant) throws OAuthProblemException {
+        int expirySeconds;
+        try {
+            expirySeconds = Integer.parseInt(codeGrant.getCodeExpiry());
+        } catch (NumberFormatException e) {
+            log.warning("NumberFormatException during auth code check: " + e);
+            throw OAuthProblemException.error(INVALID_GRANT);
+        }
+        return new DateTime(codeGrant.getGrantTimeStamp()).plusSeconds(Math.abs(expirySeconds));
     }
 
     private boolean isClientIdKnown(String clientIdentifier) {

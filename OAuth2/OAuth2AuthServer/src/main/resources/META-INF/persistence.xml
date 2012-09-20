@@ -26,6 +26,7 @@
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.OpenIdProvider</class>
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope</class>
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.TokenGrant</class>
+        <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.CodeGrant</class>
         <class>org.jboss.pressgang.belay.oauth2.authserver.data.model.User</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <!-- Demo database settings only. Not suitable for production environment -->

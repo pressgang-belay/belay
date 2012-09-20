@@ -29,12 +29,14 @@ public class Constants {
     public static final String USER_CONSENT = "user_consent";
     public static final String OAUTH2_USER = "oauth2_user";
     public static final String CLIENT_NAME = "client_name";
+    public static final String ORIGINAL_REQUEST = "http_request";
 
     // Errors
     public static final String INVALID_IDENTIFIER = "invalid_identifier";
     public static final String INVALID_PROVIDER = "invalid_openid_provider";
     public static final String INVALID_CLIENT_APPLICATION = "Client application is invalid";
     public static final String INVALID_REFRESH_TOKEN = "Refresh token is invalid";
+    public static final String INVALID_AUTH_CODE = "Authorization code is invalid";
     public static final String INVALID_GRANT_TYPE = "Grant type is unsupported";
     public static final String INVALID_METHOD = "Invalid HTTP method";
     public static final String INVALID_REDIRECT_URI = "invalid_redirect_uri";
@@ -48,7 +50,7 @@ public class Constants {
     public static final String USER_CONSENT_DENIED = "user_consent_denied";
 
     // General
-    public static final String ONE_HOUR = "3600";
+    public static final String ONE_HOUR = "3600"; // In seconds
     public static final String STORED_OAUTH_REDIRECT_URI = "storedOAuthRedirectUri";
     public static final String STORED_OAUTH_CLIENT_ID = "storedOAuthClientId";
     public static final String GOOGLE = "google";

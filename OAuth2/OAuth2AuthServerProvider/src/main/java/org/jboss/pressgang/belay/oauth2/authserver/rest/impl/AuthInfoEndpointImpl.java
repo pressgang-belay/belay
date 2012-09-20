@@ -68,7 +68,7 @@ public class AuthInfoEndpointImpl implements AuthInfoEndpoint {
                 log.info("Access token expiry has been extended by " + extension + " seconds");
                 String newExpiryString = Integer.toString(newExpiryPeriod.getSeconds());
                 tokenGrant.setAccessTokenExpiry(newExpiryString);
-                authService.updateGrant(tokenGrant);
+                authService.updateTokenGrant(tokenGrant);
                 return new AccessTokenExpiryInfo(newExpiryString, oAuthTokenExpiry);
             }
         } catch (OAuthSystemException e) {

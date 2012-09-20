@@ -27,6 +27,7 @@ public class OAuthIdRequest extends OAuthRequest {
     protected OAuthValidator<HttpServletRequest> initValidator() throws OAuthProblemException, OAuthSystemException {
         // End user authorisation validators
         validators.put(ResponseType.TOKEN.toString(), OAuthIdRequestValidator.class);
+        validators.put(ResponseType.CODE.toString(), OAuthIdRequestValidator.class);
         String requestTypeValue = getParam(OAuth.OAUTH_RESPONSE_TYPE);
         if (OAuthUtils.isEmpty(requestTypeValue)) {
             throw OAuthUtils.handleOAuthProblemException(UNSUPPORTED_RESPONSE_TYPE);
