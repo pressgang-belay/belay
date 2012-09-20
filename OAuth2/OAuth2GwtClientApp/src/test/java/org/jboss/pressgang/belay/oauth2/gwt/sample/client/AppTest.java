@@ -104,7 +104,7 @@ public class AppTest extends BaseAppTest {
         log.info("UserInfo: " + userInfo);
 
         // When the other identity is made primary
-        String newPrimaryIdentifier = "https://www.google.com/accounts/o8/id?id=AItOawlu2J4UUb2RUlQnfbSZH2rdSZ0VQABj3I0";
+        String newPrimaryIdentifier = "https://www.google.com/accounts/o8/id?id=AItOawmLo2FmPnV0Oq8J1OlUOeekNKRo_lg82q8";
         String result = appPage.makeIdentityPrimary(newPrimaryIdentifier);
         userInfo = appPage.getIdentityInfo();
 

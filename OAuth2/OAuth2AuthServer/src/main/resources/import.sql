@@ -11,7 +11,7 @@ insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-
 
 insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-1, 'https://localhost:8443/OpenIdProvider/openid/provider?id=user')
 -- insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-2, 'https://me.yahoo.com/a/1ZfO6j08s57hH1f0aHxpsHE9YoAqa1J1eKA-#8254d')
-insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-3, 'https://www.google.com/accounts/o8/id?id=AItOawlu2J4UUb2RUlQnfbSZH2rdSZ0VQABj3I0')
+insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-3, 'https://www.google.com/accounts/o8/id?id=AItOawmLo2FmPnV0Oq8J1OlUOeekNKRo_lg82q8')
 insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-4, 'https://pressgangccms.myopenid.com/')
 insert into OPENID_IDENTITY (IDENTITY_ID, IDENTIFIER) values (-5, 'https://admin.fedoraproject.org/accounts/openid/id/pressgangccms')
 
