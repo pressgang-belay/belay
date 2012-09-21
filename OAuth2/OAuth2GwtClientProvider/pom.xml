@@ -34,7 +34,7 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.pressgang.belay</groupId>
-            <artifactId>gwt-util</artifactId>
+            <artifactId>gwt-test-util</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

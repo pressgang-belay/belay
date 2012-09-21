@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response;
  * @author kamiller@redhat.com (Katie Miller)
  */
 public interface TokenEndpoint {
-
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)

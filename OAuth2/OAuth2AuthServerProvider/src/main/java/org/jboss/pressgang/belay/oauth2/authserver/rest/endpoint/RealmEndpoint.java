@@ -12,7 +12,6 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.APPLICA
  * @author kamiller@redhat.com (Katie Miller)
  */
 public interface RealmEndpoint {
-
     @GET
     @Produces(APPLICATION_XRDS_XML)
     Response getRelyingPartyRealmEndpoints(@Context HttpServletRequest request);
