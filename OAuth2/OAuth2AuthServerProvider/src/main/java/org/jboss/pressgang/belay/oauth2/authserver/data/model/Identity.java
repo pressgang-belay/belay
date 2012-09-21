@@ -141,7 +141,7 @@ public class Identity implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Identity)) return false;
 
@@ -156,11 +156,12 @@ public class Identity implements Serializable {
                 .append(country, that.getCountry())
                 .append(language, that.getLanguage())
                 .append(openIdProvider, that.getOpenIdProvider())
+                .append(user, that.getUser())
                 .isEquals();
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return new HashCodeBuilder()
                 .append(identifier)
                 .append(firstName)
@@ -170,6 +171,7 @@ public class Identity implements Serializable {
                 .append(country)
                 .append(language)
                 .append(openIdProvider)
+                .append(user)
                 .toHashCode();
     }
 

@@ -35,7 +35,7 @@
     </developers>
 
     <modules>
-        <module>Util/TestUtil</module>
+        <module>Util/TestUtilParent</module>
         <module>OpenId/OpenIdProvider</module>
         <module>OAuth2/OAuth2Shared</module>
         <module>OAuth2/OAuth2ResourceServerProvider</module>
@@ -55,11 +55,13 @@
         <java.version>1.7</java.version>
         <junit.version>4.9</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
+        <equalsverifier.version>1.1.3</equalsverifier.version>
         <skipTests>false</skipTests>
         <skipFindbugs>false</skipFindbugs>
         <skipGwtTests>true</skipGwtTests>
         <findbugs.failonerror>false</findbugs.failonerror>
         <jboss.bom.version>1.0.1.CR2</jboss.bom.version>
+        <jbossjavaee.version>1.0.0.Final</jbossjavaee.version>
         <jboss.jaxrs.api.version>1.0.0.Final</jboss.jaxrs.api.version>
         <jboss.annotations.api.version>1.0.1.Final</jboss.annotations.api.version>
         <jboss.ejb.api.version>1.0.2.Final</jboss.ejb.api.version>
@@ -75,6 +77,8 @@
         <guice.version>2.0</guice.version>
         <json.version>20090211</json.version>
         <arquillian.version>1.0.2.Final</arquillian.version>
+        <arquillianweld.version>1.0.0.CR3</arquillianweld.version>
+        <weldcore.version>1.1.5.Final</weldcore.version>
         <drone.version>1.1.0.CR2</drone.version>
         <picketlink.version>2.0.0.Beta1</picketlink.version>
         <seamsolder.version>3.0.0.Final</seamsolder.version>
@@ -102,6 +106,7 @@
         <xmlplugin.version>1.0</xmlplugin.version>
         <findbugsplugin.version>2.5.2</findbugsplugin.version>
         <surefireplugin.version>2.12.2</surefireplugin.version>
+        <surefirereportplugin.version>2.12.2</surefirereportplugin.version>
         <gpgplugin.version>1.4</gpgplugin.version>
         <checkstyleplugin.version>2.6</checkstyleplugin.version>
         <coberturaplugin.version>2.5.1</coberturaplugin.version>
@@ -165,7 +170,6 @@
                         <!-- Addresses issue caused by incompatibility between Cobertura and Java7 -->
                         <argLine>-XX:-UseSplitVerifier</argLine>
                         <skipTests>${skipTests}</skipTests>
-                        <goal>report-only</goal>
                     </configuration>
                 </plugin>
                 <plugin>

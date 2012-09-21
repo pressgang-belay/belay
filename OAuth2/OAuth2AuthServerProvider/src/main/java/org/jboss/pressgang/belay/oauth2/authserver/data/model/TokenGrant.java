@@ -143,7 +143,7 @@ public class TokenGrant implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TokenGrant)) return false;
 
@@ -162,7 +162,7 @@ public class TokenGrant implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return new HashCodeBuilder()
                 .append(accessToken)
                 .append(refreshToken)

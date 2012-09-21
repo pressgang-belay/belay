@@ -76,7 +76,7 @@ public class ClientApproval implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ClientApproval)) return false;
 
@@ -89,7 +89,7 @@ public class ClientApproval implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return new HashCodeBuilder()
                 .append(clientApplication)
                 .append(approver)

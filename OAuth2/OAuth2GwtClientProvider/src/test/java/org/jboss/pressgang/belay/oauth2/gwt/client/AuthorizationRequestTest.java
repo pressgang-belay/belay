@@ -2,7 +2,7 @@ package org.jboss.pressgang.belay.oauth2.gwt.client;
 
 import net.sf.ipsedixit.annotation.Arbitrary;
 import net.sf.ipsedixit.annotation.ArbitraryString;
-import org.jboss.pressgang.belay.util.test.unit.gwt.BaseUnitTest;
+import org.jboss.pressgang.belay.util.test.unit.gwt.BaseGwtUnitTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AuthorizationRequestTest extends BaseUnitTest {
+public class AuthorizationRequestTest extends BaseGwtUnitTest {
 
     private AuthorizationRequest authRequest;
     private String scopeDelimiter = ":";

@@ -3,7 +3,7 @@ package org.jboss.pressgang.belay.oauth2.gwt.client;
 import com.google.gwt.http.client.RequestBuilder;
 import net.sf.ipsedixit.annotation.Arbitrary;
 import net.sf.ipsedixit.annotation.ArbitraryString;
-import org.jboss.pressgang.belay.util.test.unit.gwt.BaseUnitTest;
+import org.jboss.pressgang.belay.util.test.unit.gwt.BaseGwtUnitTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class OAuthRequestTest extends BaseUnitTest {
+public class OAuthRequestTest extends BaseGwtUnitTest {
 
     private OAuthRequest oAuthRequest;
     private RequestBuilder.Method method = RequestBuilder.GET;

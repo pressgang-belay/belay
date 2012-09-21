@@ -92,7 +92,7 @@ public class UserInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserInfo)) return false;
 
@@ -111,7 +111,7 @@ public class UserInfo implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         if (this.username == null) {
             return this.primaryIdentifier.hashCode();
         }

@@ -4,7 +4,7 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.testing.StubScheduler;
 import junit.framework.Assert;
 import net.sf.ipsedixit.annotation.ArbitraryString;
-import org.jboss.pressgang.belay.util.test.unit.gwt.BaseUnitTest;
+import org.jboss.pressgang.belay.util.test.unit.gwt.BaseGwtUnitTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertThat;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AuthorizerTest extends BaseUnitTest {
+public class AuthorizerTest extends BaseGwtUnitTest {
 
     private MockAuthorizer authorizer;
     private static final String POPUP_NAME = "popup.html";

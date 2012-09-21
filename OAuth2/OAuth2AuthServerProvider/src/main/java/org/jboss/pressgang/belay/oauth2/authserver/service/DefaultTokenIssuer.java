@@ -67,7 +67,7 @@ public class DefaultTokenIssuer implements TokenIssuer {
         Optional<CodeGrant> grant = codeGrantDao.getCodeGrantFromAuthCode(authCode);
         if (grant.isPresent() && grant.get().getGrantCurrent()) {
             log.fine("Auth code already in use so generating another one");
-            return this.refreshToken();
+            return this.authorizationCode();
         }
         log.fine("Supplying auth code: " + authCode);
         return authCode;

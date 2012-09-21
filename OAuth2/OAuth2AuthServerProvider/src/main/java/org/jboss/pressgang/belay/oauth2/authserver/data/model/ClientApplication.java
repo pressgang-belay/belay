@@ -32,6 +32,7 @@ public class ClientApplication implements Serializable {
     private String clientRedirectUri;
     private Boolean tokenGrantsMustExpire;
     private Set<TokenGrant> tokenGrants = newHashSet();
+    private Set<TokenGrant> codeGrants = newHashSet();
 
     public ClientApplication() {
     }
@@ -79,6 +80,13 @@ public class ClientApplication implements Serializable {
         return tokenGrants;
     }
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="CLIENT_CODE_GRANT", joinColumns = { @JoinColumn(name = "CLIENT_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "CODE_GRANT_ID") })
+    public Set<TokenGrant> getCodeGrants() {
+        return tokenGrants;
+    }
+
     public void setClientId(BigInteger clientId) {
         this.clientId = clientId;
     }
@@ -107,8 +115,12 @@ public class ClientApplication implements Serializable {
         this.tokenGrants = tokenGrants;
     }
 
+    public void setCodeGrants(Set<TokenGrant> codeGrants) {
+        this.codeGrants = codeGrants;
+    }
+
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ClientApplication)) return false;
 
@@ -124,7 +136,7 @@ public class ClientApplication implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return new HashCodeBuilder()
                 .append(clientIdentifier)
                 .append(clientName)
@@ -143,6 +155,7 @@ public class ClientApplication implements Serializable {
                 .append("clientSecret", clientSecret)
                 .append("tokenGrantsMustExpire", tokenGrantsMustExpire)
                 .append("tokenGrants", tokenGrants)
+                .append("codeGrants", codeGrants)
                 .toString();
     }
 }

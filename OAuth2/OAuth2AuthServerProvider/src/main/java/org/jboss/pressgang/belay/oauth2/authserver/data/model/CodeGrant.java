@@ -121,7 +121,7 @@ public class CodeGrant implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CodeGrant)) return false;
 
@@ -138,7 +138,7 @@ public class CodeGrant implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return new HashCodeBuilder()
                 .append(authCode)
                 .append(codeExpiry)

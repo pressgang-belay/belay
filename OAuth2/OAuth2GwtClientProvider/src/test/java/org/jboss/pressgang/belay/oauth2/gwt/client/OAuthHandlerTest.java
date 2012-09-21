@@ -6,7 +6,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import net.sf.ipsedixit.annotation.Arbitrary;
 import net.sf.ipsedixit.annotation.ArbitraryString;
-import org.jboss.pressgang.belay.util.test.unit.gwt.BaseUnitTest;
+import org.jboss.pressgang.belay.util.test.unit.gwt.BaseGwtUnitTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class OAuthHandlerTest extends BaseUnitTest {
+public class OAuthHandlerTest extends BaseGwtUnitTest {
 
     @Mock
     private Authorizer authorizer;

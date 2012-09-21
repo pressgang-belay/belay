@@ -76,7 +76,7 @@ public class IdentityInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof IdentityInfo)) return false;
 
@@ -86,7 +86,7 @@ public class IdentityInfo implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return identifier.hashCode();
     }
 

@@ -47,7 +47,7 @@ public class Scope implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Scope)) return false;
 
@@ -57,7 +57,7 @@ public class Scope implements Serializable {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return scopeName.hashCode();
     }
 
