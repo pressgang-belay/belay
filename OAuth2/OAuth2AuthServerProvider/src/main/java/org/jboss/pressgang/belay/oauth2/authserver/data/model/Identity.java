@@ -156,7 +156,6 @@ public class Identity implements Serializable {
                 .append(country, that.getCountry())
                 .append(language, that.getLanguage())
                 .append(openIdProvider, that.getOpenIdProvider())
-                .append(user, that.getUser())
                 .isEquals();
     }
 
@@ -171,7 +170,6 @@ public class Identity implements Serializable {
                 .append(country)
                 .append(language)
                 .append(openIdProvider)
-                .append(user)
                 .toHashCode();
     }
 
