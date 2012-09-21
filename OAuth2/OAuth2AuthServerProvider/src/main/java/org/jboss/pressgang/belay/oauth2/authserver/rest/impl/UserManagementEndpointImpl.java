@@ -23,8 +23,8 @@ import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpoin
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 
 /**
- * Provides identity services for client applications, such as associating another identity with the currently
- * authenticated user and obtaining identity information. These services must be protected by the OAuth filter.
+ * Provides user services for client applications, such as changing a user's primary identity and obtaining user or
+ * identity information. These services must be protected by the OAuth filter.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */

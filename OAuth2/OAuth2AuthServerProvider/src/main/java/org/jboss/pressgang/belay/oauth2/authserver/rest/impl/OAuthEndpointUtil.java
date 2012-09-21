@@ -36,7 +36,7 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthCo
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
 
 /**
- * Encapsulates logic shared across auth web services.
+ * Encapsulates logic shared across endpoints.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */

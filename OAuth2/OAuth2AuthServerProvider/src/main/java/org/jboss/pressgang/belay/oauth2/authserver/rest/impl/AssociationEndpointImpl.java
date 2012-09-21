@@ -28,6 +28,9 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
+ * This endpoint starts the process of associating two end-user identities together. It can be used for confidential
+ * clients or public clients; if for confidential clients, it should be protected by Basic or some other authentication.
+ *
  * @author kamiller@redhat.com (Katie Miller)
  */
 public class AssociationEndpointImpl implements AssociationEndpoint {
@@ -50,12 +53,13 @@ public class AssociationEndpointImpl implements AssociationEndpoint {
      * default scope only. If this is false, whichever identity is currently the authenticated user's
      * primary identity will remain the primary identity of the resulting user.
      * <p/>
-     * The caller must include all the parameters required for an OAuthIdRequest login request, that is,
-     * provider, redirect_uri, client_id and response_type, which must be 'token'.
+     * Required OAuth2 parameters, which may be supplied query or header style, are:
+     * response_type: OAuth2 response type, token for public clients and code for confidential clients
+     * client_id: OAuth2 client identifier, supplied by OAuth2 Auth Server
+     * redirect_uri: URI to redirect to when auth complete; must be registered with the Auth Server
+     * provider: the URL or domain of the OpenID provider with which to authenticate the end-user
      *
-     * @param request      The servlet request
      * @param newIsPrimary True if the new identity being associated should be the primary identity, default false
-     * @return OAuth response containing access token, refresh token and expiry parameters, or an error
      * @throws javax.ws.rs.WebApplicationException if OAuth redirect URI is not provided
      */
     @Override

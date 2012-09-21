@@ -32,6 +32,10 @@ import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpoin
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 
 /**
+ * Return endpoint for request to associate two end-user identities together. Once the end-user has authenticated
+ * with the second identity and given oAuth authorization, there should be a redirect to this endpoint, which adds
+ * the second identity and returns an OAuth2 token grant for the updated user.
+ *
  * @author kamiller@redhat.com (Katie Miller)
  */
 public class CompleteAssociationEndpointImpl implements CompleteAssociationEndpoint {
@@ -46,6 +50,15 @@ public class CompleteAssociationEndpointImpl implements CompleteAssociationEndpo
     @Inject
     private TokenIssuer tokenIssuer;
 
+    /**
+     * Endpoint where clients are redirected after an end-user has authorized a second identity. Merges the new identity
+     * and returns a new token grant for the updated user.
+     *
+     * @return OAuth2 token grant response containing access token and expiry parameters, as well as a refresh token if
+     * the client is confidential
+     * @throws OAuthProblemException
+     * @throws OAuthSystemException
+     */
     @Override
     public Response completeAssociation(@Context HttpServletRequest request) throws OAuthProblemException,
             OAuthSystemException {

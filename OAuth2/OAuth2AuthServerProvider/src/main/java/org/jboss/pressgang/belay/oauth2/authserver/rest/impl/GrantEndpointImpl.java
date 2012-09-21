@@ -36,7 +36,7 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
  * Return endpoint for OpenID authentication requests. Completes the OAuth2 implicit or authorization code flows
- * and grants the appropriate credentials.
+ * and returns a token grant.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -52,6 +52,13 @@ public class GrantEndpointImpl implements GrantEndpoint {
     @Inject
     private TokenIssuer tokenIssuer;
 
+    /**
+     * Endpoint to complete OAuth2 authorization. Should not be accessed directly; the user agent is redirected here when
+     * end-users have authenticated with OpenID.
+     *
+     * @return Either a token grant response including access_token and expires_in parameters (for public clients)
+     * or an authorization grant response including a code parameter, and state if it was supplied
+     */
     @Override
     public Response authorize(@Context HttpServletRequest request) {
         log.info("Processing authorization attempt");

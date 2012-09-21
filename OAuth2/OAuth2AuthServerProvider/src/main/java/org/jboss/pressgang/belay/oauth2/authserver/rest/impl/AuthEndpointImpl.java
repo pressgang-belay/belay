@@ -47,6 +47,18 @@ public class AuthEndpointImpl implements AuthEndpoint {
     @Inject
     private AuthService authService;
 
+    /**
+     * Endpoint for OAuth2 authorization requests, using OpenID for authentication. Required OAuth2 parameters, which
+     * may be supplied query or header style, are:
+     * response_type: OAuth2 response type, token for public clients and code for confidential clients
+     * client_id: OAuth2 client identifier, supplied by OAuth2 Auth Server
+     * redirect_uri: URI to redirect to when auth complete; must be registered with the Auth Server
+     * provider: the URL or domain of the OpenID provider with which to authenticate the end-user
+     *
+     * Confidential clients may also supply a state parameter.
+     *
+     * @return
+     */
     @Override
     public Response requestAuthenticationWithOpenId(@Context HttpServletRequest request) {
         log.info("Processing authentication request");

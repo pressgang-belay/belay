@@ -15,6 +15,9 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.CLIENT_
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
+ * Endpoint handling end-user approval of OAuth2 authorization attempts. Presents a web form to the end-user, asking
+ * them to approve a client application's access to their OpenID data and the requested scopes.
+ *
  * @author kamiller@redhat.com (Katie Miller)
  */
 public class UserConsentEndpointImpl implements UserConsentEndpoint {

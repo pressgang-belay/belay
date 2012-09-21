@@ -36,7 +36,8 @@ import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpoin
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 
 /**
- * OAuth token endpoint. Accepts refresh token or auth code grants. For use by confidential clients only.
+ * OAuth token endpoint. Accepts refresh token or auth code grants and provides OAuth2 token grants. For use by confidential
+ * clients only.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -52,6 +53,23 @@ public class TokenEndpointImpl implements TokenEndpoint {
     @Inject
     private TokenIssuer tokenIssuer;
 
+    /**
+     * Endpoint to obtain a token grant, using either an authorization code or refresh token as the grant.
+     * Required OAuth2 parameters are:
+     * client_id: OAuth2 client identifier, supplied by OAuth2 Auth Server
+     * client_secret: OAuth2 client secret, supplied by the OAuth2 Auth Server
+     * grant_type: OAuth2 grant type, refresh_token or code
+     *
+     * If the grant type is refresh_token, another required parameter is:
+     * refresh_token: The refresh token, obtained with a previous token grant
+     *
+     * If the grant type is authorization code, other required parameters are:
+     * code: The authorization code obtained through the auth endpoint
+     * redirect_uri: The client's registered redirect URI
+     *
+     * @return Token grant response including access_token, expires_in and refresh_token parameters
+     * @throws OAuthSystemException
+     */
     @Override
     public Response authorize(@Context HttpServletRequest request) throws OAuthSystemException {
         log.info("Processing token refresh request");

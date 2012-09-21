@@ -20,7 +20,8 @@ import java.util.logging.Logger;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
 
 /**
- * Provides authorization information for resource servers, which are confidential clients.
+ * Provides authorization information for resource servers, which are confidential clients, so the endpoint must
+ * be protected by Basic or some other authentication.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -33,6 +34,12 @@ public class AuthInfoEndpointImpl implements AuthInfoEndpoint {
     @Inject
     private AuthService authService;
 
+    /**
+     * Provides information for resource servers based on an OAuth2 access token.
+     *
+     * @param token The access token to query with
+     * @return TokenGrantInfo JSON, or null if no info is found
+     */
     @Override
     public TokenGrantInfo getTokenGrantInfoForAccessToken(@HeaderParam(OAuth.OAUTH_TOKEN) String token) {
         if (token == null || token.length() == 0) {
@@ -51,6 +58,13 @@ public class AuthInfoEndpointImpl implements AuthInfoEndpoint {
         return null;
     }
 
+    /**
+     * Endpoint allowing resource servers to request that the expiry time on a token grant be extended. This
+     * should only be done for public clients, which don't have access to refresh tokens.
+     *
+     * @param token The access token from the grant to extend
+     * @return AccessTokenExpiryInfo giving information about the new expiry
+     */
     @Override
     public AccessTokenExpiryInfo extendAccessTokenExpiry(@HeaderParam(OAuth.OAUTH_TOKEN) String token) {
         if (token == null || token.length() == 0) {

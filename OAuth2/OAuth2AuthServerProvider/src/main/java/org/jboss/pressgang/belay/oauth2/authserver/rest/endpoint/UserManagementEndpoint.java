@@ -1,7 +1,5 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint;
 
-import org.apache.amber.oauth2.common.exception.OAuthProblemException;
-import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.UserInfo;
 
@@ -13,10 +11,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URISyntaxException;
 
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.IDENTIFIER;
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.NEW_IDENTITY_PRIMARY;
 
 /**
  * @author kamiller@redhat.com (Katie Miller)
