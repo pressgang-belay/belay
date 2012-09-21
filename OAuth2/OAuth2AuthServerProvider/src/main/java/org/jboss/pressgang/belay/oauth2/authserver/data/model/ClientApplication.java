@@ -32,7 +32,7 @@ public class ClientApplication implements Serializable {
     private String clientRedirectUri;
     private Boolean tokenGrantsMustExpire;
     private Set<TokenGrant> tokenGrants = newHashSet();
-    private Set<TokenGrant> codeGrants = newHashSet();
+    private Set<CodeGrant> codeGrants = newHashSet();
 
     public ClientApplication() {
     }
@@ -83,8 +83,8 @@ public class ClientApplication implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name="CLIENT_CODE_GRANT", joinColumns = { @JoinColumn(name = "CLIENT_ID") },
             inverseJoinColumns = { @JoinColumn(name = "CODE_GRANT_ID") })
-    public Set<TokenGrant> getCodeGrants() {
-        return tokenGrants;
+    public Set<CodeGrant> getCodeGrants() {
+        return codeGrants;
     }
 
     public void setClientId(BigInteger clientId) {
@@ -115,7 +115,7 @@ public class ClientApplication implements Serializable {
         this.tokenGrants = tokenGrants;
     }
 
-    public void setCodeGrants(Set<TokenGrant> codeGrants) {
+    public void setCodeGrants(Set<CodeGrant> codeGrants) {
         this.codeGrants = codeGrants;
     }
 
