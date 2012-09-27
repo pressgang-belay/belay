@@ -12,11 +12,6 @@
     <url>http://github.com/codemiller/belay</url>
     <licenses>
         <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-        <license>
             <name>GNU Lesser General Public License, Version 2.1</name>
             <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
             <distribution>repo</distribution>
@@ -262,7 +257,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${checkstyleplugin.version}</version>
                 <configuration>
-                    <configLocation>https://raw.github.com/codemiller/checkstyle/master/checkstyle.xml</configLocation>
+                    <configLocation>https://raw.github.com/codemiller/pressgang-parent/master/checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                 </configuration>
                 <executions>
