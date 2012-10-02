@@ -1,1 +1,1162 @@
-Test page test
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>PressGang Belay Developer Guide</title><link rel="stylesheet" type="text/css" href="Common_Content/css/default.css" /><link rel="stylesheet" media="print" href="Common_Content/css/print.css" type="text/css" /><meta name="generator" content="publican 3.0" /><meta name="package" content="Documentation_0.1-PressGang_Belay_Developer_Guide-0.1-en-US-1.0-1" /><meta name="description" content="A brief paragraph describing this book. This will be used as the description for the rpm package." /></head><body><p id="title"><a class="left" href="http://www.jboss.com"><img alt="Product Site" src="Common_Content/images//image_left.png" /></a><a class="right" href="http://docs.redhat.com"><img alt="Documentation Site" src="Common_Content/images//image_right.png" /></a></p><div class="book" id="id410922"><div class="titlepage"><div><div class="producttitle"><span class="productname">Documentation 0.1</span> <span class="productnumber">0.1</span></div><div><h1 class="title">PressGang Belay Developer Guide</h1></div><div><h2 class="subtitle">Developers' Guide for using PressGang Belay</h2></div><p class="edition">Edition 1</p><div><h3 class="corpauthor">
+		<span class="inlinemediaobject"><object data="Common_Content/images/title_logo.svg" type="image/svg+xml"> </object></span>
+
+	</h3></div><div><div class="authorgroup"><div class="author"><h3 class="author"><span class="firstname"> SkyNet </span> <span class="surname"> Alpha Build System </span></h3><div class="affiliation"><span class="orgname"> Engineering Content Services </span> <span class="orgdiv"> Red Hat </span></div></div></div></div><div><div id="id539038" class="legalnotice"><h1 class="legalnotice">Legal Notice</h1><div class="para"><p></p>
+		Copyright <span class="trademark"></span>© 2012 Red Hat, Inc.
+	</div><div class="para"><p></p>
+		The text of and illustrations in this document are licensed by Red Hat under a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA"). An explanation of CC-BY-SA is available at <a href="http://creativecommons.org/licenses/by-sa/3.0/">http://creativecommons.org/licenses/by-sa/3.0/</a>. In accordance with CC-BY-SA, if you distribute this document or an adaptation of it, you must provide the URL for the original version.
+	</div><div class="para"><p></p>
+		Red Hat, as the licensor of this document, waives the right to enforce, and agrees not to assert, Section 4d of CC-BY-SA to the fullest extent permitted by applicable law.
+	</div><div class="para"><p></p>
+		Red Hat, Red Hat Enterprise Linux, the Shadowman logo, JBoss, MetaMatrix, Fedora, the Infinity Logo, and RHCE are trademarks of Red Hat, Inc., registered in the United States and other countries.
+	</div><div class="para"><p></p>
+		<span class="trademark">Linux</span>® is the registered trademark of Linus Torvalds in the United States and other countries.
+	</div><div class="para"><p></p>
+		<span class="trademark">Java</span>® is a registered trademark of Oracle and/or its affiliates.
+	</div><div class="para"><p></p>
+		<span class="trademark">XFS</span>® is a trademark of Silicon Graphics International Corp. or its subsidiaries in the United States and/or other countries.
+	</div><div class="para"><p></p>
+		<span class="trademark">MySQL</span>® is a registered trademark of MySQL AB in the United States, the European Union and other countries.
+	</div><div class="para"><p></p>
+		All other trademarks are the property of their respective owners.
+	</div></div></div><div><div class="abstract"><h6>Abstract</h6><div class="para"><p></p>
+			A brief paragraph describing this book. This will be used as the description for the rpm package.
+		</div></div></div></div></div><div class="toc"><dl><dt><span class="preface"><a href="#pref-PressGang_Belay_Developer_Guide-Preface">Preface</a></span></dt><dd><dl><dt><span class="section"><a href="#id603740">1. Document Conventions</a></span></dt><dd><dl><dt><span class="section"><a href="#id565661">1.1. Typographic Conventions</a></span></dt><dt><span class="section"><a href="#id397133">1.2. Pull-quote Conventions</a></span></dt><dt><span class="section"><a href="#id557285">1.3. Notes and Warnings</a></span></dt></dl></dd><dt><span class="section"><a href="#sect_JBoss-Getting_Help_and_Giving_Feedback">2. Getting Help and Giving Feedback</a></span></dt><dd><dl><dt><span class="section"><a href="#sect_JBoss-Do_You_Need_Help">2.1. Do You Need Help?</a></span></dt><dt><span class="section"><a href="#jboss-feedback">2.2. Give us Feedback</a></span></dt></dl></dd></dl></dd><dt><span class="chapter"><a href="#chap-Introduction_to_PressGang_Belay">1. Introduction to PressGang Belay</a></span></dt><dd><dl><dt><span class="section"><a href="#About_PressGang_Belay">1.1. About PressGang Belay</a></span></dt><dt><span class="section"><a href="#About_PressGang_Belays_Documentation">1.2. About PressGang Belay's Documentation</a></span></dt><dt><span class="section"><a href="#About_This_Documents_Audience">1.3. About This Document's Audience</a></span></dt><dt><span class="section"><a href="#About_PressGang_Belays_Technologies">1.4. About PressGang Belay's Technologies</a></span></dt><dt><span class="section"><a href="#PressGang_Belay_Architecture">1.5. PressGang Belay Architecture</a></span></dt><dt><span class="section"><a href="#About_GWT">1.6. About GWT</a></span></dt><dt><span class="section"><a href="#About_the_GWT_Client_Application">1.7. About the GWT Client Application</a></span></dt><dt><span class="section"><a href="#About_the_GWT_Client_Provider">1.8. About the GWT Client Provider</a></span></dt><dt><span class="section"><a href="#About_the_Authorization_Server">1.9. About the Authorization Server</a></span></dt><dt><span class="section"><a href="#About_the_Authorization_Server_Provider">1.10. About the Authorization Server Provider</a></span></dt><dt><span class="section"><a href="#About_the_OpenID_Provider">1.11. About the OpenID Provider</a></span></dt><dt><span class="section"><a href="#About_the_OAuth2-secured_REST_App">1.12. About the OAuth2-secured REST App</a></span></dt><dt><span class="section"><a href="#About_Supported_OAuth2_Authorization_Flows">1.13. About Supported OAuth2 Authorization Flows</a></span></dt><dt><span class="section"><a href="#PressGang_Belay_Public_Client_Flow">1.14. PressGang Belay Public Client Flow</a></span></dt><dt><span class="section"><a href="#PressGang_Belay_Confidential_Client_Flow">1.15. PressGang Belay Confidential Client Flow</a></span></dt><dt><span class="section"><a href="#About_the_Resource_Server_Provider_Library">1.16. About the Resource Server Provider Library</a></span></dt><dt><span class="section"><a href="#About_PressGang_Belay_OAuth_Tokens">1.17. About PressGang Belay OAuth Tokens</a></span></dt></dl></dd><dt><span class="chapter"><a href="#chap-GWT_Client_Provider_Library_and_Sample_Application">2. GWT Client Provider Library and Sample Application</a></span></dt><dd><dl><dt><span class="section"><a href="#Setting_up_the_GWT_Client_Provider_Library">2.1. Set up the GWT Client Provider Library</a></span></dt><dt><span class="section"><a href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">2.2. Authorize a user with the GWT Client Provider Library</a></span></dt><dt><span class="section"><a href="#Constructing_an_Authorization_Request_with_the_OAuthHandler">2.3. Construct an Authorization Request with the OAuthHandler</a></span></dt><dt><span class="section"><a href="#Make_a_Request_to_the_Resource_Server">2.4. Make a Request to the Resource Server</a></span></dt><dt><span class="section"><a href="#Query_the_OpenID_Provider">2.5. Retrieve End-User Data</a></span></dt><dt><span class="section"><a href="#Clear_Stored_Tokens">2.6. Clear Stored Tokens</a></span></dt><dt><span class="section"><a href="#Retrieve_an_Access_Token">2.7. Retrieve Access Tokens</a></span></dt><dt><span class="section"><a href="#Encode_a_URL">2.8. Encode a URL</a></span></dt><dt><span class="section"><a href="#Prepare_the_GWT_Client_Application_for_Use">2.9. Prepare the GWT Client Application for Use</a></span></dt></dl></dd><dt><span class="chapter"><a href="#chap-Resource_Server_Provider_and_Sample_Application">3. Resource Server Provider and Sample Application</a></span></dt><dd><dl><dt><span class="section"><a href="#Secure_RESTful_Web_Services_with_the_Resource_Server_Provider_Library">3.1. Secure RESTful Web Services with the Resource Server Provider Library</a></span></dt></dl></dd><dt><span class="chapter"><a href="#chap-Authorisation_Server_and_Associated_Processes">4. Authorisation Server and Associated Processes</a></span></dt><dd><dl><dt><span class="section"><a href="#Set_Up_an_OAuth2_Authorization_Server_Using_the_Auth_Server_Provider_Library">4.1. Set Up an OAuth2 Authorization Server Using the Auth Server Provider Library</a></span></dt><dt><span class="section"><a href="#Define_a_Web_Service_for_Your_Auth_Server">4.2. Define Paths For Provided Endpoint Implementations</a></span></dt><dt><span class="section"><a href="#Define_Custom_Paths_For_Endpoint_Methods">4.3. Customise Paths For Provided Endpoint Implementations</a></span></dt><dt><span class="section"><a href="#Override_Auth_Server_Provider_Configuration_Options">4.4. Override Auth Server Provider Configuration Options</a></span></dt><dt><span class="section"><a href="#About_Using_GWT_with_OAuth2">4.5. About Using GWT with OAuth2</a></span></dt><dt><span class="section"><a href="#Override_the_Default_OAuth2_Token_Generation_Service">4.6. Override Default OAuth2 Token Generation Service</a></span></dt></dl></dd><dt><span class="chapter"><a href="#id607469">5. Status Report</a></span></dt><dt><span class="appendix"><a href="#appe-PressGang_Belay_Developer_Guide-Revision_History">A. Revision History</a></span></dt></dl></div><div class="preface" id="pref-PressGang_Belay_Developer_Guide-Preface"><div class="titlepage"><div><div><h1 class="title">Preface</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="id603740">1. Document Conventions</h2></div></div></div><div class="para"><p></p>
+		This manual uses several conventions to highlight certain words and phrases and draw attention to specific pieces of information.
+	</div><div class="para"><p></p>
+		In PDF and paper editions, this manual uses typefaces drawn from the <a href="https://fedorahosted.org/liberation-fonts/">Liberation Fonts</a> set. The Liberation Fonts set is also used in HTML editions if the set is installed on your system. If not, alternative but equivalent typefaces are displayed. Note: Red Hat Enterprise Linux 5 and later includes the Liberation Fonts set by default.
+	</div><div class="section"><div class="titlepage"><div><div><h3 class="title" id="id565661">1.1. Typographic Conventions</h3></div></div></div><div class="para"><p></p>
+			Four typographic conventions are used to call attention to specific words and phrases. These conventions, and the circumstances they apply to, are as follows.
+		</div><div class="para"><p></p>
+			<code class="literal">Mono-spaced Bold</code>
+		</div><div class="para"><p></p>
+			Used to highlight system input, including shell commands, file names and paths. Also used to highlight keycaps and key combinations. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para"><p></p>
+				To see the contents of the file <code class="filename">my_next_bestselling_novel</code> in your current working directory, enter the <code class="command">cat my_next_bestselling_novel</code> command at the shell prompt and press <span class="keycap"><strong>Enter</strong></span> to execute the command.
+			</div></blockquote></div><div class="para"><p></p>
+			The above includes a file name, a shell command and a keycap, all presented in mono-spaced bold and all distinguishable thanks to context.
+		</div><div class="para"><p></p>
+			Key combinations can be distinguished from keycaps by the plus sign that connects each part of a key combination. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para"><p></p>
+				Press <span class="keycap"><strong>Enter</strong></span> to execute the command.
+			</div><div class="para"><p></p>
+				Press <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Alt</strong></span>+<span class="keycap"><strong>F2</strong></span> to switch to a virtual terminal.
+			</div></blockquote></div><div class="para"><p></p>
+			The first paragraph highlights the particular keycap to press. The second highlights two key combinations (each a set of three keycaps with each set pressed simultaneously).
+		</div><div class="para"><p></p>
+			If source code is discussed, class names, methods, functions, variable names and returned values mentioned within a paragraph will be presented as above, in <code class="literal">mono-spaced bold</code>. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para"><p></p>
+				File-related classes include <code class="classname">filesystem</code> for file systems, <code class="classname">file</code> for files, and <code class="classname">dir</code> for directories. Each class has its own associated set of permissions.
+			</div></blockquote></div><div class="para"><p></p>
+			<span class="application"><strong>Proportional Bold</strong></span>
+		</div><div class="para"><p></p>
+			This denotes words or phrases encountered on a system, including application names; dialog box text; labeled buttons; check-box and radio button labels; menu titles and sub-menu titles. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para"><p></p>
+				Choose <span class="guimenu"><strong>System</strong></span> → <span class="guisubmenu"><strong>Preferences</strong></span> → <span class="guimenuitem"><strong>Mouse</strong></span> from the main menu bar to launch <span class="application"><strong>Mouse Preferences</strong></span>. In the <span class="guilabel"><strong>Buttons</strong></span> tab, click the <span class="guilabel"><strong>Left-handed mouse</strong></span> check box and click <span class="guibutton"><strong>Close</strong></span> to switch the primary mouse button from the left to the right (making the mouse suitable for use in the left hand).
+			</div><div class="para"><p></p>
+				To insert a special character into a <span class="application"><strong>gedit</strong></span> file, choose <span class="guimenu"><strong>Applications</strong></span> → <span class="guisubmenu"><strong>Accessories</strong></span> → <span class="guimenuitem"><strong>Character Map</strong></span> from the main menu bar. Next, choose <span class="guimenu"><strong>Search</strong></span> → <span class="guimenuitem"><strong>Find…</strong></span> from the <span class="application"><strong>Character Map</strong></span> menu bar, type the name of the character in the <span class="guilabel"><strong>Search</strong></span> field and click <span class="guibutton"><strong>Next</strong></span>. The character you sought will be highlighted in the <span class="guilabel"><strong>Character Table</strong></span>. Double-click this highlighted character to place it in the <span class="guilabel"><strong>Text to copy</strong></span> field and then click the <span class="guibutton"><strong>Copy</strong></span> button. Now switch back to your document and choose <span class="guimenu"><strong>Edit</strong></span> → <span class="guimenuitem"><strong>Paste</strong></span> from the <span class="application"><strong>gedit</strong></span> menu bar.
+			</div></blockquote></div><div class="para"><p></p>
+			The above text includes application names; system-wide menu names and items; application-specific menu names; and buttons and text found within a GUI interface, all presented in proportional bold and all distinguishable by context.
+		</div><div class="para"><p></p>
+			<code class="command"><em class="replaceable"><code>Mono-spaced Bold Italic</code></em></code> or <span class="application"><strong><em class="replaceable"><code>Proportional Bold Italic</code></em></strong></span>
+		</div><div class="para"><p></p>
+			Whether mono-spaced bold or proportional bold, the addition of italics indicates replaceable or variable text. Italics denotes text you do not input literally or displayed text that changes depending on circumstance. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para"><p></p>
+				To connect to a remote machine using ssh, type <code class="command">ssh <em class="replaceable"><code>username</code></em>@<em class="replaceable"><code>domain.name</code></em></code> at a shell prompt. If the remote machine is <code class="filename">example.com</code> and your username on that machine is john, type <code class="command">ssh john@example.com</code>.
+			</div><div class="para"><p></p>
+				The <code class="command">mount -o remount <em class="replaceable"><code>file-system</code></em></code> command remounts the named file system. For example, to remount the <code class="filename">/home</code> file system, the command is <code class="command">mount -o remount /home</code>.
+			</div><div class="para"><p></p>
+				To see the version of a currently installed package, use the <code class="command">rpm -q <em class="replaceable"><code>package</code></em></code> command. It will return a result as follows: <code class="command"><em class="replaceable"><code>package-version-release</code></em></code>.
+			</div></blockquote></div><div class="para"><p></p>
+			Note the words in bold italics above — username, domain.name, file-system, package, version and release. Each word is a placeholder, either for text you enter when issuing a command or for text displayed by the system.
+		</div><div class="para"><p></p>
+			Aside from standard usage for presenting the title of a work, italics denotes the first use of a new and important term. For example:
+		</div><div class="blockquote"><blockquote class="blockquote"><div class="para"><p></p>
+				Publican is a <em class="firstterm">DocBook</em> publishing system.
+			</div></blockquote></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title" id="id397133">1.2. Pull-quote Conventions</h3></div></div></div><div class="para"><p></p>
+			Terminal output and source code listings are set off visually from the surrounding text.
+		</div><div class="para"><p></p>
+			Output sent to a terminal is set in <code class="computeroutput">mono-spaced roman</code> and presented thus:
+		</div><pre class="screen">books        Desktop   documentation  drafts  mss    photos   stuff  svn
+books_tests  Desktop1  downloads      images  notes  scripts  svgs</pre><div class="para"><p></p>
+			Source-code listings are also set in <code class="computeroutput">mono-spaced roman</code> but add syntax highlighting as follows:
+		</div><pre class="programlisting">package org.<span class="perl_Function">jboss</span>.<span class="perl_Function">book</span>.<span class="perl_Function">jca</span>.<span class="perl_Function">ex1</span>;
+
+<span class="perl_Keyword">import</span> javax.naming.InitialContext;
+
+<span class="perl_Keyword">public</span> <span class="perl_Keyword">class</span> ExClient
+{
+   <span class="perl_Keyword">public</span> <span class="perl_DataType">static</span> <span class="perl_DataType">void</span> <span class="perl_Function">main</span>(String args[]) 
+       <span class="perl_Keyword">throws</span> Exception
+   {
+      InitialContext iniCtx = <span class="perl_Keyword">new</span> InitialContext();
+      Object         ref    = iniCtx.<span class="perl_Function">lookup</span>(<span class="perl_String">"EchoBean"</span>);
+      EchoHome       home   = (EchoHome) ref;
+      Echo           echo   = home.<span class="perl_Function">create</span>();
+
+      System.<span class="perl_Function">out</span>.<span class="perl_Function">println</span>(<span class="perl_String">"Created Echo"</span>);
+
+      System.<span class="perl_Function">out</span>.<span class="perl_Function">println</span>(<span class="perl_String">"Echo.echo('Hello') = "</span> + echo.<span class="perl_Function">echo</span>(<span class="perl_String">"Hello"</span>));
+   }
+}</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title" id="id557285">1.3. Notes and Warnings</h3></div></div></div><div class="para"><p></p>
+			Finally, we use three visual styles to draw attention to information that might otherwise be overlooked.
+		</div><div class="note"><div class="admonition_header"><h2>Note</h2></div><div class="admonition"><div class="para"><p></p>
+				Notes are tips, shortcuts or alternative approaches to the task at hand. Ignoring a note should have no negative consequences, but you might miss out on a trick that makes your life easier.
+			</div></div></div><div class="important"><div class="admonition_header"><h2>Important</h2></div><div class="admonition"><div class="para"><p></p>
+				Important boxes detail things that are easily missed: configuration changes that only apply to the current session, or services that need restarting before an update will apply. Ignoring a box labeled 'Important' will not cause data loss but may cause irritation and frustration.
+			</div></div></div><div class="warning"><div class="admonition_header"><h2>Warning</h2></div><div class="admonition"><div class="para"><p></p>
+				Warnings should not be ignored. Ignoring warnings will most likely cause data loss.
+			</div></div></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="sect_JBoss-Getting_Help_and_Giving_Feedback">2. Getting Help and Giving Feedback</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title" id="sect_JBoss-Do_You_Need_Help">2.1. Do You Need Help?</h3></div></div></div><a id="id553867" class="indexterm"></a><div class="para"><p></p>
+			If you experience difficulty with a procedure described in this documentation, visit the Red Hat Customer Portal at <a href="http://access.redhat.com">http://access.redhat.com</a>. Through the customer portal, you can:
+		</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+					search or browse through a knowledgebase of technical support articles about Red Hat products.
+				</div></li><li class="listitem"><div class="para"><p></p>
+					submit a support case to Red Hat Global Support Services (GSS).
+				</div></li><li class="listitem"><div class="para"><p></p>
+					access other product documentation.
+				</div></li></ul></div><div class="para"><p></p>
+			Red Hat also hosts a large number of electronic mailing lists for discussion of Red Hat software and technology. You can find a list of publicly available mailing lists at <a href="https://www.redhat.com/mailman/listinfo">https://www.redhat.com/mailman/listinfo</a>. Click on the name of any mailing list to subscribe to that list or to access the list archives.
+		</div></div><div class="section"><div class="titlepage"><div><div><h3 class="title" id="jboss-feedback">2.2. Give us Feedback</h3></div></div></div><a id="id554124" class="indexterm"></a><div class="para"><p></p>
+			If you find a typographical error, or know how this guide can be improved, we would love to hear from you. Submit a report in Bugzilla against the product <code class="literal">Documentation 0.1</code> and the component <code class="literal">documentation</code>. The following link will take you to a pre-filled bug report for this product: https://bugzilla.redhat.com/.
+		</div><div class="para"><p></p>
+			Fill out the following template in Bugzilla's <code class="literal">Description</code> field. Be as specific as possible when describing the issue; this will help ensure that we can fix it quickly.
+		</div><pre class="screen">Document URL:
+
+
+Section Number and Name:
+
+
+Describe the issue:
+
+
+Suggestions for improvement:
+
+
+Additional information:
+
+
+</pre><div class="para"><p></p>
+			Be sure to give us your name so that you can receive full credit for reporting the issue.
+		</div></div></div></div><div class="chapter" id="chap-Introduction_to_PressGang_Belay"><div class="titlepage"><div><div><h2 class="title">Chapter 1. Introduction to PressGang Belay</h2></div></div></div><div class="toc"><dl><dt><span class="section"><a href="#About_PressGang_Belay">1.1. About PressGang Belay</a></span></dt><dt><span class="section"><a href="#About_PressGang_Belays_Documentation">1.2. About PressGang Belay's Documentation</a></span></dt><dt><span class="section"><a href="#About_This_Documents_Audience">1.3. About This Document's Audience</a></span></dt><dt><span class="section"><a href="#About_PressGang_Belays_Technologies">1.4. About PressGang Belay's Technologies</a></span></dt><dt><span class="section"><a href="#PressGang_Belay_Architecture">1.5. PressGang Belay Architecture</a></span></dt><dt><span class="section"><a href="#About_GWT">1.6. About GWT</a></span></dt><dt><span class="section"><a href="#About_the_GWT_Client_Application">1.7. About the GWT Client Application</a></span></dt><dt><span class="section"><a href="#About_the_GWT_Client_Provider">1.8. About the GWT Client Provider</a></span></dt><dt><span class="section"><a href="#About_the_Authorization_Server">1.9. About the Authorization Server</a></span></dt><dt><span class="section"><a href="#About_the_Authorization_Server_Provider">1.10. About the Authorization Server Provider</a></span></dt><dt><span class="section"><a href="#About_the_OpenID_Provider">1.11. About the OpenID Provider</a></span></dt><dt><span class="section"><a href="#About_the_OAuth2-secured_REST_App">1.12. About the OAuth2-secured REST App</a></span></dt><dt><span class="section"><a href="#About_Supported_OAuth2_Authorization_Flows">1.13. About Supported OAuth2 Authorization Flows</a></span></dt><dt><span class="section"><a href="#PressGang_Belay_Public_Client_Flow">1.14. PressGang Belay Public Client Flow</a></span></dt><dt><span class="section"><a href="#PressGang_Belay_Confidential_Client_Flow">1.15. PressGang Belay Confidential Client Flow</a></span></dt><dt><span class="section"><a href="#About_the_Resource_Server_Provider_Library">1.16. About the Resource Server Provider Library</a></span></dt><dt><span class="section"><a href="#About_PressGang_Belay_OAuth_Tokens">1.17. About PressGang Belay OAuth Tokens</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_PressGang_Belay">1.1. About PressGang Belay</h2></div></div></div><div class="para"><p></p>
+		PressGang Belay was created to provide RESTful web service security, with a few particular restrictions in mind. The first was that to avoid handling or storing end-user passwords; the system had to outsource authentication somehow, and for this we chose to use OpenID. The second design restriction was that the system had to be appropriate for a shared REST interface that also served as the server side of a Google Web Toolkit (GWT) application. Authentication/authorization had to be handled in the browser by the GWT client-side, without relying on any dedicated, GWT-specific server-side. To facilitate this we chose to use OAuth2 with its authorization and resource server model. From the different OAuth2 flow types, we chose to use a slighly modified version of the Implicit Flow for public clients. A further design restriction was to be able to use the system both internally and externally. This is another reason we chose OpenID; it provides external authentication, and we could standardise on it by creating an internal OpenID provider wrapping internal authentication mechanisms (this is the idea behind the OpenID Provider project). Given these restrictions, creating a suite of components that utilised OpenID and OAuth2 seemed like the appropriate solution. Note that while there is a draft OpenID Connect standard that attempts to combine OpenID and OAuth2, implementing this would not have met the goals of this project because of its architecture. One final restriction on the project was that it had to be possible to select the OpenID providers used, to allow the flexibility to use lesser known providers such as the Fedora Account System and/or a custom provider.
+	</div><div class="para"><p></p>
+		PressGang Belay uses OAuth2 and OpenID to provide filter-based security for RESTful web services used by in-browser applications. Non-public clients without browser access, such as internal terminal applications, can be issued non-expiring OAuth2 access tokens so no login process is necessary. Non-public clients with browser access, such as traditional client-server applications are catered for, with endpoints implementing OAuth2's Authorization Code flow. PressGang Belay provides libraries that allow RESTful resource servers and GWT client apps utilising those RESTful web services to be implemented easily. It also provides an authorization server library and sample implementation and an example OpenID provider implementation, which could be used to wrap alternative authentication mechanisms. It is designed to secure RESTful web services, but could potentially be used by any service that can be protected by a filter.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11410">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11410-288728+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+PressGang+Belay&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_PressGang_Belays_Documentation">1.2. About PressGang Belay's Documentation</h2></div></div></div><div class="para"><p></p>
+		This documentation will be looking at the PressGang Belay authentication system and the other systems that are required for its use. Primarily, it will be providing an overview of the technologies and how they are working together as well as some insight into the reasons behind the use of each part of the system. It will also provide instuctions for setting up and using the various libraries. Outside the scope of this documentation is reworking the system for individual situations.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11412">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11412-245433+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+PressGang+Belay%27s+Documentation&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_This_Documents_Audience">1.3. About This Document's Audience</h2></div></div></div><div class="para"><p></p>
+		This documentation is aimed at developers who want to implement and use PressGang Belay. It is assumed that you already have, or are planning to build a system that you would like to integrate the libraries with. It is also assumed that you have had some experience with the technologies that are utilised by PressGang Belay, such as Maven and GWT. There will not be any coverage of the inner workings of these technologies.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11413">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11413-245433+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+This+Document%27s+Audience&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_PressGang_Belays_Technologies">1.4. About PressGang Belay's Technologies</h2></div></div></div><div class="para"><p></p>
+		Core technologies used in the PressGang Belay projects include Java EE, JBoss and GWT. The OAuth2 Auth Server Provider, OAuth2 Resource Server Provider and OpenID Provider projects have been tested on JBoss Application Server 7 with OpenJDK7; they are not designed or guaranteed to run on any other platform at present. These projects have been tested with the RESTEasy implementation of JAX-RS that is provided by JBoss. The OAuth2 GWT Client Provider is, naturally, designed for use with GWT. All of the projects have been built with Maven. The key libraries used are Apache Amber, OpenId-Filter and Gwt-OAuth2. As the Apache Amber and OpenId-Filter libraries have not had formal releases yet, their use may necessitate changes in these projects in the future. Likewise, while this project tries to follow the current OAuth2 specification as closely as possible, as this is a draft, changes may prompt alterations in this project in the future.
+	</div><div class="see-also-list see-also-list"><p></p><h5 class="formalpara" id="id471112">See Also:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#PressGang_Belay_Architecture">Section 1.5, “PressGang Belay Architecture”</a>
+					</div></li></ul></div>
+
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11414">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11414-271411+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+PressGang+Belay%27s+Technologies&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="PressGang_Belay_Architecture">1.5. PressGang Belay Architecture</h2></div></div></div><div class="figure"><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/1222.jpg" align="middle" width="666" alt="A graphical representation of the architecture involved with PressGang Belay." /></div></div><h6>Figure 1.1. PressGang Belay Architecture</h6></div><br class="figure-break" /><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11746">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11746-292277+02+Oct+2012+13%3A32+en-US&amp;short_desc=PressGang+Belay+Architecture&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_GWT">1.6. About GWT</h2></div></div></div><div class="para"><p></p>
+		Google Web Toolkit (GWT) is an open source development toolkit for building and optimizing complex browser-based applications. The GWT SDK provides APIs and widgets which allow Java to be compiled into JavaScript.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11415">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11415-271412+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+GWT&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_the_GWT_Client_Application">1.7. About the GWT Client Application</h2></div></div></div><div class="para"><p></p>
+		The GWT Client Application is a sample app demonstrating use of the GWT Client Provider library. It shows how the library can be used to gain end-user authorisation and call web services that are secured with OAuth2. This functionality is designed to work with any spec-compliant OAuth2 Auth and Resource Server implementations. The sample application also demonstrates how the library can be used with the OAuth2 Auth Server and OAuth2 Resource Server implementations. It shows how to make a login request to the OAuth2 Auth Server, which will prompt end-users to authenticate via OpenID, and how to make subsequent requests for resources. The application also demonstrates the use of some user management services, such as querying the identity of the end-user and associating multiple OpenID identities with the same end-user.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11416">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11416-276405+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+the+GWT+Client+Application&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_the_GWT_Client_Provider">1.8. About the GWT Client Provider</h2></div></div></div><div class="para"><p></p>
+		The GWT Client Provider is a library to assist with OAuth2 authorization and requests to secured resources. It is an extension of the Gwt-OAuth2 library. It facilitates requests for end-user authorization and stores the OAuth2 access tokens and related information that is returned, either in the browser's local storage or in cookies. It provides a means of sending requests to OAuth2-secured web services with the required credentials, prompting the end-user to authenticate or authorize the request if necessary, and will store any changes to those credentials that are included with the response.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11417">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11417-292501+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+the+GWT+Client+Provider&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_the_Authorization_Server">1.9. About the Authorization Server</h2></div></div></div><div class="para"><p></p>
+		The Authorization Server is a sample OAuth2 auth server implementation that can be used by both the sample GWT Client Application and any apps utilising the Resource Server Provider for authentication and authorization purposes. It allows client applications, such as the GWT Client Application, to authenticate users via an OpenID provider and will generate and return an OAuth2 token and its expiry details after this process is complete. The Auth Server also communictes with the Resource Server. When a user requests a particular resource from a REST interface protected by the Resource Server Provider, the Auth Server will return information about the user's token when requested. The Authorization Server implementation is given as an example of how to use the Authorization Server Provider library to create an auth server; developers can customise the implementation as they see fit.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11418">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11418-272185+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+the+Authorization+Server&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_the_Authorization_Server_Provider">1.10. About the Authorization Server Provider</h2></div></div></div><div class="para"><p></p>
+		The Authorization Server Provider is a library to assist with the creation of an Authorization Server. It uses the Apache Amber library. It offers a data model for end-users, client applications, scopes, token grants etc. It also provides implementations for OAuth2 auth and token endpoints, using OpenID as the authentication mechanism for end-users, as well as implementations for user-management tasks. There is also an implementation of authorization information endpoints designed for use with a resource server using the Resource Server Provider library; this authorization information could be shared via a database instead if desired; the default <span class="property">OAuth2RSAuthService</span> used can be overridden to achieve this. All of these endpoint implementations can be replaced or ignored in an Auth Server webapp.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11419">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11419-292506+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+the+Authorization+Server+Provider&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_the_OpenID_Provider">1.11. About the OpenID Provider</h2></div></div></div><div class="para"><p></p>
+		The OpenID Provider is the server on which all of the user information is stored. It can be one that you have created yourself, or it can be a third party identity provider such as Google. It is the OpenId Provider that the Authentication Server talks to validate a user. The Authentication Server will request user authentication and the OpenId Provider will respond with the identity of the user. Passwords stored in the OpenId Provider are used for authentication, but are never released to any other clients.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11420">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11420-245433+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+the+OpenID+Provider&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_the_OAuth2-secured_REST_App">1.12. About the OAuth2-secured REST App</h2></div></div></div><div class="para"><p></p>
+		The OAuth2-secured REST app is a sample application that demonstrates how the OAuth2 Resource Server Provider library can be used to secure RESTful web services. It is a basic application that provides GET, CREAT, UPDATE and DELETE endpoints. These endpoints are protected by OAuth2 using a filter; clients need to have a valid token issued by the OAuth2 Auth Server to access them.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11608">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11608-292508+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+the+OAuth2-secured+REST+App&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_Supported_OAuth2_Authorization_Flows">1.13. About Supported OAuth2 Authorization Flows</h2></div></div></div><div class="para"><p></p>
+		The OAuth2 specification defines four authorization grant types or flows: authorization code, implicit, resource owner password credentials and client credentials. PressGang Belay provides support for the first two of these; the authorization code flow and the implict flow.
+	</div><div class="para"><p></p>
+		The authorization code flow is only appropriate for client applications that can protect a client secret, such as web applications with a secure server-side. These are known as confidential clients and they require client applications to authenticate themselves using their client secret. In this flow, refresh tokens are issued and can be used to obtain new access tokens.
+	</div><div class="para"><p></p>
+		The implicit flow is optimised for clients implemented in a browser, such as GWT clients, who cannot securely store a client secret. These are public clients and no refresh tokens are issued to them as they receive an access token from the outset. In PressGang Belay, access token expiry is extended every time a token is used to access a protected resouce. However, it must be refreshed within a set amount of time otherwise the client will be required to go through the authorization process again.
+	</div><div class="see-also-list see-also-list"><p></p><h5 class="formalpara" id="id472447">See Also:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#PressGang_Belay_Public_Client_Flow">Section 1.14, “PressGang Belay Public Client Flow”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#PressGang_Belay_Confidential_Client_Flow">Section 1.15, “PressGang Belay Confidential Client Flow”</a>
+					</div></li></ul></div>
+
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11741">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11741-292239+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+Supported+OAuth2+Authorization+Flows&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="PressGang_Belay_Public_Client_Flow">1.14. PressGang Belay Public Client Flow</h2></div></div></div><div class="figure"><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/1223.jpg" align="middle" width="666" alt="A diagram depicting the authorization flow for a public client." /></div></div><h6>Figure 1.2. PressGang Belay Public Client Flow Diagram</h6></div><br class="figure-break" /><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11749">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11749-292291+02+Oct+2012+13%3A32+en-US&amp;short_desc=PressGang+Belay+Public+Client+Flow&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="PressGang_Belay_Confidential_Client_Flow">1.15. PressGang Belay Confidential Client Flow</h2></div></div></div><div class="figure"><div class="figure-contents"><div class="mediaobject" align="center"><img src="images/1224.jpg" align="middle" width="666" alt="A diagram depicting the authorization flow for a confidential client." /></div></div><h6>Figure 1.3. PressGang Belay Confidential Client Flow Diagram</h6></div><br class="figure-break" /><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11750">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11750-292291+02+Oct+2012+13%3A32+en-US&amp;short_desc=PressGang+Belay+Confidential+Client+Flow&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_the_Resource_Server_Provider_Library">1.16. About the Resource Server Provider Library</h2></div></div></div><div class="para"><p></p>
+		The Resource Server Provider library can be used to secure RESTful web services using OAuth2, in conjunction with an OAuth2 Auth Server. While the Auth Server handles end-user authentication and authorisation, this library contains the logic to make decisions on whether or not to grant access to a particular endpoint, to a particular client application with an end-user token. It uses the Apache Amber library. The Resource Server Provider offers a data model for RESTful endpoints and access scopes, which must match those of the Auth Server. It makes requests to the Auth Server to retrieve information to assist with its decision-making. If the OAuth2 Auth Server and Resource Server were running together, a shared database could perhaps be used instead, however, as these two servers are separate enitites in the OAuth2 specification and Apache Amber libraries, they are also assumed to be separate in this implementation.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11609">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11609-292234+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+the+Resource+Server+Provider+Library&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_PressGang_Belay_OAuth_Tokens">1.17. About PressGang Belay OAuth Tokens</h2></div></div></div><div class="para"><p></p>
+		The default OAuth2 token issuer provided by the OAuth2 Auth Server Provider library generates random strings; it does not hash any user information. It can be overridden if this is desired, as documented in the Auth Server Provider section. The Resource Server Provider library's <code class="interfacename">org.jboss.pressgang.belay.oauth2.resourceserver.service.OAuth2RSAuthService,</code> interface can be implemented to add logic to check the hash against the returned information. The implementation will have to be annotated with @Alternative and listed in <code class="filename">beans.xml</code>.
+	</div><div class="para"><p></p>
+		By default all access tokens expire. However, it may be desirable to issue a token grant that does not expire, for example, if a client application were an internal terminal app. Although there are no endpoints to create this sort of token grant, the Token Grant data model includes the boolean attribute <span class="property">accessTokenExpires</span>, which could manually be set to false in the database. The Resource Server Provider library will take this into account when making its access decisions.
+	</div><div class="see-also-list see-also-list"><p></p><h5 class="formalpara" id="id548990">See Also:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Set_Up_an_OAuth2_Authorization_Server_Using_the_Auth_Server_Provider_Library">Section 4.1, “Set Up an OAuth2 Authorization Server Using the Auth Server Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11611">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11611-292512+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+PressGang+Belay+OAuth+Tokens&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div></div><div class="chapter" id="chap-GWT_Client_Provider_Library_and_Sample_Application"><div class="titlepage"><div><div><h2 class="title">Chapter 2. GWT Client Provider Library and Sample Application</h2></div></div></div><div class="toc"><dl><dt><span class="section"><a href="#Setting_up_the_GWT_Client_Provider_Library">2.1. Set up the GWT Client Provider Library</a></span></dt><dt><span class="section"><a href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">2.2. Authorize a user with the GWT Client Provider Library</a></span></dt><dt><span class="section"><a href="#Constructing_an_Authorization_Request_with_the_OAuthHandler">2.3. Construct an Authorization Request with the OAuthHandler</a></span></dt><dt><span class="section"><a href="#Make_a_Request_to_the_Resource_Server">2.4. Make a Request to the Resource Server</a></span></dt><dt><span class="section"><a href="#Query_the_OpenID_Provider">2.5. Retrieve End-User Data</a></span></dt><dt><span class="section"><a href="#Clear_Stored_Tokens">2.6. Clear Stored Tokens</a></span></dt><dt><span class="section"><a href="#Retrieve_an_Access_Token">2.7. Retrieve Access Tokens</a></span></dt><dt><span class="section"><a href="#Encode_a_URL">2.8. Encode a URL</a></span></dt><dt><span class="section"><a href="#Prepare_the_GWT_Client_Application_for_Use">2.9. Prepare the GWT Client Application for Use</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Setting_up_the_GWT_Client_Provider_Library">2.1. Set up the GWT Client Provider Library</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id443694">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#About_GWT">Section 1.6, “About GWT”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#About_the_GWT_Client_Provider">Section 1.8, “About the GWT Client Provider”</a>
+					</div></li></ul></div>
+
+		</div><div class="procedure"><h6>Procedure 2.1. Task</h6><ol class="1"><li class="step"><div class="para"><p></p>
+				Obtain the GWT Client Provider library jar file and add it to the classpath of your project. If you are using Maven, you can achieve this by adding the Sonatype OSS repository and GWT Client Provider dependency to your <code class="filename">pom.xml</code> as follows in the example below. If you are using any other build tool, download the appropriate jar file from the JBoss repository and add it as a library. 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;project&gt;</span>
+	...
+    	<span class="perl_Keyword">&lt;repositories&gt;</span>
+        	<span class="perl_Keyword">&lt;repository&gt;</span>
+            	<span class="perl_Keyword">&lt;id&gt;</span>oss-repo<span class="perl_Keyword">&lt;/id&gt;</span>
+                <span class="perl_Keyword">&lt;name&gt;</span>OSS repository<span class="perl_Keyword">&lt;/name&gt;</span>
+                <span class="perl_Keyword">&lt;url&gt;</span>https://oss.sonatype.org/content/groups/public/<span class="perl_Keyword">&lt;/url&gt;</span>
+            <span class="perl_Keyword">&lt;/repository&gt;</span>
+        <span class="perl_Keyword">&lt;/repositories&gt;</span>
+    ...
+        <span class="perl_Keyword">&lt;dependencies&gt;</span>
+        	<span class="perl_Keyword">&lt;dependency&gt;</span>
+            	<span class="perl_Keyword">&lt;groupId&gt;</span>org.jboss.pressgangccms.auth<span class="perl_Keyword">&lt;/groupId&gt;</span>
+                <span class="perl_Keyword">&lt;artifactId&gt;</span>gwt-client-provider<span class="perl_Keyword">&lt;/artifactId&gt;</span>
+                <span class="perl_Keyword">&lt;version&gt;</span>1.0<span class="perl_Keyword">&lt;/version&gt;</span>
+                <span class="perl_Keyword">&lt;classifier&gt;</span>alpha<span class="perl_Keyword">&lt;/classifier&gt;</span>
+            <span class="perl_Keyword">&lt;/dependency&gt;</span>
+        <span class="perl_Keyword">&lt;/dependencies&gt;</span>
+    ...
+<span class="perl_Keyword">&lt;/project&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				Add the library to your GWT application's <code class="filename">Module.gwt.xml</code> file using the following code:
+			</div><pre class="programlisting"><span class="perl_Keyword">&lt;inherits</span><span class="perl_Others"> name=</span><span class="perl_String">"org.jboss.pressgangccms.oauth2.gwt.OAuth2GwtClientProvider"</span><span class="perl_Keyword">/&gt;</span></pre></li></ol></div><div class="formalpara"><p></p><h5 class="formalpara" id="id529954">Result</h5>
+			The GWT Client Provider Libaray is ready to be used by your application.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11421">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11421-292514+02+Oct+2012+13%3A32+en-US&amp;short_desc=Set+up+the+GWT+Client+Provider+Library&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Authorizing_a_User_with_the_GWT_Client_Provider_Library">2.2. Authorize a user with the GWT Client Provider Library</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id530052">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="procedure"><h6>Procedure 2.2. Task</h6><ol class="1"><li class="step"><div class="para"><p></p>
+				Declare and instantiate an OAuthHandler in your application using the following code: 
+<pre class="programlisting">
+<span class="perl_Keyword">import</span> org.jboss.pressgangccms.oauth2.gwt.client.OAuthHandler;
+
+<span class="perl_Keyword">public</span> <span class="perl_Keyword">class</span> App <span class="perl_Keyword">implements</span> EntryPoint {         
+
+	<span class="perl_Keyword">private</span> <span class="perl_DataType">static</span> <span class="perl_DataType">final</span> OAuthHandler AUTH_HANDLER = OAuthHandler.<span class="perl_Function">get</span>();
+
+}
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				Using this handler, you can authorize an end-user, using an OpenID Provider. To do this, you require:
+			</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						The auth URL of your OAuth2 Authorization Server implementation.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The client ID of your application, as defined by your OAuth2 Authorization Server implementation.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The URL or domain name of your OpenID provider.
+					</div></li></ul></div><div class="para"><p></p>
+				Where the auth URL is <a href="https://mydomain:443/MyAuthServer/rest/auth/login">https://mydomain:443/MyAuthServer/rest/auth/login</a>, the OpenID provider domain is gmail.com and the client app id is <span class="property">appClientId</span>, the code will be as follows: 
+<pre class="programlisting">
+
+<span class="perl_DataType">final</span> AuthorizationRequest request = OpenIdRequestUtil.<span class="perl_Function">openIdAuthorizationRequest</span>(<span class="perl_String">"https://mydomain:443/MyAuthServer/rest/auth/authorize"</span>, <span class="perl_String">"appClientId"</span>, <span class="perl_String">"gmail.com"</span>).<span class="perl_Function">withScopes</span>(<span class="perl_String">"PERFORM_USER_MANAGEMENT"</span>);
+
+AUTH_HANDLER.<span class="perl_Function">sendAuthRequest</span>(request, <span class="perl_Keyword">new</span> Callback&lt;String, Throwable&gt;() {
+
+	@Override
+    <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onSuccess</span>(String result) {
+    	<span class="perl_Comment">// Do something</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>    }
+
+    @Override
+    <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onFailure</span>(Throwable caught) {
+        <span class="perl_Comment">// Handle error</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>    }
+});
+</pre>
+
+			</div></li></ol></div><div class="formalpara"><p></p><h5 class="formalpara" id="id540597">Result</h5>
+			The user has been authorized by the OpenID provider.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11422">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11422-272196+02+Oct+2012+13%3A32+en-US&amp;short_desc=Authorize+a+user+with+the+GWT+Client+Provider+Library&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Constructing_an_Authorization_Request_with_the_OAuthHandler">2.3. Construct an Authorization Request with the OAuthHandler</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id546949">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">Section 2.2, “Authorize a user with the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		The <code class="classname">OAuthHandler</code> can be used to call the user management methods provided by the Belay Auth Server implementation. Endpoints that return new OAuth2 credentials must be called with the <code class="methodname">sendAuthRequest()</code> method.
+	</div><div class="procedure"><h6>Procedure 2.3. Task</h6><ul><li class="step"><div class="para"><p></p>
+				The <code class="classname">OpenIdRequestUtil</code> class provides static factory methods to assist with <span class="property">AuthorizationRequest</span> and <span class="property">OAuthRequest</span> construction. Here is an example of adding a second identity to a user. The parameters used are:
+			</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						The association URL.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The application's unique client ID.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The OpenID provider URL for the identity to associate with the currently authorized user.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						Whether or not the new identity should be the user's primary identity.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The current OAuth2 access token in use, which can be obtained through the <code class="methodname">OAuthHandler</code> as is demonstrated below.
+					</div></li></ul></div><div class="para"><p></p>
+				
+<pre class="programlisting">
+
+<span class="perl_DataType">final</span> AuthorizationRequest request = OpenIdRequestUtil.<span class="perl_Function">associateIdentityRequest</span>(<span class="perl_String">"https://mydomain:443/MyAuthServer/rest/auth/user/associate/associateIdentity"</span>, <span class="perl_String">"appClientId"</span>, <span class="perl_String">"yahoo.com"</span>, AUTH_HANDLER.<span class="perl_Function">getLastTokenResult</span>(), <span class="perl_Keyword">false</span>).<span class="perl_Function">withScopes</span>(<span class="perl_String">"PERFORM_USER_MANAGEMENT"</span>);
+         
+	AUTH_HANDLER.<span class="perl_Function">sendAuthRequest</span>(request, <span class="perl_Keyword">new</span> Callback&lt;String, Throwable&gt;() {
+             @Override
+             <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onSuccess</span>(String result) {
+                 <span class="perl_Comment">// Do something</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>             }
+
+             @Override
+             <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onFailure</span>(Throwable caught) {
+                 <span class="perl_Comment">// Handle error</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>             }
+     });
+</pre>
+
+			</div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id442514">Result</h5>
+			You have created an Authorization Request using the required parameters.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11465">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11465-292515+02+Oct+2012+13%3A32+en-US&amp;short_desc=Construct+an+Authorization+Request+with+the+OAuthHandler&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Make_a_Request_to_the_Resource_Server">2.4. Make a Request to the Resource Server</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id599099">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">Section 2.2, “Authorize a user with the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		The <span class="property">OAuthHandler</span> can be used to make requests to an OAuth2-secured Resource Server.
+	</div><div class="procedure"><h6>Procedure 2.4. Task</h6><ul><li class="step"><div class="para"><p></p>
+				To make a request to the Resource Server, you need to construct an <code class="methodname">OAuthRequest</code>. The constructor parameters required are: 
+				<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+							The REST method type.
+						</div></li><li class="listitem"><div class="para"><p></p>
+							The URL to request.
+						</div></li></ul></div>
+
+			</div><div class="para"><p></p>
+				Optionally, the request headers, timeout and/or request data can be set, the same as with a GWT <span class="property">RequestBuilder</span>.
+			</div><div class="para"><p></p>
+				Here is an example of a basic GET request: 
+<pre class="programlisting">
+
+AUTH_HANDLER.<span class="perl_Function">sendRequest</span>(<span class="perl_Keyword">new</span> <span class="perl_Function">OAuthRequest</span>(RequestBuilder.<span class="perl_Function">GET</span>, <span class="perl_String">"https://mydomain:443/MyResourceServer/rest/resource"</span>), <span class="perl_Keyword">new</span> <span class="perl_Function">RequestCallback</span>() {
+             
+	@Override
+    <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onResponseReceived</span>(Request request, Response response) {
+    	<span class="perl_Comment">// Do something</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>    }
+
+    @Override
+    <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onError</span>(Request request, Throwable exception) {
+        <span class="perl_Comment">// Handle error</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>    }
+});
+</pre>
+
+			</div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id538925">Result</h5>
+			A request to the Resource Server has been created using the required parameters.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11466">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11466-292519+02+Oct+2012+13%3A32+en-US&amp;short_desc=Make+a+Request+to+the+Resource+Server&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Query_the_OpenID_Provider">2.5. Retrieve End-User Data</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id568314">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">Section 2.2, “Authorize a user with the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		If the Belay Auth Server implementation is in use, you can query the identity and user information endpoints for data about the currently authorised user and their primary Open ID identity.
+	</div><div class="procedure"><h6>Procedure 2.5. Task</h6><ul><li class="step"><div class="para"><p></p>
+				To make a request for this information, use the following code as a template to retrieve user information: 
+<pre class="programlisting">
+
+AUTH_HANDLER.<span class="perl_Function">sendRequest</span>(<span class="perl_Keyword">new</span> <span class="perl_Function">OAuthRequest</span>(RequestBuilder.<span class="perl_Function">GET</span>, <span class="perl_String">"https://mydomain:443/MyAuthServer/rest/auth/user/queryUser"</span>), <span class="perl_Keyword">new</span> <span class="perl_Function">RequestCallback</span>() {
+
+	@Override
+    <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onResponseReceived</span>(Request request, Response response) {
+    	<span class="perl_Comment">// Do something</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>    }
+ 
+    @Override
+    <span class="perl_Keyword">public</span> <span class="perl_DataType">void</span> <span class="perl_Function">onError</span>(Request request, Throwable exception) {
+        <span class="perl_Comment">// Handle error</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>    }
+});
+</pre>
+
+			</div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id597843">Result</h5>
+			A request for information about the currently authorised user identity has been created and is ready to send to the OpenID Provider.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11467">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11467-272059+02+Oct+2012+13%3A32+en-US&amp;short_desc=Retrieve+End-User+Data&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Clear_Stored_Tokens">2.6. Clear Stored Tokens</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id557602">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">Section 2.2, “Authorize a user with the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		To force reauthenticates with each session, you can clear the stored tokens after an end-user has finished with the app or clicked a logout button.
+	</div><div class="procedure"><h6>Procedure 2.6. Task</h6><ul><li class="step"><div class="para"><p></p>
+				To clear stored tokens, use the <span class="property">OAuthHandler</span> as follows : 
+<pre class="programlisting">
+AUTH_HANDLER.<span class="perl_Function">clearAllTokens</span>();
+</pre>
+
+			</div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id483812">Result</h5>
+			Tokens that had been stored for the previous session have been cleared.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11469">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11469-272061+02+Oct+2012+13%3A32+en-US&amp;short_desc=Clear+Stored+Tokens&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Retrieve_an_Access_Token">2.7. Retrieve Access Tokens</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id468551">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">Section 2.2, “Authorize a user with the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		The GWT Client Provider library can be used to retrieve the last access token supplied or to retrieve a token for a specific request previously issued.
+	</div><div class="procedure"><h6>Procedure 2.7. Task</h6><ul><li class="step"><div class="para"><p></p>
+				To retreive access tokens, use the following code: 
+<pre class="programlisting">
+String accessToken = AUTH_HANDLER.<span class="perl_Function">getLastTokenResult</span>();
+String accessTokenForSpecificRequest = AUTH_HANDLER.<span class="perl_Function">getTokenForRequest</span>(myStoredAuthRequest);
+</pre>
+
+			</div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id452417">Result</h5>
+			Your access token has been successfully retrieved.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11470">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11470-272066+02+Oct+2012+13%3A32+en-US&amp;short_desc=Retrieve+Access+Tokens&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Encode_a_URL">2.8. Encode a URL</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id596896">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Authorizing_a_User_with_the_GWT_Client_Provider_Library">Section 2.2, “Authorize a user with the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="procedure"><h6>Procedure 2.8. Task</h6><ul><li class="step"><div class="para"><p></p>
+				To encode a URL, use the following code: 
+<pre class="programlisting">
+AUTH_HANDLER.<span class="perl_Function">encodeUrl</span>(<span class="perl_String">"http://myurl"</span>);
+</pre>
+
+			</div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id569204">Result</h5>
+			The specified URL has been encoded.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11471">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11471-272068+02+Oct+2012+13%3A32+en-US&amp;short_desc=Encode+a+URL&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Prepare_the_GWT_Client_Application_for_Use">2.9. Prepare the GWT Client Application for Use</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id541371">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#About_the_GWT_Client_Application">Section 1.7, “About the GWT Client Application”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		The GWT Client Application demonstrates how the GWT Client Provider library can be used and how a GWT client application can interact with the other components of PressGang Belay. To run the application:
+	</div><div class="procedure"><h6>Procedure 2.9. Task</h6><ol class="1"><li class="step"><div class="para"><p></p>
+				Navigate to the Belay GitHub page and clone the repository.
+			</div></li><li class="step"><div class="para"><p></p>
+				Edit the <code class="filename">functionaltest.properties</code> file in <code class="filename">OAuth2GwtClientApp/src/test/resources/functional</code> and add the usernames and passwords of your external OpenID accounts for Google, Yahoo, Fedora etc. Alternatively, you can add these details as arguments when you run mvn using the parameter values in the <code class="filename">functionaltest.properties</code> file: ie: <code class="code">mvn clean install -Dgoogle.user=myid@gmail.com -Dgoogle.pass=password</code>.
+			</div></li><li class="step"><div class="para"><p></p>
+				Unfortunately one project dependency, the gwt-oauth2 library, was not hosted online anywhere at the time of writing, so it must be added. Download the latest gwt-oauth2 library jar and upload it to a local Maven repository you can access. Build the project with the command <code class="code">mvn clean install -Dgwt.oauth2.repo="http://yourmavenrepository.com"</code>. Alternatively, you could add this jar to your classpath and remove the related Maven dependencies/repositories.
+			</div></li></ol></div><div class="formalpara"><p></p><h5 class="formalpara" id="id432645">Result</h5>
+			The GWT Client Application is now ready to be run.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11472">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11472-271994+02+Oct+2012+13%3A32+en-US&amp;short_desc=Prepare+the+GWT+Client+Application+for+Use&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div></div><div class="chapter" id="chap-Resource_Server_Provider_and_Sample_Application"><div class="titlepage"><div><div><h2 class="title">Chapter 3. Resource Server Provider and Sample Application</h2></div></div></div><div class="toc"><dl><dt><span class="section"><a href="#Secure_RESTful_Web_Services_with_the_Resource_Server_Provider_Library">3.1. Secure RESTful Web Services with the Resource Server Provider Library</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Secure_RESTful_Web_Services_with_the_Resource_Server_Provider_Library">3.1. Secure RESTful Web Services with the Resource Server Provider Library</h2></div></div></div><div class="para"><p></p>
+		It is assumed that you are using Linux and have a Maven web application project already set up with some JAX-RS endpoints. It also assumes you are deploying to JBoss AS 7. If you use a different build tool, OS or application server, adapt the steps to suit.
+	</div><div class="para"><p></p>
+		The first major component to configure is your data source. If you already have a database for your application, you can choose to add the resource server provider's data to it, or you can create a separate database for this information. The following steps assume you wish to keep the data sources separate, or do not already have a data source configured. If this is not the case, you can simply merge the following with your existing configuration and database.
+	</div><div class="procedure"><h6>Procedure 3.1. Task</h6><ol class="1"><li class="step"><div class="para"><p></p>
+				In <code class="filename">{project.home/src/main/webapp/WEB-INF</code>, create a datasource xml file for the resource server database, such as <code class="filename">oauth2resourceserver-ds.xml</code>. Take note of the JNDI name as it must be included under <span class="property">jta-data-source</span> in your <code class="filename">persistence.xml</code>. Adding to your <code class="filename">persistence.xml</code> will be continued in later steps. Here is an example datasource configuration file for an in-memory database: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;code&gt;</span>
+	<span class="perl_Keyword">&lt;?xml</span> version="1.0" encoding="UTF-8"<span class="perl_Keyword">?&gt;</span>
+		<span class="perl_Keyword">&lt;datasources</span><span class="perl_Others"> xmlns=</span><span class="perl_String">"http://www.jboss.org/ironjacamar/schema"</span><span class="perl_Others"> xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="perl_Others"> xsi:schemaLocation=</span><span class="perl_String">"http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+			<span class="perl_Keyword">&lt;datasource</span><span class="perl_Others"> jndi-name=</span><span class="perl_String">"java:jboss/datasources/OAuth2ResourceServerDS"</span><span class="perl_Others"> pool-name=</span><span class="perl_String">"oauth2resourceserver"</span><span class="perl_Others"> enabled=</span><span class="perl_String">"true"</span><span class="perl_Error">use-java-context="true"</span><span class="perl_Keyword">&gt;</span>
+				<span class="perl_Keyword">&lt;connection-url&gt;</span>jdbc:h2:mem:oauth2resourceserver;DB_CLOSE_ON_EXIT=FALSE<span class="perl_Keyword">&lt;/connection-url&gt;</span>
+				<span class="perl_Keyword">&lt;driver&gt;</span>h2<span class="perl_Keyword">&lt;/driver&gt;</span>
+				<span class="perl_Keyword">&lt;security&gt;</span>
+					<span class="perl_Keyword">&lt;user-name&gt;</span>sa<span class="perl_Keyword">&lt;/user-name&gt;</span>
+					<span class="perl_Keyword">&lt;password&gt;</span>sa<span class="perl_Keyword">&lt;/password&gt;</span>
+				<span class="perl_Keyword">&lt;/security&gt;</span>
+			<span class="perl_Keyword">&lt;/datasource&gt;</span>
+		<span class="perl_Keyword">&lt;/datasources&gt;</span>
+<span class="perl_Keyword">&lt;/code&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				While you are working in the directory <code class="filename">{project.home/src/main/webapp/WEB-INF</code>, create a file there called <code class="filename">beans.xml</code>. Its content should be as follows: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;?xml</span> version="1.0" encoding="UTF-8"<span class="perl_Keyword">?&gt;</span>
+	<span class="perl_Keyword">&lt;beans</span><span class="perl_Others"> xmlns=</span><span class="perl_String">"http://java.sun.com/xml/ns/javaee"</span><span class="perl_Others"> xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="perl_Others">        	xsi:schemaLocation=</span><span class="perl_String">"</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">        	http://java.sun.com/xml/ns/javaee</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">        	http://java.sun.com/xml/ns/javaee/beans_1_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+        <span class="perl_Keyword">&lt;/beans&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				Create a <code class="filename">persistence.xml</code> file under <code class="filename">${project.basedir}/src/main/resources/META-INF</code>, or open your existing one. Add a persistence unit for the data source you defined in step 1, making sure the JTA data source specified matches the JNDI name in your data source XML and that the Resource Server Provider model classes to be used (<code class="classname">OAuth2RSScope</code> and <code class="classname">OAuth2RSEndpoint</code>) are listed. Here is an example <code class="filename">persistence.xml</code>: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;?xml</span> version="1.0" encoding="UTF-8"<span class="perl_Keyword">?&gt;</span>
+<span class="perl_Keyword">&lt;persistence</span><span class="perl_Others"> version=</span><span class="perl_String">"2.0"</span>
+<span class="perl_Others">   xmlns=</span><span class="perl_String">"http://java.sun.com/xml/ns/persistence"</span><span class="perl_Others"> xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="perl_Others">   xsi:schemaLocation=</span><span class="perl_String">"</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">        http://java.sun.com/xml/ns/persistence</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">        http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+    <span class="perl_Keyword">&lt;persistence-unit</span><span class="perl_Others"> name=</span><span class="perl_String">"oauth2-resourceserver"</span><span class="perl_Keyword">&gt;</span>
+        <span class="perl_Keyword">&lt;jta-data-source&gt;</span>java:jboss/datasources/OAuth2ResourceServerDS<span class="perl_Keyword">&lt;/jta-data-source&gt;</span>
+        <span class="perl_Keyword">&lt;jar-file&gt;</span>resource-server-provider-1.0-SNAPSHOT.jar<span class="perl_Keyword">&lt;/jar-file&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSScope<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSEndpoint<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Comment">&lt;!-- Demo database settings only. Not suitable for production environment --&gt;</span>
+        <span class="perl_Keyword">&lt;properties&gt;</span>
+            <span class="perl_Keyword">&lt;property</span><span class="perl_Others"> name=</span><span class="perl_String">"jboss.entity.manager.factory.jndi.name"</span><span class="perl_Others"> value=</span><span class="perl_String">"java:app/OAuth2ResourceServerManagerFactory"</span> <span class="perl_Keyword">/&gt;</span>
+            <span class="perl_Keyword">&lt;property</span><span class="perl_Others"> name=</span><span class="perl_String">"hibernate.hbm2ddl.auto"</span><span class="perl_Others"> value=</span><span class="perl_String">"create-drop"</span> <span class="perl_Keyword">/&gt;</span>
+            <span class="perl_Keyword">&lt;property</span><span class="perl_Others"> name=</span><span class="perl_String">"hibernate.hbm2ddl.import_files"</span><span class="perl_Others"> value=</span><span class="perl_String">"resourceserver-import.sql"</span> <span class="perl_Keyword">/&gt;</span>
+            <span class="perl_Keyword">&lt;property</span><span class="perl_Others"> name=</span><span class="perl_String">"hibernate.show_sql"</span><span class="perl_Others"> value=</span><span class="perl_String">"false"</span> <span class="perl_Keyword">/&gt;</span>
+        <span class="perl_Keyword">&lt;/properties&gt;</span>
+    <span class="perl_Keyword">&lt;/persistence-unit&gt;</span>
+<span class="perl_Keyword">&lt;/persistence&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				In the same directory, <code class="filename">${project.basedir}/src/main/resources/META-INF</code>, create a file called <code class="filename">resourceserver.properties</code>. This file must be present with all properties set, other than <span class="property">tokenExpiryExtensionThreshold</span>, which is optional, in order for the Resource Server Provider library to function. Here is an example <code class="filename">resourceserver.properties</code> file with comments explaining each property: 
+<pre class="programlisting">
+authServerUsername=resourceserver # Basic auth username <span class="perl_Keyword">for</span> the Resource Server, as set on the Auth Server. <span class="perl_Keyword">This</span> is used when the library needs to request information about an OAuth token
+
+authServerPassword=password # Basic auth password <span class="perl_Keyword">for</span> the Resource Server, as set on the Auth Server
+
+authServerInfoUrl=https:<span class="perl_Comment">//localhost:8443/OAuth2AuthServer/rest/auth/info # The endpoint the Resource Server Provider should query for OAuth2 token information</span><span class="perl_Comment"></span>
+<span class="perl_Comment"></span>
+entityManagerFactoryJndiAddress=java:app/OAuth2ResourceServerManagerFactory # The JNDI address of the Resource Server manager factory, as specified in your persistence.<span class="perl_Function">xml</span> (see step <span class="perl_Float">3</span>)
+
+tokenExpiryExtensionThreshold=<span class="perl_Float">300</span> # <span class="perl_Keyword">If</span> a token used by a <span class="perl_Keyword">public</span> <span class="perl_Function">client</span> (which can't access refresh tokens) is within <span class="perl_Keyword">this</span> many seconds of expiring when a request is made, the expiry time will be extended. Defaults to <span class="perl_Float">900</span> (<span class="perl_Float">15</span> minutes)
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				The Resource Server Provider library needs to know what endpoints the Resource Server provides, and which scopes grant access to a particular endpoint. Endpoints are defined by their URL pattern, which can include basic regex, and their HTTP method. The scope names used must match those used by the Auth Server, as it is the Auth Server that grants client access to particular scopes on behalf of end-users. If a token has any of the scopes mapped to an endpoint, requests made with that token will be granted access to the endpoint. The endpoints, scopes and mappings between them is data that needs to be imported into the database. Here is a sample <code class="filename">resourceserver-import.sql</code> file, placed in <code class="filename">${project.basedir}/src/main/resources</code> to import data to a data source when the application is deployed. With this data, only GET requests are allowed under the DEFAULT scope. 
+<pre class="programlisting">
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE (SCOPE_ID, SCOPE_NAME) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_String">'DEFAULT'</span>)
+
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_String">'https://localhost:8443/OAuth2SecuredRestApp/rest/people'</span>, <span class="perl_String">'GET'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-2</span>, <span class="perl_String">'https://localhost:8443/OAuth2SecuredRestApp/rest/people/[0-9]+'</span>, <span class="perl_String">'GET'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-3</span>, <span class="perl_String">'https://localhost:8443/OAuth2SecuredRestApp/rest/people'</span>, <span class="perl_String">'POST'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-4</span>, <span class="perl_String">'https://localhost:8443/OAuth2SecuredRestApp/rest/people'</span>, <span class="perl_String">'PUT'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-5</span>, <span class="perl_String">'https://localhost:8443/OAuth2SecuredRestApp/rest/people/[0-9]+'</span>, <span class="perl_String">'DELETE'</span>)
+
+ 
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_DecVal">-1</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_DecVal">-2</span>)
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				The last major part of configuring your Resource Server using the Resource Server Provider library is to add a filter for the protected resources. This is done in the <code class="filename">web.xml</code> file. Create a file called <code class="filename">web.xml</code> under <code class="filename">${project.basedir}/src/main/webapp/WEB-INF</code>, or open your existing file. You need to add a filter using the <code class="classname">org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSFilter</code> class and a mapping indicating which URLs should be protected by this filter. You also need to define a context parameter to tell the library which class to use to make the access decisions. Here is an example <code class="filename">web.xml</code> that secures all endpoints under and including <code class="filename">/rest/people</code>: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;web-app</span><span class="perl_Others"> version=</span><span class="perl_String">"3.0"</span><span class="perl_Others"> xmlns=</span><span class="perl_String">"http://java.sun.com/xml/ns/javaee"</span><span class="perl_Others"> xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span><span class="perl_Others"> xsi:schemaLocation=</span><span class="perl_String">"http://java.sun.com/xml/ns/javaeehttp://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+    <span class="perl_Keyword">&lt;display-name&gt;</span>PressGang Belay OAuth2-secured App Example<span class="perl_Keyword">&lt;/display-name&gt;</span>
+    <span class="perl_Keyword">&lt;filter&gt;</span>
+        <span class="perl_Keyword">&lt;filter-name&gt;</span>OAuth2 Filter<span class="perl_Keyword">&lt;/filter-name&gt;</span>
+        <span class="perl_Keyword">&lt;filter-class&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSFilter<span class="perl_Keyword">&lt;/filter-class&gt;</span>
+    <span class="perl_Keyword">&lt;/filter&gt;</span>
+    <span class="perl_Keyword">&lt;filter-mapping&gt;</span>
+        <span class="perl_Keyword">&lt;filter-name&gt;</span>OAuth2 Filter<span class="perl_Keyword">&lt;/filter-name&gt;</span>
+        <span class="perl_Keyword">&lt;url-pattern&gt;</span>/rest/people/*<span class="perl_Keyword">&lt;/url-pattern&gt;</span>
+    <span class="perl_Keyword">&lt;/filter-mapping&gt;</span>
+    <span class="perl_Keyword">&lt;context-param&gt;</span>
+        <span class="perl_Keyword">&lt;param-name&gt;</span>oauth.rs.provider-class<span class="perl_Keyword">&lt;/param-name&gt;</span>
+        <span class="perl_Keyword">&lt;param-value&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSProvider<span class="perl_Keyword">&lt;/param-value&gt;</span>
+    <span class="perl_Keyword">&lt;/context-param&gt;</span>
+<span class="perl_Keyword">&lt;/web-app&gt;</span>
+</pre>
+
+			</div></li></ol></div><div class="formalpara"><p></p><h5 class="formalpara" id="id597826">Result</h5>
+			Your Web Service is using the Resource Server Provider Library and has been secured.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11610">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11610-296655+02+Oct+2012+13%3A32+en-US&amp;short_desc=Secure+RESTful+Web+Services+with+the+Resource+Server+Provider+Library&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div></div><div class="chapter" id="chap-Authorisation_Server_and_Associated_Processes"><div class="titlepage"><div><div><h2 class="title">Chapter 4. Authorisation Server and Associated Processes</h2></div></div></div><div class="toc"><dl><dt><span class="section"><a href="#Set_Up_an_OAuth2_Authorization_Server_Using_the_Auth_Server_Provider_Library">4.1. Set Up an OAuth2 Authorization Server Using the Auth Server Provider Library</a></span></dt><dt><span class="section"><a href="#Define_a_Web_Service_for_Your_Auth_Server">4.2. Define Paths For Provided Endpoint Implementations</a></span></dt><dt><span class="section"><a href="#Define_Custom_Paths_For_Endpoint_Methods">4.3. Customise Paths For Provided Endpoint Implementations</a></span></dt><dt><span class="section"><a href="#Override_Auth_Server_Provider_Configuration_Options">4.4. Override Auth Server Provider Configuration Options</a></span></dt><dt><span class="section"><a href="#About_Using_GWT_with_OAuth2">4.5. About Using GWT with OAuth2</a></span></dt><dt><span class="section"><a href="#Override_the_Default_OAuth2_Token_Generation_Service">4.6. Override Default OAuth2 Token Generation Service</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Set_Up_an_OAuth2_Authorization_Server_Using_the_Auth_Server_Provider_Library">4.1. Set Up an OAuth2 Authorization Server Using the Auth Server Provider Library</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id569782">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#About_the_Authorization_Server">Section 1.9, “About the Authorization Server”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#About_the_Authorization_Server_Provider">Section 1.10, “About the Authorization Server Provider”</a>
+					</div></li><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#About_PressGang_Belay_OAuth_Tokens">Section 1.17, “About PressGang Belay OAuth Tokens”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		This task assumes you are using a Maven project structure on Linux and will be running your webapp on JBoss AS 7. If you use a different build tool, application server or OS, adapt the steps to suit.
+	</div><div class="procedure"><h6>Procedure 4.1. Task</h6><ol class="1"><li class="step"><div class="para"><p></p>
+				Obtain the Auth Server Provider library jar file and add it to the classpath of your project. If you are using Maven, you can achieve this by adding the JBoss repository and Auth Server Provider dependency to your <code class="filename">pom.xml</code> as follows in the example below. If you are using any other build tool, download the appropriate jar file from the Maven repository and add it as a library. 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;project&gt;</span>
+	...
+    	<span class="perl_Keyword">&lt;repositories&gt;</span>
+        	<span class="perl_Keyword">&lt;repository&gt;</span>
+            	<span class="perl_Keyword">&lt;id&gt;</span>oss-repo<span class="perl_Keyword">&lt;/id&gt;</span>
+                <span class="perl_Keyword">&lt;name&gt;</span>OSS repository<span class="perl_Keyword">&lt;/name&gt;</span>
+                <span class="perl_Keyword">&lt;url&gt;</span>https://oss.sonatype.org/content/groups/public/<span class="perl_Keyword">&lt;/url&gt;</span>
+            <span class="perl_Keyword">&lt;/repository&gt;</span>
+        <span class="perl_Keyword">&lt;/repositories&gt;</span>
+    ...
+        <span class="perl_Keyword">&lt;dependencies&gt;</span>
+            <span class="perl_Keyword">&lt;dependency&gt;</span>
+                <span class="perl_Keyword">&lt;groupId&gt;</span>org.jboss.pressgang.belay<span class="perl_Keyword">&lt;/groupId&gt;</span>
+                <span class="perl_Keyword">&lt;artifactId&gt;</span>auth-server<span class="perl_Keyword">&lt;/artifactId&gt;</span>
+                <span class="perl_Keyword">&lt;version&gt;</span>1.0<span class="perl_Keyword">&lt;/version&gt;</span>
+            <span class="perl_Keyword">&lt;/dependency&gt;</span>
+        <span class="perl_Keyword">&lt;/dependencies&gt;</span>
+    ...
+<span class="perl_Keyword">&lt;/project&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				Create a package under <code class="filename">{project.basedir}/src/main/java</code> in which to keep your web service code. Alternatively, you can define your endpoint paths in your <code class="filename">web.xml</code>. This documentation does not discuss this approach. To use the Java EE 6 no-XML approach to activating JAX-RS, in this package, create a class called <code class="classname">JaxRsActivator</code> that looks like the following, using your desired web service endpoint base in the <span class="property">@ApplicationPath</span> annotation: 
+<pre class="programlisting">
+<span class="perl_Keyword">import</span> javax.ws.rs.ApplicationPath;
+<span class="perl_Keyword">import</span> javax.ws.rs.core.Application;
+
+@<span class="perl_Function">ApplicationPath</span>(<span class="perl_String">"/rest"</span>)
+<span class="perl_Keyword">public</span> <span class="perl_Keyword">class</span> JaxRsActivator <span class="perl_Keyword">extends</span> Application {
+   <span class="perl_Comment">/* class body intentionally left blank */</span>
+}
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				The Auth Server Provider library uses the Belay Resource Server Provider library. As such, there are properties files for both libraries for custom configuration. Create a file called <code class="filename">resourceserver.properties</code> in the directory <code class="filename">${project.basedir}/src/main/resources/META-INF/</code>. This file must be present with the first four properties set if you wish to use the Auth Server endpoint implementations provided by the Auth Server Provider library; the token expiry threshold property is optional. Here is an example <code class="filename">resourceserver.properties</code> file with comments explaining each property: 
+<pre class="programlisting">
+authServerUsername=authserver # Basic auth username for the Auth Server, as set on your server. This is used when the Resource Server Provider library needs to request information about an OAuth token used to access an OAuth2-protected Auth Server endpoint, such as /rest/auth/identity/query
+
+authServerPassword=password # Basic auth password for the Auth Server, as set on your server
+
+authServerInfoUrl=https://localhost:8443/OAuth2AuthServer/rest/auth/info # The endpoint the Resource Server Provider should query for OAuth2 token information
+
+entityManagerFactoryJndiAddress=java:app/OAuth2AuthServerManagerFactory # The JNDI address of the Auth Server manager factory, as specified in your persistence.xml (see step 8)
+
+tokenExpiryExtensionThreshold=300 # If a token used by a public client (which can't access refresh tokens) is within this many seconds of expiring when a request is made, the expiry time will be extended. Defaults to 900 (15 minutes)
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				In <code class="code">{project.basedir}/src/main/resource/META-INF</code> you should also create a <code class="filename">persistence.xml</code> file. The important things to include are:
+			</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						A reference to the Resource Server Provider jar file, as you will be using its model classes, and a listing of those classes
+					</div></li><li class="listitem"><div class="para"><p></p>
+						A reference to the Auth Server Provider jar file, as you will be using its model classes, and a listing of those classes
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The property <span class="property">jboss.entity.manager.factory.jndi.name</span>, which should be set to the same JNDI address you set in your <code class="filename">resourceserver.properties</code> file for the <span class="property">entityManagerFactoryJndiAddress</span> property. This allows the Resource Server Provider to create an appropriate Entity Manager. The persistence unit name must be <span class="property">oauth2-authserver</span>.
+					</div></li></ul></div><div class="para"><p></p>
+				Here is an example <code class="filename">persistence.xml</code>: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;?xml</span> version="1.0" encoding="UTF-8"<span class="perl_Keyword">?&gt;</span>
+<span class="perl_Keyword">&lt;persistence</span><span class="perl_Others"> version=</span><span class="perl_String">"2.0"</span>
+<span class="perl_Others">	xmlns=</span><span class="perl_String">"http://java.sun.com/xml/ns/persistence"</span><span class="perl_Others"> xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="perl_Others">    xsi:schemaLocation=</span><span class="perl_String">"</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">    http://java.sun.com/xml/ns/persistence</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">    http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+    <span class="perl_Keyword">&lt;persistence-unit</span><span class="perl_Others"> name=</span><span class="perl_String">"oauth2-authserver"</span><span class="perl_Keyword">&gt;</span>
+    	<span class="perl_Keyword">&lt;jta-data-source&gt;</span>java:jboss/datasources/OAuth2AuthServerDS<span class="perl_Keyword">&lt;/jta-data-source&gt;</span>
+        <span class="perl_Keyword">&lt;jar-file&gt;</span>resource-server-provider-1.0.jar<span class="perl_Keyword">&lt;/jar-file&gt;</span>
+        <span class="perl_Keyword">&lt;jar-file&gt;</span>auth-server-provider-1.0.jar<span class="perl_Keyword">&lt;/jar-file&gt;</span>
+	
+		<span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSScope<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.data.model.OAuth2RSEndpoint<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.ClientApplication<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.ClientApproval<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.Identity<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.OpenIdProvider<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.TokenGrant<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.CodeGrant<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.data.model.User<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Comment">&lt;!-- Demo database settings only. Not suitable for production environment --&gt;</span>
+        <span class="perl_Keyword">&lt;properties&gt;</span>
+        	<span class="perl_Keyword">&lt;property</span><span class="perl_Others"> name=</span><span class="perl_String">"jboss.entity.manager.factory.jndi.name"</span><span class="perl_Others"> value=</span><span class="perl_String">"java:app/OAuth2AuthServerManagerFactory"</span> <span class="perl_Keyword">/&gt;</span>
+            <span class="perl_Keyword">&lt;property</span><span class="perl_Others"> name=</span><span class="perl_String">"hibernate.hbm2ddl.auto"</span><span class="perl_Others"> value=</span><span class="perl_String">"create-drop"</span> <span class="perl_Keyword">/&gt;</span>
+            <span class="perl_Keyword">&lt;property</span><span class="perl_Others"> name=</span><span class="perl_String">"hibernate.show_sql"</span><span class="perl_Others"> value=</span><span class="perl_String">"false"</span> <span class="perl_Keyword">/&gt;</span>
+        <span class="perl_Keyword">&lt;/properties&gt;</span>
+    <span class="perl_Keyword">&lt;/persistence-unit&gt;</span>
+<span class="perl_Keyword">&lt;/persistence&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				If you are simply testing the system with an in-memory database, you will want to create an <code class="filename">import.sql</code> file in <code class="filename">${project.basedir}/src/main/resources</code> to put some data in your database when the Auth Server starts. Whether you are using an in-memory database or a file database, you will need to make sure your database contains the same sort of information as included in the following sample <code class="filename">import.sql</code>. See the reference for the database schema. The data to import includes:
+			</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						The Clients authorized to use the Auth Server, including their unique identifier, name and the redirect URI they use. This must include the Auth Server itself as it plays the role of a client during user identity association requests. The identifier and (<span class="property">completeAssociation</span>) URI used for the Auth Server must match what was specified in the properties file.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The OpenID providers available for end-user authentication, including their name and URL, either in full or just the domain if appropriate. OpenID providers that include a user ID as part their domains (ie: MyOpenID) should be recorded with the static part of the domain only.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The scopes that the Auth Server can assign to end-user identities, which must have unique names. There must be a 'default' scope (as defined in the properties file) as this is the scope all users are given when they are first created.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The scopes that the Resource Server Provider uses when it is protecting Auth Server endpoints, which under the default endpoint implementations are the user management and public client association services. These names should match the scope names used in the SCOPE table as it the Auth Server that assigns these to end-users.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The Auth Server endpoints that the Resource Server Provider is being used to protect. Each endpoint must have a URL, which can include basic regex, and an HTTP method.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						The mapping between Resource Server scopes and Resource Server endpoints, ie: which scopes a user must have to access an endpoint.
+					</div></li></ul></div><div class="para"><p></p>
+				Here is a sample <code class="filename">import.sql</code> file. Note that this data allows clients to perform user management by default; you may wish to put these endpoints under a separate scope.: 
+<pre class="programlisting">
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, GRANTS_MUST_EXPIRE) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_String">'OAuth2AuthServer'</span>, <span class="perl_String">'OAuth2AuthServer'</span>, <span class="perl_String">'/auth/identity/completeAssociation'</span>, <span class="perl_Keyword">true</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, GRANTS_MUST_EXPIRE) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-2</span>, <span class="perl_String">'pressgang_belay_id'</span>, <span class="perl_String">'GwtOAuth2Client'</span>, <span class="perl_Keyword">true</span>, <span class="perl_String">'https://localhost:8443/OAuth2GwtClientApp/org.jboss.pressgang.belay.oauth2.gwt.sample.App/oAuthWindow.html'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_String">'Google'</span>, <span class="perl_String">'gmail.com'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-2</span>, <span class="perl_String">'Red Hat'</span>, <span class="perl_String">'https://localhost:8443/OpenIdProvider'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-3</span>, <span class="perl_String">'Yahoo'</span>, <span class="perl_String">'me.yahoo.com'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-4</span>, <span class="perl_String">'Facebook'</span>, <span class="perl_String">'facebook.com'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-5</span>, <span class="perl_String">'myOpenID'</span>, <span class="perl_String">'myopenid.com'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-6</span>, <span class="perl_String">'Fedora Account System'</span>,<span class="perl_String">'admin.fedoraproject.org'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> <span class="perl_Keyword">SCOPE</span> (SCOPE_ID, SCOPE_NAME) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_String">'DEFAULT'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE (SCOPE_ID, SCOPE_NAME) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_String">'DEFAULT'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_String">'https://localhost:8443/OAuth2AuthServer/rest/auth/user/associate/associateIdentity'</span>, <span class="perl_String">'GET'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-2</span>, <span class="perl_String">'https://localhost:8443/OAuth2AuthServer/rest/auth/user/associate/completeAssociation'</span>, <span class="perl_String">'GET'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-3</span>, <span class="perl_String">'https://localhost:8443/OAuth2AuthServer/rest/auth/user/makeIdentityPrimary'</span>, <span class="perl_String">'GET'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-4</span>, <span class="perl_String">'https://localhost:8443/OAuth2AuthServer/rest/auth/user/queryIdentity'</span>, <span class="perl_String">'GET'</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-5</span>, <span class="perl_String">'https://localhost:8443/OAuth2AuthServer/rest/auth/user/queryUser'</span>, <span class="perl_String">'GET'</span>)
+
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_DecVal">-1</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_DecVal">-2</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_DecVal">-3</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_DecVal">-4</span>)
+<span class="perl_Keyword">insert</span> <span class="perl_Keyword">into</span> RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) <span class="perl_Keyword">values</span> (<span class="perl_DecVal">-1</span>, <span class="perl_DecVal">-5</span>)
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				Create or navigate to the directory <code class="filename">{project.basedir}/src/main/webapp/WEB-INF</code>. In this directory, create a file called <code class="filename">beans.xml</code>. Its content should be as follows: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;?xml</span> version="1.0" encoding="UTF-8"<span class="perl_Keyword">?&gt;</span>
+	<span class="perl_Keyword">&lt;beans</span><span class="perl_Others"> xmlns=</span><span class="perl_String">"http://java.sun.com/xml/ns/javaee"</span><span class="perl_Others"> xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="perl_Others">    	xsi:schemaLocation=</span><span class="perl_String">"</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">        http://java.sun.com/xml/ns/javaee</span><span class="perl_String"></span>
+<span class="perl_String"></span><span class="perl_String">        http://java.sun.com/xml/ns/javaee/beans_1_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+    <span class="perl_Keyword">&lt;/beans&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				In <code class="code">{project.home/src/main/webapp/WEB-INF</code>, create a datasource xml file for your database, such as <code class="filename">oauth2authserver-ds.xml</code>. Its JNDI name must match the jta-data-source included in your <code class="filename">persistence.xml</code>. Here is an example datasource configuration file for an in-memory database: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;?xml</span> version="1.0" encoding="UTF-8"<span class="perl_Keyword">?&gt;</span>
+<span class="perl_Keyword">&lt;datasources</span><span class="perl_Others"> xmlns=</span><span class="perl_String">"http://www.jboss.org/ironjacamar/schema"</span>
+<span class="perl_Others">	xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="perl_Others">    xsi:schemaLocation=</span><span class="perl_String">"http://www.jboss.org/ironjacamar/schema http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+    <span class="perl_Keyword">&lt;datasource</span><span class="perl_Others"> jndi-name=</span><span class="perl_String">"java:jboss/datasources/OAuth2AuthServerDS"</span>
+<span class="perl_Others">    	pool-name=</span><span class="perl_String">"oauth2authserver"</span><span class="perl_Others"> enabled=</span><span class="perl_String">"true"</span>
+<span class="perl_Others">        use-java-context=</span><span class="perl_String">"true"</span><span class="perl_Keyword">&gt;</span>
+        	<span class="perl_Keyword">&lt;connection-url&gt;</span>jdbc:h2:mem:oauth2authserver;DB_CLOSE_ON_EXIT=FALSE<span class="perl_Keyword">&lt;/connection-url&gt;</span>
+            <span class="perl_Keyword">&lt;driver&gt;</span>h2<span class="perl_Keyword">&lt;/driver&gt;</span>
+            <span class="perl_Keyword">&lt;security&gt;</span>
+            	<span class="perl_Keyword">&lt;user-name&gt;</span>sa<span class="perl_Keyword">&lt;/user-name&gt;</span>
+                <span class="perl_Keyword">&lt;password&gt;</span>sa<span class="perl_Keyword">&lt;/password&gt;</span>
+            <span class="perl_Keyword">&lt;/security&gt;</span>
+    <span class="perl_Keyword">&lt;/datasource&gt;</span>
+<span class="perl_Keyword">&lt;/datasources&gt;</span>
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				In <code class="filename">{project.basedir}/src/main/webapp/WEB-INF</code>, create a <code class="filename">web.xml</code> file. There are several aspects of the Auth Server set-up to configure here. These are:
+			</div><div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<span class="property">GuiceOverrideServletContextListener</span>: The OpenID Filter library that the Auth Server uses is by default configured to use a Host Meta Fetcher that sends requests to Google as part of the OpenID provider discovery process. This may be undesirable if you are using a custom OpenID provider with an internal URL you don't wish to share, or for performance reasons. The <span class="property">GuiceOverrideServletContextListener</span> overrides this behaviour and uses a default Host Meta Fetcher implementation that does not send requests to Google.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						OpenID Filter: The OpenID filter must be configured for the OAuth2auth and grant endpoints that utilise OpenID for end-user authentication.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						OAuth Filter: The OAuth filter must be configured for the endpoints that have resources protected by OAuth2, namely the identity service endpoints.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						OAuth2 Context Parameters: Context params must be set to configure the OAuth2 libraries, which need to know which class to use as a resource server provider, what types of token transmission to accept (ie: query, header) and what endpoints to use for token requests and authorisation requests.
+					</div></li><li class="listitem"><div class="para"><p></p>
+						Security Constraints: Basic security (or an alternative) needs to be set up for protected resource endpoints, such as the token endpoint for confidential clients and the user information endpoint.
+					</div></li></ul></div><div class="para"><p></p>
+				Here is a sample <code class="filename">web.xml</code> with all of these configured: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;web-app</span><span class="perl_Others"> version=</span><span class="perl_String">"3.0"</span><span class="perl_Others"> xmlns=</span><span class="perl_String">"http://java.sun.com/xml/ns/javaee"</span>
+<span class="perl_Others">		xmlns:xsi=</span><span class="perl_String">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<span class="perl_Others">        xsi:schemaLocation=</span><span class="perl_String">"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"</span><span class="perl_Keyword">&gt;</span>
+	<span class="perl_Keyword">&lt;display-name&gt;</span>PressGang Belay OAuth2 Auth Server<span class="perl_Keyword">&lt;/display-name&gt;</span> 
+
+	<span class="perl_Comment">&lt;!-- Used to override Guice binding in the openid-filter library --&gt;</span>
+	<span class="perl_Keyword">&lt;listener&gt;</span>
+		<span class="perl_Keyword">&lt;listener-class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.openid.GuiceOverrideServletContextListener<span class="perl_Keyword">&lt;/listener-class&gt;</span>
+	<span class="perl_Keyword">&lt;listener&gt;</span>
+
+	<span class="perl_Comment">&lt;!-- The OpenID Filter handles identity authentication --&gt;</span>
+	<span class="perl_Keyword">&lt;filter&gt;</span>
+		<span class="perl_Keyword">&lt;filter-name&gt;</span>OpenID Filter<span class="perl_Keyword">&lt;/filter-name&gt;</span>
+		<span class="perl_Keyword">&lt;filter-class&gt;</span>com.google.code.openid.RelyingPartyFilter<span class="perl_Keyword">&lt;/filter-class&gt;</span>
+	<span class="perl_Keyword">&lt;/filter&gt;</span>
+
+	<span class="perl_Comment">&lt;!-- This defines the URL that requires OpenID authentication --&gt;</span>
+	<span class="perl_Keyword">&lt;filter-mapping&gt;</span>
+		<span class="perl_Keyword">&lt;filter-name&gt;</span>OpenID Filter<span class="perl_Keyword">&lt;/filter-name&gt;</span>
+		<span class="perl_Keyword">&lt;url-pattern&gt;</span>/rest/auth/authorize<span class="perl_Keyword">&lt;/url-pattern&gt;</span>
+		<span class="perl_Keyword">&lt;url-pattern&gt;</span>/auth/confidential/authorize<span class="perl_Keyword">&lt;/url-pattern&gt;</span>
+		<span class="perl_Keyword">&lt;url-pattern&gt;</span>/rest/auth/grant<span class="perl_Keyword">&lt;/url-pattern&gt;</span>
+ 	<span class="perl_Keyword">&lt;/filter-mapping&gt;</span>
+
+	<span class="perl_Comment">&lt;!-- The OAuth Filter handles auth for identity services --&gt;</span>
+	<span class="perl_Keyword">&lt;filter&gt;</span>
+		<span class="perl_Keyword">&lt;filter-name&gt;</span>OAuth Filter<span class="perl_Keyword">&lt;/filter-name&gt;</span>
+		<span class="perl_Keyword">&lt;filter-class&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSFilter<span class="perl_Keyword">&lt;/filter-class&gt;</span>
+	<span class="perl_Keyword">&lt;/filter&gt;</span>
+	<span class="perl_Keyword">&lt;filter-mapping&gt;</span>
+		<span class="perl_Keyword">&lt;filter-name&gt;</span>OAuth Filter<span class="perl_Keyword">&lt;/filter-name&gt;</span>
+		<span class="perl_Keyword">&lt;url-pattern&gt;</span>/rest/auth/user/*<span class="perl_Keyword">&lt;/url-pattern&gt;</span>
+	<span class="perl_Keyword">&lt;/filter-mapping&gt;</span>
+	<span class="perl_Keyword">&lt;context-param&gt;</span>
+		<span class="perl_Keyword">&lt;param-name&gt;</span>oauth.rs.provider-class<span class="perl_Keyword">&lt;/param-name&gt;</span>
+		<span class="perl_Keyword">&lt;param-value&gt;</span>org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSProvider<span class="perl_Keyword">&lt;/param-value&gt;</span>
+	<span class="perl_Keyword">&lt;/context-param&gt;</span>
+	<span class="perl_Keyword">&lt;context-param&gt;</span>
+		<span class="perl_Keyword">&lt;param-name&gt;</span>oauth.provider.tokens.request<span class="perl_Keyword">&lt;/param-name&gt;</span>
+		<span class="perl_Keyword">&lt;param-value&gt;</span>/rest/auth/token<span class="perl_Keyword">&lt;/param-value&gt;</span>
+	<span class="perl_Keyword">&lt;/context-param&gt;</span>
+	<span class="perl_Keyword">&lt;context-param&gt;</span>
+		<span class="perl_Keyword">&lt;param-name&gt;</span>oauth.provider.tokens.access<span class="perl_Keyword">&lt;/param-name&gt;</span>
+		<span class="perl_Keyword">&lt;param-value&gt;</span>/rest/auth/authorise<span class="perl_Keyword">&lt;/param-value&gt;</span>
+	<span class="perl_Keyword">&lt;/context-param&gt;</span>
+
+	<span class="perl_Comment">&lt;!-- Allowing query-style params on requests, required for identity service endpoints --&gt;</span>
+	<span class="perl_Keyword">&lt;context-param&gt;</span>
+		<span class="perl_Keyword">&lt;param-name&gt;</span>oauth.rs.tokens<span class="perl_Keyword">&lt;/param-name&gt;</span>
+		<span class="perl_Keyword">&lt;param-value&gt;</span>QUERY,HEADER<span class="perl_Keyword">&lt;/param-value&gt;</span>
+	<span class="perl_Keyword">&lt;/context-param&gt;</span>
+	<span class="perl_Keyword">&lt;security-constraint&gt;</span>
+		<span class="perl_Keyword">&lt;web-resource-collection&gt;</span>
+			<span class="perl_Keyword">&lt;web-resource-name&gt;</span>ClientResources<span class="perl_Keyword">&lt;/web-resource-name&gt;</span>
+			<span class="perl_Keyword">&lt;url-pattern&gt;</span>/rest/auth/info<span class="perl_Keyword">&lt;/url-pattern&gt;</span>
+			<span class="perl_Keyword">&lt;url-pattern&gt;</span>/rest/auth/token<span class="perl_Keyword">&lt;/url-pattern&gt;</span>
+		<span class="perl_Keyword">&lt;/web-resource-collection&gt;</span>
+		<span class="perl_Keyword">&lt;auth-constraint&gt;</span>
+			<span class="perl_Keyword">&lt;role-name&gt;</span>clientapp<span class="perl_Keyword">&lt;/role-name&gt;</span>
+		<span class="perl_Keyword">&lt;/auth-constraint&gt;</span>
+		<span class="perl_Keyword">&lt;user-data-constraint&gt;</span>
+			<span class="perl_Keyword">&lt;transport-guarantee&gt;</span>CONFIDENTIAL<span class="perl_Keyword">&lt;/transport-guarantee&gt;</span>
+		<span class="perl_Keyword">&lt;/user-data-constraint&gt;</span>
+	<span class="perl_Keyword">&lt;/security-constraint&gt;</span>
+	<span class="perl_Keyword">&lt;login-config&gt;</span>
+		<span class="perl_Keyword">&lt;auth-method&gt;</span>BASIC<span class="perl_Keyword">&lt;/auth-method&gt;</span>
+		<span class="perl_Keyword">&lt;realm-name&gt;</span>ApplicationRealm<span class="perl_Keyword">&lt;/realm-name&gt;</span>
+	<span class="perl_Keyword">&lt;/login-config&gt;</span>
+	<span class="perl_Keyword">&lt;security-role&gt;</span>
+		<span class="perl_Keyword">&lt;role-name&gt;</span>clientapp<span class="perl_Keyword">&lt;/role-name&gt;</span>
+	<span class="perl_Keyword">&lt;/security-role&gt;</span>
+<span class="perl_Keyword">&lt;/web-app&gt;</span>
+</pre>
+
+			</div></li></ol></div><div class="formalpara"><p></p><h5 class="formalpara" id="id559650">Result</h5>
+			An Authentication Server has been set up and configured for use with the Auth Server Provider Library.
+		</div><div class="see-also-list see-also-list"><p></p><h5 class="formalpara" id="id562003">See Also:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Override_Auth_Server_Provider_Configuration_Options">Section 4.4, “Override Auth Server Provider Configuration Options”</a>
+					</div></li></ul></div>
+
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11473">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11473-296651+02+Oct+2012+13%3A32+en-US&amp;short_desc=Set+Up+an+OAuth2+Authorization+Server+Using+the+Auth+Server+Provider+Library&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Define_a_Web_Service_for_Your_Auth_Server">4.2. Define Paths For Provided Endpoint Implementations</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id608890">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Set_Up_an_OAuth2_Authorization_Server_Using_the_Auth_Server_Provider_Library">Section 4.1, “Set Up an OAuth2 Authorization Server Using the Auth Server Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		For the Auth Server to use any of the library implementations, you must define an endpoint path. Where different versions of the same endpoint need to be defined for public clients and confidential clients, such as with the <code class="methodname">AuthEndpoint</code> and <code class="methodname">AssociationEndpoint</code>, two endpoints can be created extending the same base implementation, with the endpoint for confidential clients protected by Basic authentication or any of the other OAuth2 authentication flows and the public client version left open. For this example, the <code class="methodname">AuthEndpointImpl</code> will be used, which implements the <code class="interfacename">AuthEndpoint</code> interface.
+	</div><div class="procedure"><h6>Procedure 4.2. Task</h6><ol class="1"><li class="step"><div class="para"><p></p>
+				Create a class extending your desired library implementation of the endpoint, for example, <code class="methodname">AuthEndpointImpl</code>.
+			</div></li><li class="step"><div class="para"><p></p>
+				Add the <span class="property">@Path</span> and any relevant request annotations. For example: 
+<pre class="programlisting">
+<span class="perl_Keyword">import</span> org.jboss.pressgang.belay.oauth2.authserver.rest.impl.AuthEndpointImpl;
+
+<span class="perl_Keyword">import</span> javax.enterprise.context.RequestScoped;
+<span class="perl_Keyword">import</span> javax.ws.rs.Path:
+ 
+@RequestScoped
+@<span class="perl_Function">Path</span>(<span class="perl_String">"/auth/authorize"</span>)
+<span class="perl_Keyword">public</span> <span class="perl_Keyword">class</span> PublicClientAuthWebService <span class="perl_Keyword">extends</span> AuthEndpointImpl {
+	<span class="perl_Comment">/* class body intentionally left blank */</span>
+}</pre>
+
+			</div></li></ol></div><div class="formalpara"><p></p><h5 class="formalpara" id="id473370">Result</h5>
+			A path has been defined for a provided endpoint implementation.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11475">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11475-288900+02+Oct+2012+13%3A32+en-US&amp;short_desc=Define+Paths+For+Provided+Endpoint+Implementations&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Define_Custom_Paths_For_Endpoint_Methods">4.3. Customise Paths For Provided Endpoint Implementations</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id545704">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Set_Up_an_OAuth2_Authorization_Server_Using_the_Auth_Server_Provider_Library">Section 4.1, “Set Up an OAuth2 Authorization Server Using the Auth Server Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		If you wish to define custom paths for individual methods of an endpoint interface where these are predefined, such as the <code class="interfacename">UserManagementEndpoint</code> interface, you must override the methods and decorate them with all the required JAX-RS annotations as these will no longer be inherited. Otherwise, the paths defined in the interface will be used, with the base path you defined.
+	</div><div class="procedure"><h6>Procedure 4.3. Task</h6><ul><li class="step"><div class="para"><p></p>
+				Use the following code as a template for your implementation: 
+<pre class="programlisting">
+<span class="perl_Keyword">import</span> org.apache.amber.oauth2.common.exception.OAuthProblemException;
+<span class="perl_Keyword">import</span> org.apache.amber.oauth2.common.exception.OAuthSystemException;
+<span class="perl_Keyword">import</span> org.jboss.pressgang.belay.oauth2.authserver.rest.impl.UserManagementEndpointImpl;
+<span class="perl_Keyword">import</span> org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo;
+<span class="perl_Keyword">import</span> org.jboss.pressgang.belay.oauth2.shared.data.model.UserInfo;
+ 
+<span class="perl_Keyword">import</span> javax.enterprise.context.RequestScoped;
+<span class="perl_Keyword">import</span> javax.servlet.http.HttpServletRequest;
+<span class="perl_Keyword">import</span> javax.ws.rs.GET;
+<span class="perl_Keyword">import</span> javax.ws.rs.Path;
+<span class="perl_Keyword">import</span> javax.ws.rs.Produces;
+<span class="perl_Keyword">import</span> javax.ws.rs.QueryParam;
+<span class="perl_Keyword">import</span> javax.ws.rs.core.Context;
+<span class="perl_Keyword">import</span> javax.ws.rs.core.MediaType;
+<span class="perl_Keyword">import</span> javax.ws.rs.core.Response;
+<span class="perl_Keyword">import</span> java.net.URISyntaxException;
+ 
+@RequestScoped
+@<span class="perl_Function">Path</span>(<span class="perl_String">"/auth/user"</span>)
+<span class="perl_Keyword">public</span> <span class="perl_Keyword">class</span> UserManagementWebService <span class="perl_Keyword">extends</span> UserManagementWebServiceImpl {
+	@Override
+    @GET
+	@<span class="perl_Function">Produces</span>(MediaType.<span class="perl_Function">APPLICATION_JSON</span>)
+    @<span class="perl_Function">Path</span>(<span class="perl_String">"/myCustomQueryUserPath"</span>)
+    <span class="perl_Keyword">public</span> UserInfo <span class="perl_Function">getUserInfo</span>(@Context HttpServletRequest request, String identifier) {
+       	<span class="perl_Keyword">return</span> <span class="perl_Keyword">super</span>.<span class="perl_Function">getPrimaryUserInfo</span>(request, identifier);
+    }
+
+    @Override
+    @GET
+    @<span class="perl_Function">Produces</span>(MediaType.<span class="perl_Function">APPLICATION_JSON</span>)
+    @<span class="perl_Function">Path</span>(<span class="perl_String">"/myCustomQueryIdentityPath"</span>)
+    <span class="perl_Keyword">public</span> IdentityInfo <span class="perl_Function">getIdentityInfo</span>(@Context HttpServletRequest request, @<span class="perl_Function">QueryParam</span>(<span class="perl_String">"id"</span>) String identifier) {
+        <span class="perl_Keyword">return</span> <span class="perl_Keyword">super</span>.<span class="perl_Function">getPrimaryIdentityInfo</span>(request, identifier);
+    }
+
+    @Override
+    @GET
+    @<span class="perl_Function">Path</span>(<span class="perl_String">"/myCustomMakeIdentityPrimaryPath"</span>)
+    <span class="perl_Keyword">public</span> Response <span class="perl_Function">makeIdentityPrimary</span>(@Context HttpServletRequest request, @<span class="perl_Function">QueryParam</span>(<span class="perl_String">"id"</span>) String identifier) {
+        <span class="perl_Keyword">return</span> <span class="perl_Keyword">super</span>.<span class="perl_Function">makeIdentityPrimary</span>(request, identifier);
+    }
+}</pre>
+
+			</div><div class="note"><div class="admonition_header"><h2>Note</h2></div><div class="admonition"><div class="para"><p></p>
+					If you wish to write your own implementations for some or all of the OAuth2 endpoints defined by the Auth Server Provider, you can implement the interfaces supplied (ie: <code class="interfacename">TokenEndpoint</code>, <code class="interfacename">UserManagementEndpoint</code>). You can then configure your Auth Server implementation to use your authorisation and token endpoints in your <code class="filename">web.xml</code>. You should also inform your resource servers and OAuth2 clients where these endpoints are located.
+				</div></div></div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id584233">Result</h5>
+			Predefined paths have been overridden and custom paths have been defined for individual methods of the endpoint interface.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11477">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11477-288904+02+Oct+2012+13%3A32+en-US&amp;short_desc=Customise+Paths+For+Provided+Endpoint+Implementations&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Override_Auth_Server_Provider_Configuration_Options">4.4. Override Auth Server Provider Configuration Options</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id558436">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Set_Up_an_OAuth2_Authorization_Server_Using_the_Auth_Server_Provider_Library">Section 4.1, “Set Up an OAuth2 Authorization Server Using the Auth Server Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		You may wish to create an <code class="filename">authserver.properties</code> file in <code class="filename">${project.basedir}/src/main/resources/META-INF/</code> to override Auth Server Provider configurations options. However, this file and every property in it is optional; defaults will be used if the file is not found or a property is not set.
+	</div><div class="procedure"><h6>Procedure 4.4. Task</h6><ul><li class="step"><div class="para"><p></p>
+				Here is an example <code class="filename">authserver.properties</code> files showing the default values with comments explaining each property available: 
+<pre class="programlisting">
+oAuthTokenExpiry=3600 # The expiry time of an OAuth2 access token in seconds, set when the token is created. This is also the time used to extend public client access tokens by when their expiry time is pushed out
+oAuthCodeExpiry=60 # The expiry time of an OAuth2 authorization code in seconds, set when the code is created
+urlEncoding=UTF-8 # The encoding type specified when encoding or decoding URLs
+openIdRealm=/OAuth2AuthServer/rest/auth/ # The OpenID realm of the Auth Server restEndpointBasePath=/OAuth2AuthServer/rest # The base path for the Auth Server's RESTful endpoints, as defined by the application name and JAX-RS base path
+publicAuthEndpoint=/auth/authorize # The path to the OAuth2 authorization endpoint for public clients (ie: not secured by Basic or other authentication), relative to the project's JAX-RS base path
+grantEndpoint=/auth/grant # The path to the OAuth2 grant endpoint, relative to the project's JAX-RS base path
+completeAssociationEndpoint=/auth/user/associate/completeAssociation # The path to the OAuth2 endpoint to complete an identity association request, relative to the project's JAX-RS base path
+openIdReturnUri=/OAuth2AuthServer/rest/auth/grant # The endpoint to use as the OpenID return URI, which should match the grantEndpoint property but be expressed relative to the server's domain
+authServerOAuthClientId=OAuth2AuthServer # An OAuth client ID for the AuthServer, which much match the value in the database
+defaultScopeName=DEFAULT # The name of the scope that all users should have upon creation and all token grants are given, capitalised by convention. This must have a matching definition in the database
+promptEndUserToApproveClientAppOnEveryLogin=false # Boolean true/false. True if you want the end-user to be prompted to approve client access of their auth info and resources on every login
+endUserConsentUri=/auth/consent # The URI to redirect end-users to give consent for client access to their auth info and resources, relative to the project's JAX-RS base path
+endUserConsentFormCssLocation= # The URL where a style sheet for the end-user consent page can be found; optional
+</pre>
+
+			</div></li></ul></div><div class="formalpara"><p></p><h5 class="formalpara" id="id525965">Result</h5>
+			An <code class="filename">authserver.properties</code> file has been created and the default configurations have been overriden.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11483">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11483-296653+02+Oct+2012+13%3A32+en-US&amp;short_desc=Override+Auth+Server+Provider+Configuration+Options&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="About_Using_GWT_with_OAuth2">4.5. About Using GWT with OAuth2</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id434281">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#Setting_up_the_GWT_Client_Provider_Library">Section 2.1, “Set up the GWT Client Provider Library”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		GWT offers developers an OAuth2 Library for use with GWT applications. Although it provides the facility for your users to grant selective access to their information for different servers, this implementation doesn't require users to do so. Considering that the Authentication Server and Resouce Server could potentially share a database for this application, this Client App doesn't request permission from the user for each one, it assumes that in accepting the inital sharing of private data on login it will continue to be allowed to do so.
+	</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11484">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11484-255334+02+Oct+2012+13%3A32+en-US&amp;short_desc=About+Using+GWT+with+OAuth2&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" id="Override_the_Default_OAuth2_Token_Generation_Service">4.6. Override Default OAuth2 Token Generation Service</h2></div></div></div><div class="prereqs-list prereqs-list"><p></p><h5 class="formalpara" id="id603530">Prerequisites:</h5>
+			<div class="itemizedlist"><ul><li class="listitem"><div class="para"><p></p>
+						<a class="xref" href="#About_PressGang_Belay_OAuth_Tokens">Section 1.17, “About PressGang Belay OAuth Tokens”</a>
+					</div></li></ul></div>
+
+		</div><div class="para"><p></p>
+		The default OAuth2 token generation service from the Auth Server Provider library uses an MD5 token generator and does some checks to ensure active tokens are unique.
+	</div><div class="procedure"><h6>Procedure 4.5. Task</h6><ol class="1"><li class="step"><div class="para"><p></p>
+				To override this service, you will create your own implementation of the <code class="interfacename">org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer</code> interface decorated with the <span class="property">javax.enterprise.inject.Alternative</span> annotation using the following example code: 
+<pre class="programlisting">
+<span class="perl_Keyword">import</span> org.apache.amber.oauth2.common.exception.OAuthSystemException;
+<span class="perl_Keyword">import</span> org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer;
+<span class="perl_Keyword">import</span> javax.ejb.Stateless;
+<span class="perl_Keyword">import</span> javax.enterprise.inject.Alternative;
+
+@Alternative
+@Stateless
+<span class="perl_Keyword">public</span> <span class="perl_Keyword">class</span> AlternativeTokenIssuer <span class="perl_Keyword">implements</span> TokenIssuer {
+
+	@Override
+        <span class="perl_Keyword">public</span> String <span class="perl_Function">accessToken</span>() <span class="perl_Keyword">throws</span> OAuthSystemException {
+            <span class="perl_Keyword">return</span> <span class="perl_String">"foo"</span>;
+        }
+
+        @Override
+        <span class="perl_Keyword">public</span> String <span class="perl_Function">refreshToken</span>() <span class="perl_Keyword">throws</span> OAuthSystemException {
+            <span class="perl_Keyword">return</span> <span class="perl_String">"bar"</span>;
+        }
+
+        @Override
+        <span class="perl_Keyword">public</span> String <span class="perl_Function">authorizationCode</span>() <span class="perl_Keyword">throws</span> OAuthSystemException {
+            <span class="perl_Keyword">return</span> <span class="perl_String">"foobar"</span>;
+        }
+    }
+</pre>
+
+			</div></li><li class="step"><div class="para"><p></p>
+				Enable your implementation and override the default by adding your class to your <code class="filename">beans.xml</code>: 
+<pre class="programlisting">
+<span class="perl_Keyword">&lt;beans&gt;</span>
+        ...
+        <span class="perl_Keyword">&lt;alternatives&gt;</span>
+            <span class="perl_Keyword">&lt;class&gt;</span>org.jboss.pressgang.belay.oauth2.authserver.sample.service.AlternativeTokenIssuer<span class="perl_Keyword">&lt;/class&gt;</span>
+        <span class="perl_Keyword">&lt;/alternatives&gt;</span>
+<span class="perl_Keyword">&lt;/beans&gt;</span>
+</pre>
+
+			</div></li></ol></div><div class="formalpara"><p></p><h5 class="formalpara" id="id610067">Result</h5>
+			A custom Token Issuer interface has been created and overrides the default OAuth2 token generation service.
+		</div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="http://skynet.usersys.redhat.com:8080/TopicIndex/TopicEdit.seam?topicTopicId=11532">Edit this topic</a>
+	</div></div><div class="simplesect"><div class="titlepage"><div><div><h1 class="title"></h1></div></div></div><div class="RoleCreateBugPara RoleCreateBugPara"><p></p>
+		<a href="https://bugzilla.redhat.com/enter_bug.cgi?cf_environment=Instance+Name%3A+Not+Defined%0ABuild%3A+CSProcessor+Builder+Version+1.7%0ABuild+Filter%3A+null%0ABuild+Name%3A+11411%2C+PressGang+Belay+Developer+Guide-0.1-null%0ABuild+Date%3A+02-10-2012+13%3A32%3A08&amp;cf_build_id=11532-272153+02+Oct+2012+13%3A32+en-US&amp;short_desc=Override+Default+OAuth2+Token+Generation+Service&amp;assigned_to=hlawrenc%40redhat.com&amp;product=PressGang+CCMS&amp;component=Documentation&amp;version=1.x&amp;keywords=Documentation">Report a bug</a>
+	</div></div></div></div><div class="chapter" id="id607469"><div class="titlepage"><div><div><h2 class="title">Chapter 5. Status Report</h2></div></div></div><div class="itemizedlist"><h6>Build Statistics</h6><ul><li class="listitem"><div class="para"><p></p>
+				Total Number of Errors: 0
+			</div></li><li class="listitem"><div class="para"><p></p>
+				Total Number of Warnings: 0
+			</div></li><li class="listitem"><div class="para"><p></p>
+				Number of Topics with No Content: 0
+			</div></li><li class="listitem"><div class="para"><p></p>
+				Number of Topics with Invalid Injection points: 0
+			</div></li><li class="listitem"><div class="para"><p></p>
+				Number of Topics with Invalid Content: 0
+			</div></li><li class="listitem"><div class="para"><p></p>
+				Number of Topics with Invalid Image references: 0
+			</div></li></ul></div></div><div class="appendix" id="appe-PressGang_Belay_Developer_Guide-Revision_History"><div class="titlepage"><div><div><h1 class="title">Revision History</h1></div></div></div><div class="para"><p></p>
+		<div class="revhistory"><table border="0" width="100%" summary="Revision history"><tr><th align="left" valign="top" colspan="3"><strong>Revision History</strong></th></tr><tr><td align="left">Revision 1.0-1</td><td align="left">Tue Oct 02 2012</td><td align="left"><span class="author"><span class="firstname"> CS Builder </span> <span class="surname"> Robot </span></span></td></tr><tr><td align="left" colspan="3">
+					<table border="0" summary="Simple list" class="simplelist"><tr><td> Built from Content Specification: 11411, Revision: 292290 </td></tr></table>
+
+				</td></tr></table></div>
+
+	</div></div></div><div id="site_footer"></div><script type="text/javascript">
+		$("#site_footer").load("../../../../../footer.html");
+	</script></body></html>
