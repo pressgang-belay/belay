@@ -92,7 +92,7 @@
         <jbossarquillian.version>7.1.1.Final</jbossarquillian.version>
         <guava.version>13.0-rc1</guava.version>
         <gwt.version>1.5.3</gwt.version>
-        <gwtoauth2.version>0.2-alpha</gwtoauth2.version>
+        <gwtoauth2.version>0.2</gwtoauth2.version>
         <gwtuser.version>2.4.0</gwtuser.version>
         <gwtplugin.version>2.4.0</gwtplugin.version>
         <xmlplugin.version>1.0</xmlplugin.version>

@@ -30,7 +30,6 @@
             <groupId>com.google.api</groupId>
             <artifactId>gwt-oauth2</artifactId>
             <version>${gwtoauth2.version}</version>
-            <classifier>alpha</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.pressgang.belay</groupId>
