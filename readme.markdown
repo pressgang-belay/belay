@@ -28,4 +28,5 @@ If you have a look through the html for index.html before updating it, the two s
 3. Remove old image file from images/
 4. Add new image files to images/ 
 5. Rename files to the designation provided by Skynet
-6. Commit and push
+6. If necessary, updated index.html with the new image names
+7. Commit and push
