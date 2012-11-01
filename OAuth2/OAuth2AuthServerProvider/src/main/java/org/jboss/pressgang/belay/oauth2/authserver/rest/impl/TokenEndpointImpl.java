@@ -181,7 +181,7 @@ public class TokenEndpointImpl implements TokenEndpoint {
     }
 
     private OAuthResponse buildOAuthJsonErrorResponse(String error, String description) throws OAuthSystemException {
-        return OAuthASResponse.errorResponse(HttpServletResponse.SC_NOT_FOUND)
+        return OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                 .setError(error)
                 .setErrorDescription(description)
                 .buildJSONMessage();

@@ -194,7 +194,7 @@ class OAuthEndpointUtil {
     static WebApplicationException createWebApplicationException(String error, Integer status) {
         Response.ResponseBuilder responseBuilder = (status != null)
                 ? Response.status(status)
-                : Response.status(HttpServletResponse.SC_NOT_FOUND);
+                : Response.status(HttpServletResponse.SC_BAD_REQUEST);
         return new WebApplicationException(responseBuilder.entity(error).build());
     }
 
@@ -213,7 +213,7 @@ class OAuthEndpointUtil {
         log.warning("OAuthProblemException thrown: " + e.getMessage() + " " + e.getDescription() + "\n" + join(e.getStackTrace()));
         String redirectUri = e.getRedirectUri();
         if (OAuthUtils.isEmpty(redirectUri)) {
-            throw createWebApplicationException(e.getError(), HttpServletResponse.SC_NOT_FOUND);
+            throw createWebApplicationException(e.getError(), HttpServletResponse.SC_BAD_REQUEST);
         }
         try {
             OAuthResponse response = OAuthASResponse.errorResponse(HttpServletResponse.SC_FOUND)
