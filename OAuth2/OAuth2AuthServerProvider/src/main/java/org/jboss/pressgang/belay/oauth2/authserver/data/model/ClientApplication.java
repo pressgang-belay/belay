@@ -6,8 +6,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Set;
@@ -20,7 +18,7 @@ import static com.google.common.collect.Sets.newHashSet;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="CLIENT", uniqueConstraints = @UniqueConstraint(columnNames = { "CLIENT_IDENTIFIER"}))
+@Table(name = "CLIENT")
 public class ClientApplication implements Serializable {
 
     private static final long serialVersionUID = 2098266256101575627L;
@@ -38,26 +36,26 @@ public class ClientApplication implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CLIENT_ID")
     public BigInteger getClientId() {
         return clientId;
     }
 
     @NotNull
-    @Column(name = "CLIENT_IDENTIFIER")
+    @Column(name = "CLIENT_IDENTIFIER", unique = true)
     public String getClientIdentifier() {
         return clientIdentifier;
     }
 
     @NotNull
-    @Column(name = "CLIENT_NAME")
+    @Column(name = "CLIENT_NAME", unique = true)
     public String getClientName() {
         return clientName;
     }
 
     @NotNull
-    @Column(name = "CLIENT_REDIRECT_URI")
+    @Column(name = "CLIENT_REDIRECT_URI", unique = true)
     public String getClientRedirectUri() {
         return clientRedirectUri;
     }
@@ -73,16 +71,12 @@ public class ClientApplication implements Serializable {
         return tokenGrantsMustExpire;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="CLIENT_TOKEN_GRANT", joinColumns = { @JoinColumn(name = "CLIENT_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "TOKEN_GRANT_ID") })
+    @OneToMany(mappedBy = "grantClient")
     public Set<TokenGrant> getTokenGrants() {
         return tokenGrants;
     }
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="CLIENT_CODE_GRANT", joinColumns = { @JoinColumn(name = "CLIENT_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "CODE_GRANT_ID") })
+    @OneToMany(mappedBy = "grantClient")
     public Set<CodeGrant> getCodeGrants() {
         return codeGrants;
     }
@@ -154,8 +148,6 @@ public class ClientApplication implements Serializable {
                 .append("clientRedirectUri", clientRedirectUri)
                 .append("clientSecret", clientSecret)
                 .append("tokenGrantsMustExpire", tokenGrantsMustExpire)
-                .append("tokenGrants", tokenGrants)
-                .append("codeGrants", codeGrants)
                 .toString();
     }
 }

@@ -1,6 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 
 import com.googlecode.jatl.Html;
+import org.jboss.pressgang.belay.oauth2.authserver.request.OAuthIdRequest;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.UserConsentEndpoint;
 
 import javax.inject.Inject;
@@ -11,7 +12,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_SCOPE;
+import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.getOAuthIdRequestParamsFromSession;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.CLIENT_NAME;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.ORIGINAL_REQUEST_PARAMS;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 
 /**
@@ -28,7 +31,8 @@ public class UserConsentEndpointImpl implements UserConsentEndpoint {
     @Override
     public String getUserConsentForm(@Context HttpServletRequest request) {
         final String clientName = OAuthEndpointUtil.getStringAttributeFromSession(request, log, CLIENT_NAME, "Application client name");
-        final Set<String> requestedScopes = OAuthEndpointUtil.getStringSetAttributeFromSession(request, log, OAUTH_SCOPE, "Requested scopes");
+        final OAuthIdRequest.OAuthIdRequestParams oAuthRequestParams = getOAuthIdRequestParamsFromSession(request, ORIGINAL_REQUEST_PARAMS);
+        final Set<String> requestedScopes = oAuthRequestParams.getScopes();
         log.info("Serving end-user approval form for client application " + clientName);
 
         final String header = "Authorization Required";
@@ -36,14 +40,14 @@ public class UserConsentEndpointImpl implements UserConsentEndpoint {
         new Html(stringWriter) {{
             html();
             head().title().text(header);
-                if (endUserConsentFormCssLocation != null && (! endUserConsentFormCssLocation.isEmpty())) {
-                    link().href(endUserConsentFormCssLocation).rel("stylesheet").type("text/css");
-                }
+            if (endUserConsentFormCssLocation != null && (!endUserConsentFormCssLocation.isEmpty())) {
+                link().href(endUserConsentFormCssLocation).rel("stylesheet").type("text/css");
+            }
             end();
             body();
             h3().id("userConsentHead").text(header).end();
             p().id("userConsentText").text("The " + clientName + " application wants to authenticate you based on your OpenID account/s.").end();
-            if (!requestedScopes.isEmpty()) {
+            if (requestedScopes != null && (!requestedScopes.isEmpty())) {
                 p().id("userConsentScopesText").text("The application has also requested access to resources accessible under the following scopes:").end();
                 ul();
                 for (String requestedScope : requestedScopes) {
@@ -52,7 +56,7 @@ public class UserConsentEndpointImpl implements UserConsentEndpoint {
                 end();
             }
             p().id("userApprovalText").text("Do you approve this access?").end();
-            form().id("userConsentForm").action(restEndpointBasePath + grantEndpoint).method("post")
+            form().id("userConsentForm").action(restEndpointBasePath + authEndpoint).method("post")
                     .text("Approve").input().type("radio").name("user_consent").id("approve").value("TRUE").text(" ")
                     .text("Deny").input().type("radio").name("user_consent").id("deny").value("FALSE").checked("TRUE").p().end()
                     .button().id("submitButton").text("Submit").end();

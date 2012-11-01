@@ -7,13 +7,8 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Set;
-
-import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
 
 /**
  * Persistence logic for authenticated users.
@@ -21,7 +16,7 @@ import static com.google.appengine.repackaged.com.google.common.collect.Sets.new
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="OPENID_IDENTITY", uniqueConstraints = @UniqueConstraint(columnNames = { "IDENTIFIER" }))
+@Table(name = "OPENID_IDENTITY")
 public class Identity implements Serializable {
 
     private static final long serialVersionUID = -2816937391756095960L;
@@ -41,14 +36,14 @@ public class Identity implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDENTITY_ID")
     public BigInteger getIdentityId() {
         return identityId;
     }
 
     @NotNull
-    @Column(name = "IDENTIFIER")
+    @Column(name = "IDENTIFIER", unique = true)
     public String getIdentifier() {
         return identifier;
     }
@@ -86,16 +81,14 @@ public class Identity implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinTable(name="OPENID_IDENTITY_OPENID_PROVIDER", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "PROVIDER_ID") })
+    @JoinColumn(name = "PROVIDER_ID")
     public OpenIdProvider getOpenIdProvider() {
         return openIdProvider;
     }
 
     @NotNull
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-    @JoinTable(name="OPENID_IDENTITY_OPENID_USER", joinColumns = { @JoinColumn(name = "IDENTITY_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "USER_ID") })
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
     public User getUser() {
         return user;
     }

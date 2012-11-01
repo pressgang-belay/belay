@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import org.apache.amber.oauth2.as.request.OAuthTokenRequest;
 import org.apache.amber.oauth2.as.response.OAuthASResponse;
 import org.apache.amber.oauth2.common.OAuth;
-import org.apache.amber.oauth2.common.error.OAuthError;
 import org.apache.amber.oauth2.common.exception.OAuthProblemException;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.OAuthResponse;
@@ -32,12 +31,12 @@ import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVA
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.INVALID_GRANT;
 import static org.apache.amber.oauth2.common.error.OAuthError.TokenResponse.UNSUPPORTED_GRANT_TYPE;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.filterTokenGrantsByClient;
-import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.makeTokenGrantsNonCurrent;
+import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.makeExpiringTokenGrantsNonCurrent;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 
 /**
  * OAuth token endpoint. Accepts refresh token or auth code grants and provides OAuth2 token grants. For use by confidential
- * clients only.
+ * clients only. Endpoint must be protected by Basic or some other authentication method.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -59,10 +58,10 @@ public class TokenEndpointImpl implements TokenEndpoint {
      * client_id: OAuth2 client identifier, supplied by OAuth2 Auth Server
      * client_secret: OAuth2 client secret, supplied by the OAuth2 Auth Server
      * grant_type: OAuth2 grant type, refresh_token or code
-     *
+     * <p/>
      * If the grant type is refresh_token, another required parameter is:
      * refresh_token: The refresh token, obtained with a previous token grant
-     *
+     * <p/>
      * If the grant type is authorization code, other required parameters are:
      * code: The authorization code obtained through the auth endpoint
      * redirect_uri: The client's registered redirect URI
@@ -90,7 +89,7 @@ public class TokenEndpointImpl implements TokenEndpoint {
                         oAuthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET))) {
                     TokenGrant tokenGrant = createTokenGrantFromOldGrant(oAuthRequest, oAuthRequest.getClientId());
                     OAuthTokenResponseBuilder oAuthTokenResponseBuilder
-                            = OAuthEndpointUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK);
+                            = OAuthEndpointUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK, null);
                     return buildResponse(oAuthTokenResponseBuilder.buildJSONMessage());
                 } else {
                     log.warning("Invalid refresh token: " + oAuthRequest.getParam(OAUTH_REFRESH_TOKEN));
@@ -105,7 +104,7 @@ public class TokenEndpointImpl implements TokenEndpoint {
                         oAuthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET))) {
                     TokenGrant tokenGrant = createTokenGrantFromCodeGrant(oAuthRequest, oAuthRequest.getClientId());
                     OAuthTokenResponseBuilder oAuthTokenResponseBuilder
-                            = OAuthEndpointUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK);
+                            = OAuthEndpointUtil.addTokenGrantResponseParams(tokenGrant, HttpServletResponse.SC_OK, null);
                     return buildResponse(oAuthTokenResponseBuilder.buildJSONMessage());
                 } else {
                     log.warning("Invalid auth code: " + oAuthRequest.getParam(OAUTH_CODE));
@@ -125,7 +124,7 @@ public class TokenEndpointImpl implements TokenEndpoint {
         TokenGrant oldTokenGrant = authService.getTokenGrantByRefreshToken(oAuthRequest
                 .getParam(OAUTH_REFRESH_TOKEN)).get();
         // Make sure no token grants held by the user for the client app are marked as current before issuing new one
-        makeTokenGrantsNonCurrent(authService, filterTokenGrantsByClient(oldTokenGrant.getGrantUser().getTokenGrants(), clientId));
+        makeExpiringTokenGrantsNonCurrent(authService, filterTokenGrantsByClient(oldTokenGrant.getGrantUser().getTokenGrants(), clientId));
         // Issue new grant
         TokenGrant newTokenGrant = OAuthEndpointUtil.createTokenGrantWithDefaults(tokenIssuer, authService,
                 oldTokenGrant.getGrantUser(), oldTokenGrant.getGrantClient(), true);
@@ -147,7 +146,7 @@ public class TokenEndpointImpl implements TokenEndpoint {
             throws OAuthSystemException {
         CodeGrant codeGrant = authService.getCodeGrantByAuthCode(oAuthRequest.getParam(OAUTH_CODE)).get();
         // Make sure no token grants held by the user for the client app are marked as current before issuing new one
-        makeTokenGrantsNonCurrent(authService, filterTokenGrantsByClient(codeGrant.getGrantUser().getTokenGrants(), clientId));
+        makeExpiringTokenGrantsNonCurrent(authService, filterTokenGrantsByClient(codeGrant.getGrantUser().getTokenGrants(), clientId));
         // Issue new grant
         TokenGrant newTokenGrant = OAuthEndpointUtil.createTokenGrantWithDefaults(tokenIssuer, authService,
                 codeGrant.getGrantUser(), codeGrant.getGrantClient(), true);

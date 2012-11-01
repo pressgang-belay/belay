@@ -54,7 +54,7 @@ public class PersonWebService {
 
         Optional<Person> personFound = personRepository.findById(id);
 
-        if (! personFound.isPresent()) {
+        if (!personFound.isPresent()) {
             log.warning("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -131,7 +131,7 @@ public class PersonWebService {
                 // Validates member using bean validation
                 validatePerson(person);
 
-                if (! (personRepository.findById(person.getPersonId()).isPresent())) {
+                if (!(personRepository.findById(person.getPersonId()).isPresent())) {
                     log.warning("Attempt to use PUT to create " + person.getPersonName()
                             + " with id: " + person.getPersonId());
                     String result = "No person to update at: "
@@ -177,7 +177,7 @@ public class PersonWebService {
 
         Response.ResponseBuilder builder;
 
-        if (! (personRepository.findById(id).isPresent())) {
+        if (!(personRepository.findById(id).isPresent())) {
             log.warning("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } else {

@@ -37,52 +37,52 @@ import java.math.BigInteger;
  */
 @Entity
 @XmlRootElement
-@Table(name="PERSON", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "PERSON_NAME" }),
-        @UniqueConstraint(columnNames = { "PERSON_USERNAME" })
+@Table(name = "PERSON", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"PERSON_NAME"}),
+        @UniqueConstraint(columnNames = {"PERSON_USERNAME"})
 })
 public class Person implements Serializable {
 
-	private static final long serialVersionUID = 8570615351546278428L;
+    private static final long serialVersionUID = 8570615351546278428L;
 
-	private BigInteger personId;
-	private String personName;
-	private String personUsername;
-	private String personEmail;
+    private BigInteger personId;
+    private String personName;
+    private String personUsername;
+    private String personEmail;
 
     Person() {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PERSON_ID")
-	public BigInteger getPersonId() {
-		return personId;
-	}
+    public BigInteger getPersonId() {
+        return personId;
+    }
 
     @NotNull
     @Size(min = 1, max = 25)
     @Pattern(regexp = "[A-Za-z ]*", message = "must contain only letters and spaces")
     @Column(name = "PERSON_NAME")
-	public String getPersonName() {
-		return personName;
-	}
+    public String getPersonName() {
+        return personName;
+    }
 
     @NotNull
     @Size(min = 1, max = 15)
     @Pattern(regexp = "[A-Za-z]*", message = "must contain only letters")
     @Column(name = "PERSON_USERNAME")
-	public String getPersonUsername() {
-		return personUsername;
-	}
+    public String getPersonUsername() {
+        return personUsername;
+    }
 
     @NotNull
     @NotEmpty
     @Email
     @Column(name = "PERSON_EMAIL")
-	public String getPersonEmail() {
-		return personEmail;
-	}
+    public String getPersonEmail() {
+        return personEmail;
+    }
 
     public void setPersonId(BigInteger personId) {
         this.personId = personId;
@@ -96,9 +96,9 @@ public class Person implements Serializable {
         this.personUsername = username;
     }
 
-	public void setPersonEmail(String email) {
-		this.personEmail = email;
-	}
+    public void setPersonEmail(String email) {
+        this.personEmail = email;
+    }
 
     @Override
     public boolean equals(Object o) {

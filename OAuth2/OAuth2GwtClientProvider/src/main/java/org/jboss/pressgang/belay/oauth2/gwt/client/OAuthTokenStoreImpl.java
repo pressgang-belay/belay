@@ -6,7 +6,7 @@ import com.google.gwt.storage.client.Storage;
  * This a renamed copy of the TokenStoreImpl class from the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/).
  * It is recreated here as it is package private in the original library.
  * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
- *
+ * <p/>
  * Default implementation of token storage, using localStorage to store tokens
  * (if supported).
  *

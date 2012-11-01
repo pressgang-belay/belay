@@ -12,4 +12,7 @@ import javax.ws.rs.core.Response;
 public interface AuthEndpoint {
     @GET
     Response requestAuthenticationWithOpenId(@Context HttpServletRequest request);
+
+    @POST
+    Response authorize(@Context HttpServletRequest request);
 }

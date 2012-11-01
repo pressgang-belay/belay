@@ -3,14 +3,14 @@ package org.jboss.pressgang.belay.oauth2.authserver.data.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jboss.pressgang.belay.oauth2.authserver.data.constraint.PrimaryIdentityAssociated;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Set;
 
-import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Persistence logic for a group of Users that all represent the same end user.
@@ -18,8 +18,8 @@ import static com.google.appengine.repackaged.com.google.common.collect.Sets.new
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="OPENID_USER", uniqueConstraints = {@UniqueConstraint(columnNames = { "OPENID_IDENTITY_IDENTITY_ID" }),
-                                                @UniqueConstraint(columnNames = { "USERNAME" })})
+@PrimaryIdentityAssociated
+@Table(name = "OPENID_USER")
 public class User implements Serializable {
     private static final long serialVersionUID = 6622976631392573530L;
 
@@ -36,24 +36,24 @@ public class User implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
     public BigInteger getUserId() {
         return userId;
     }
 
-    @Column(name = "USERNAME")
+    @Column(name = "USERNAME", unique = true)
     public String getUsername() {
         return username;
     }
 
-    @OneToOne
-    @JoinColumn(name = "OPENID_IDENTITY_IDENTITY_ID")
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "PRIMARY_IDENTITY_ID", unique = true)
     public Identity getPrimaryIdentity() {
         return primaryIdentity;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     public Set<Identity> getUserIdentities() {
         return userIdentities;
     }
@@ -69,8 +69,8 @@ public class User implements Serializable {
     }
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "OPENID_USER_SCOPE", joinColumns = { @JoinColumn(name = "USER_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
+    @JoinTable(name = "OPENID_USER_SCOPE", joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "SCOPE_ID")})
     public Set<Scope> getUserScopes() {
         return userScopes;
     }
@@ -137,10 +137,7 @@ public class User implements Serializable {
                 .append("primaryIdentity", primaryIdentity)
                 .append("username", username)
                 .append("userIdentities", userIdentities)
-                .append("tokenGrants", tokenGrants)
-                .append("codeGrants", codeGrants)
                 .append("userScopes", userScopes)
-                .append("clientApprovals", clientApprovals)
                 .toString();
     }
 }

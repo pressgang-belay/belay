@@ -1,6 +1,8 @@
 package org.jboss.pressgang.belay.oauth2.resourceserver.filter;
 
-import java.lang.Override;import java.lang.String;import java.security.Principal;
+import java.lang.Override;
+import java.lang.String;
+import java.security.Principal;
 
 /**
  * Implementation of Principal for use during OAuth filtering.

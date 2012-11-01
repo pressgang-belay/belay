@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.*;
 import org.jboss.pressgang.belay.oauth2.gwt.client.AuthorizationRequest;
 import org.jboss.pressgang.belay.oauth2.gwt.client.OAuthHandler;
 import org.jboss.pressgang.belay.oauth2.gwt.client.OAuthRequest;
-import org.jboss.pressgang.belay.oauth2.gwt.client.OpenIdRequestUtil;
+import org.jboss.pressgang.belay.oauth2.gwt.client.RequestUtil;
 
 /**
  * Sample app demonstrating how OAuth2GwtClientProvider library can be used.
@@ -36,12 +36,13 @@ public class App implements EntryPoint {
     private static final String BELAY_AUTH_SERVER_URL = "https://localhost:8443/OAuth2AuthServer";
     private static final String BELAY_IDENTITY_QUERY_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/user/queryIdentity";
     private static final String BELAY_USER_QUERY_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/user/queryUser";
-    private static final String BELAY_ASSOCIATE_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/user/associate/associateIdentity";
+    private static final String BELAY_ASSOCIATE_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/user/associate";
+    private static final String BELAY_INVALIDATE_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/invalidate";
     private static final String BELAY_MAKE_PRIMARY_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/user/makeIdentityPrimary";
     private static final String BELAY_AUTH_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/authorize";
     private static final String BELAY_CLIENT_ID = "pressgang_belay_id";
+    private final String PERFORM_USER_MANAGEMENT = "PERFORM_USER_MANAGEMENT";
 
-    private static String currentToken;
     private final Label inputLabel = new Label("Input: ");
     private final TextBox inputTextBox = new TextBox();
 
@@ -59,6 +60,7 @@ public class App implements EntryPoint {
         makeIdentityPrimary();
         getIdentityInfo();
         getUserInfo();
+        grantInvalidate();
         addClearTokens();
         addRequiredTable();
     }
@@ -78,8 +80,8 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorizationRequest request = OpenIdRequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
-                        BELAY_CLIENT_ID, RED_HAT_PROVIDER_URL).withScopes("PERFORM_USER_MANAGEMENT");
+                final AuthorizationRequest request = RequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
+                        BELAY_CLIENT_ID, RED_HAT_PROVIDER_URL).withScopes(PERFORM_USER_MANAGEMENT);
                 AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
@@ -92,8 +94,8 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorizationRequest request = OpenIdRequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
-                        BELAY_CLIENT_ID, GOOGLE_PROVIDER_URL).withScopes("PERFORM_USER_MANAGEMENT");
+                final AuthorizationRequest request = RequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
+                        BELAY_CLIENT_ID, GOOGLE_PROVIDER_URL).withScopes(PERFORM_USER_MANAGEMENT);
                 AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
@@ -106,7 +108,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorizationRequest request = OpenIdRequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
+                final AuthorizationRequest request = RequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
                         BELAY_CLIENT_ID, YAHOO_PROVIDER_URL);
                 AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
@@ -132,9 +134,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorizationRequest request = OpenIdRequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
+                final AuthorizationRequest request = RequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
                         BELAY_CLIENT_ID, MYOPENID_PROVIDER_PREFIX + inputTextBox.getText() + MYOPENID_PROVIDER_SUFFIX)
-                        .withScopes("PERFORM_USER_MANAGEMENT");
+                        .withScopes(PERFORM_USER_MANAGEMENT);
                 AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
@@ -147,9 +149,9 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorizationRequest request = OpenIdRequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
+                final AuthorizationRequest request = RequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
                         BELAY_CLIENT_ID, FEDORA_PROVIDER_PREFIX + inputTextBox.getText())
-                        .withScopes("PERFORM_USER_MANAGEMENT");
+                        .withScopes(PERFORM_USER_MANAGEMENT);
                 AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
             }
         });
@@ -193,14 +195,29 @@ public class App implements EntryPoint {
     private void addAssociateIdentity() {
         Button button = new Button("Associate provider identity*");
         button.getElement().setId("associateProviderIdentityButton");
-
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final AuthorizationRequest request = OpenIdRequestUtil.associateIdentityRequest(BELAY_ASSOCIATE_URL,
-                        BELAY_CLIENT_ID, inputTextBox.getText(), AUTH_HANDLER.getLastTokenResult(), false)
-                        .withScopes("PERFORM_USER_MANAGEMENT");
-                AUTH_HANDLER.sendAuthRequest(request, getStandardCallback());
+                final String originalToken = AUTH_HANDLER.getLastTokenResult();
+                if (originalToken == null) {
+                    Window.alert("You must have an authorized identity before associating a second identity");
+                } else {
+                    final AuthorizationRequest authRequest = RequestUtil.openIdAuthorizationRequest(BELAY_AUTH_URL,
+                            BELAY_CLIENT_ID, inputTextBox.getText()).withScopes(PERFORM_USER_MANAGEMENT).forceNewRequest(true);
+                    AUTH_HANDLER.sendAuthRequest(authRequest, new Callback<String, Throwable>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            final OAuthRequest request = RequestUtil.associateIdentitiesRequest(RequestBuilder.POST,
+                                    BELAY_ASSOCIATE_URL, BELAY_CLIENT_ID, originalToken, false);
+                            AUTH_HANDLER.sendRequest(request, getStandardRequestCallback());
+                        }
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            Window.alert("Error:\n" + caught.getMessage());
+                        }
+                    });
+                }
             }
         });
         RootPanel.get().add(button);
@@ -212,7 +229,7 @@ public class App implements EntryPoint {
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                AUTH_HANDLER.sendRequest(OpenIdRequestUtil.makeIdentityPrimaryRequest(RequestBuilder.GET,
+                AUTH_HANDLER.sendRequest(RequestUtil.makeIdentityPrimaryRequest(RequestBuilder.GET,
                         BELAY_MAKE_PRIMARY_URL, inputTextBox.getText()), getStandardRequestCallback());
             }
         });
@@ -243,6 +260,19 @@ public class App implements EntryPoint {
         RootPanel.get().add(button);
     }
 
+    private void grantInvalidate() {
+        Button button = new Button("Invalidate current token");
+        button.getElement().setId("invalidateCurrentTokenButton");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                AUTH_HANDLER.sendRequest(RequestUtil.invalidateTokenGrantRequest(RequestBuilder.GET,
+                        BELAY_INVALIDATE_URL, BELAY_CLIENT_ID), getStandardRequestCallback());
+            }
+        });
+        RootPanel.get().add(button);
+    }
+
     private void addRequiredTable() {
         Label label = new Label("*Requires input");
         HTMLTable table = new Grid(5, 2);
@@ -253,7 +283,7 @@ public class App implements EntryPoint {
         table.setText(2, 0, "Login with Fedora Account System");
         table.setText(2, 1, "Username from OpenID identifier ie: https://admin.fedoraproject.org/accounts/openid/id/{username}");
         table.setText(3, 0, "Associate provider identity");
-        table.setText(3, 1, "URL/domain of OpenID provider to associate ie: gmail.com");
+        table.setText(3, 1, "URL/domain of OpenID provider to authenticate identity to associate ie: gmail.com");
         table.setText(4, 0, "Make identity primary");
         table.setText(4, 1, "OpenID identifier to make primary ie: https://admin.fedoraproject.org/accounts/openid/id/johnsmith");
         RootPanel.get().add(label);
@@ -294,7 +324,6 @@ public class App implements EntryPoint {
             @Override
             public void onSuccess(String result) {
                 Window.alert("Result: " + result);
-                currentToken = result;
             }
 
             @Override

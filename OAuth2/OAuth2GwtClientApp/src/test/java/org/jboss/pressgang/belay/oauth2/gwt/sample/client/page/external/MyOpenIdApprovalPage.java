@@ -14,8 +14,10 @@ import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriver
  */
 public class MyOpenIdApprovalPage extends BasePage {
 
-    @FindBy(id = "continue-button") private WebElement continueButton;
-    @FindBy(id = "skip_step") private WebElement persistenceCheckbox;
+    @FindBy(id = "continue-button")
+    private WebElement continueButton;
+    @FindBy(id = "skip_step")
+    private WebElement persistenceCheckbox;
 
     protected MyOpenIdApprovalPage(WebDriver driver) {
         super(driver);

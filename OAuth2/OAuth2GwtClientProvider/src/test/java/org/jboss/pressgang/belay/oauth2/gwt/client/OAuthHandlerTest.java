@@ -78,14 +78,12 @@ public class OAuthHandlerTest extends BaseGwtUnitTest {
 
         // Then the authorizer is called to authorize the request
         verify(authorizer).authorize(any(AuthorizationRequest.class), any(Callback.class));
-        // And the authorization request is recorded
-        assertThat(handler.lastAuthRequest.equals(authRequest), is(true));
     }
 
     @Test
     public void testSendRequestBeforeAuthorization() throws Exception {
         // Given a call to authorize has not been made
-        handler.lastAuthRequest = null;
+        handler.lastSuccessfulAuthRequest = null;
 
         // When an attempt to authorize is made
         // Then the callback's error branch is taken
@@ -105,7 +103,7 @@ public class OAuthHandlerTest extends BaseGwtUnitTest {
     @Test
     public void testSendRequestAfterAuthorization() throws Exception {
         // Given the user has logged in previously
-        handler.lastAuthRequest = authRequest;
+        handler.lastSuccessfulAuthRequest = authRequest;
 
         // When an attempt to send an OAuth request is made
         handler.sendRequest(oAuthRequest, requestCallback);
@@ -117,7 +115,7 @@ public class OAuthHandlerTest extends BaseGwtUnitTest {
     @Test
     public void testSendRequestWhenTokenInvalid() throws Exception {
         // Given a user has logged in previously but a valid token cannot be retrieved
-        handler.lastAuthRequest = authRequest;
+        handler.lastSuccessfulAuthRequest = authRequest;
         CallbackMockStubber.callFailureWith(exception).when(authorizer)
                 .authorize(any(AuthorizationRequest.class), any(Callback.class));
 
@@ -139,7 +137,7 @@ public class OAuthHandlerTest extends BaseGwtUnitTest {
     @Test
     public void testSendRequestWhenTokenValid() throws Exception {
         // Given a user has logged in and their token has been successfully retrieved
-        handler.lastAuthRequest = authRequest;
+        handler.lastSuccessfulAuthRequest = authRequest;
         CallbackMockStubber.callSuccessWith(token).when(authorizer)
                 .authorize(any(AuthorizationRequest.class), any(Callback.class));
 
@@ -153,7 +151,7 @@ public class OAuthHandlerTest extends BaseGwtUnitTest {
     @Test
     public void testRequestWithResponse() throws Exception {
         // Given a user has sent a successful request
-        handler.lastAuthRequest = authRequest;
+        handler.lastSuccessfulAuthRequest = authRequest;
         CallbackMockStubber.callSuccessWith(token).when(authorizer)
                 .authorize(any(AuthorizationRequest.class), any(Callback.class));
         CallbackMockStubber.callOnResponseReceivedWith(request, response).when(oAuthRequest)
@@ -169,7 +167,7 @@ public class OAuthHandlerTest extends BaseGwtUnitTest {
     @Test
     public void testRequestWithErrorResponse() throws Exception {
         // Given a user has sent a request successfully but the response is an error
-        handler.lastAuthRequest = authRequest;
+        handler.lastSuccessfulAuthRequest = authRequest;
         CallbackMockStubber.callSuccessWith(token).when(authorizer)
                 .authorize(any(AuthorizationRequest.class), any(Callback.class));
         CallbackMockStubber.callOnErrorWith(request, exception).when(oAuthRequest)

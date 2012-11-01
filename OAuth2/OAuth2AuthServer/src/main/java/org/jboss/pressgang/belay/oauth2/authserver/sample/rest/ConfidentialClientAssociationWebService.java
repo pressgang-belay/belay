@@ -9,6 +9,6 @@ import javax.ws.rs.Path;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RequestScoped
-@Path("/auth/confidential/user/associate/associateIdentity")
+@Path("/auth/confidential/user/associate")
 public class ConfidentialClientAssociationWebService extends AssociationEndpointImpl {
 }

@@ -32,7 +32,7 @@ public class OAuth2RSFilter extends OAuthFilter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
-        provider.setServletResponse((HttpServletResponse)response);
+        provider.setServletResponse((HttpServletResponse) response);
         super.doFilter(request, response, chain);
     }
 }

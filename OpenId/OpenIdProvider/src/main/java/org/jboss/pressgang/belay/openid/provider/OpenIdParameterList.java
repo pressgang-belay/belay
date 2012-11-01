@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * This class is based on org.picketlink.identity.federation.api.openid.provider.OpenIDParameterList by Anil Saldhana,
  * It has been modified from the original, in 2012.
- *
+ * <p/>
  * <p/>
  * JBoss, Home of Professional Open Source.
  * Copyright 2008, Red Hat Middleware LLC, and individual contributors

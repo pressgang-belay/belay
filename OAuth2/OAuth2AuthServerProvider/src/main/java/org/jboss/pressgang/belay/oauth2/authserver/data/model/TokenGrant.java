@@ -11,7 +11,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
-import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Persistence logic for OAuth tokens granted.
@@ -19,7 +19,8 @@ import static com.google.appengine.repackaged.com.google.common.collect.Sets.new
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="TOKEN_GRANT")
+@Table(name = "TOKEN_GRANT", uniqueConstraints = {@UniqueConstraint(columnNames = {"ACCESS_TOKEN", "TOKEN_GRANT_TIMESTAMP"}),
+        @UniqueConstraint(columnNames = {"REFRESH_TOKEN", "TOKEN_GRANT_TIMESTAMP"})})
 public class TokenGrant implements Serializable {
 
     private static final long serialVersionUID = -2401887340233987092L;
@@ -39,7 +40,7 @@ public class TokenGrant implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TOKEN_GRANT_ID")
     public BigInteger getTokenGrantId() {
         return tokenGrantId;
@@ -70,20 +71,21 @@ public class TokenGrant implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
-    @Column(name = "TOKEN_GRANT_TIME_STAMP")
+    @Column(name = "TOKEN_GRANT_TIMESTAMP")
     public Date getGrantTimeStamp() {
         return grantTimeStamp;
     }
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "CLIENT_ID")
     public ClientApplication getGrantClient() {
         return grantClient;
     }
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "OPENID_USER_USER_ID")
+    @JoinColumn(name = "USER_ID")
     public User getGrantUser() {
         return grantUser;
     }
@@ -96,8 +98,8 @@ public class TokenGrant implements Serializable {
 
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "TOKEN_GRANT_SCOPE", joinColumns = { @JoinColumn(name = "TOKEN_GRANT_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
+    @JoinTable(name = "TOKEN_GRANT_SCOPE", joinColumns = {@JoinColumn(name = "TOKEN_GRANT_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "SCOPE_ID")})
     public Set<Scope> getGrantScopes() {
         return grantScopes;
     }

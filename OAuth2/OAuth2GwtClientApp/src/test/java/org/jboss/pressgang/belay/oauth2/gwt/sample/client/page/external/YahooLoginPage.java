@@ -19,10 +19,14 @@ import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriver
  */
 public class YahooLoginPage extends BasePage {
 
-    @FindBy(id = "username") private WebElement usernameInputField;
-    @FindBy(id = "passwd") private WebElement passwordInputField;
-    @FindBy(id = "persistent") private WebElement persistentLoginCheckbox;
-    @FindBy(id = ".save") private WebElement loginButton;
+    @FindBy(id = "username")
+    private WebElement usernameInputField;
+    @FindBy(id = "passwd")
+    private WebElement passwordInputField;
+    @FindBy(id = "persistent")
+    private WebElement persistentLoginCheckbox;
+    @FindBy(id = ".save")
+    private WebElement loginButton;
 
     public YahooLoginPage(WebDriver driver) {
         super(driver);

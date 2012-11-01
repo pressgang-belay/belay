@@ -15,6 +15,6 @@ public class BaseGwtTest extends GWTTestCase {
 
     // Required to prevent error
     public void testSanity() {
-        assert(true);
+        assert (true);
     }
 }

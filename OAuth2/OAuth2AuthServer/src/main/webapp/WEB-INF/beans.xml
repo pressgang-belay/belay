@@ -15,6 +15,6 @@
         http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
     <!-- Uncomment to enable the AlternativeTokenIssuer implementation of TokenIssuer, which will override the default implementation -->
     <!--<alternatives>-->
-        <!--<class>org.jboss.pressgang.belay.oauth2.authserver.sample.service.AlternativeTokenIssuer</class>-->
+    <!--<class>org.jboss.pressgang.belay.oauth2.authserver.sample.service.AlternativeTokenIssuer</class>-->
     <!--</alternatives>-->
 </beans>

@@ -29,8 +29,8 @@ public class OAuthRequest {
     }
 
     public OAuthRequest setRequestData(String requestData) {
-       builder.setRequestData(requestData);
-       return this;
+        builder.setRequestData(requestData);
+        return this;
     }
 
     public String getUrl() {

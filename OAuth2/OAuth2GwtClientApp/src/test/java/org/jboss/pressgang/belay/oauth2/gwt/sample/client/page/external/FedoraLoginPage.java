@@ -18,9 +18,12 @@ import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriver
  */
 public class FedoraLoginPage extends BasePage {
 
-    @FindBy(id = "user_name") private WebElement usernameInputField;
-    @FindBy(id = "password") private WebElement passwordInputField;
-    @FindBy(name = "login") private WebElement loginButton;
+    @FindBy(id = "user_name")
+    private WebElement usernameInputField;
+    @FindBy(id = "password")
+    private WebElement passwordInputField;
+    @FindBy(name = "login")
+    private WebElement loginButton;
 
     public FedoraLoginPage(WebDriver driver) {
         super(driver);

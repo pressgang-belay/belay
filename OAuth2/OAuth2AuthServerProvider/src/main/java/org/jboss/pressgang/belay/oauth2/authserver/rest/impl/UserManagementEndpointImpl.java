@@ -1,7 +1,8 @@
 package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 
 import com.google.common.base.Optional;
-import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
+import org.jboss.pressgang.belay.oauth2.authserver.data.model.Identity;
+import org.jboss.pressgang.belay.oauth2.authserver.data.model.User;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.UserManagementEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.service.AuthService;
 import org.jboss.pressgang.belay.oauth2.authserver.service.TokenIssuer;
@@ -18,8 +19,9 @@ import javax.ws.rs.core.Response;
 import java.security.Principal;
 import java.util.logging.Logger;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.createWebApplicationException;
+import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.urlDecodeString;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 
 /**
@@ -58,7 +60,7 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
         user.setPrimaryIdentity(newPrimaryIdentity);
         authService.updateUser(user);
         log.info("Sending OK result for request to make identity primary");
-        return Response.ok().build();
+        return Response.ok().entity("Operation completed successfully").build();
     }
 
     /**
@@ -112,8 +114,8 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
 
     private void checkIdentityAssociatedWithAuthorizedUser(HttpServletRequest request, String identifier) {
         Optional<Identity> primaryIdentity = authService.getIdentity(request.getUserPrincipal().getName());
-        if ((!primaryIdentity.isPresent() || (!authService.isIdentityAssociatedWithUser(identifier,
-                primaryIdentity.get().getUser())))) {
+        if (isNullOrEmpty(identifier) || (!primaryIdentity.isPresent())
+                || (!authService.isIdentityAssociatedWithUser(identifier, primaryIdentity.get().getUser()))) {
             log.warning("Could not process request related to identity " + identifier
                     + " ; user unauthorized or identity not found");
             throw createWebApplicationException(UNAUTHORIZED_QUERY_ERROR + " " + identifier,

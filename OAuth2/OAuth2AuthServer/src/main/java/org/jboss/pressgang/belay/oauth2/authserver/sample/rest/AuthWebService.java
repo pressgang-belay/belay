@@ -10,5 +10,5 @@ import javax.ws.rs.Path;
  */
 @RequestScoped
 @Path("/auth/authorize")
-public class PublicClientAuthWebService extends AuthEndpointImpl {
+public class AuthWebService extends AuthEndpointImpl {
 }

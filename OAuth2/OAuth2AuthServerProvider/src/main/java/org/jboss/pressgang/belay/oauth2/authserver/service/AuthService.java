@@ -2,149 +2,59 @@ package org.jboss.pressgang.belay.oauth2.authserver.service;
 
 import com.google.common.base.Optional;
 import org.apache.amber.oauth2.common.exception.OAuthSystemException;
-import org.jboss.pressgang.belay.oauth2.authserver.data.dao.*;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.*;
-import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.TokenGrantInfo;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.UserInfo;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import java.util.logging.Logger;
-
 /**
- * Service class wraps calls to DAOs.
- *
  * @author kamiller@redhat.com (Katie Miller)
  */
-@Stateless
-public class AuthService {
+public interface AuthService {
 
-    @Inject
-    @AuthServer
-    private Logger log;
+    public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) throws OAuthSystemException;
 
-    @Inject
-    private ClientApplicationDao clientApplicationDao;
+    public Optional<TokenGrant> getTokenGrantByRefreshToken(String refreshToken) throws OAuthSystemException;
 
-    @Inject
-    private OpenIdProviderDao openIdProviderDao;
+    public Optional<TokenGrantInfo> getTokenGrantInfoByAccessToken(String accessToken) throws OAuthSystemException;
 
-    @Inject
-    private ScopeDao scopeDao;
+    public void addTokenGrant(TokenGrant tokenGrant);
 
-    @Inject
-    private TokenGrantDao tokenGrantDao;
+    public Optional<CodeGrant> getCodeGrantByAuthCode(String authCode) throws OAuthSystemException;
 
-    @Inject
-    private CodeGrantDao codeGrantDao;
+    public void updateTokenGrant(TokenGrant tokenGrant);
 
-    @Inject
-    private IdentityDao identityDao;
+    public void addCodeGrant(CodeGrant grant);
 
-    @Inject
-    private UserDao userDao;
+    public void updateCodeGrant(CodeGrant grant);
 
-    @Inject
-    private ClientApprovalDao clientApprovalDao;
+    public Optional<Identity> getIdentity(String identifier);
 
-    public Optional<TokenGrant> getTokenGrantByAccessToken(String accessToken) throws OAuthSystemException {
-        return tokenGrantDao.getTokenGrantFromAccessToken(accessToken);
-    }
+    public Optional<IdentityInfo> getIdentityInfo(String identifier);
 
-    public Optional<TokenGrant> getTokenGrantByRefreshToken(String refreshToken) throws OAuthSystemException {
-        return tokenGrantDao.getTokenGrantFromRefreshToken(refreshToken);
-    }
+    public Optional<UserInfo> getUserInfo(String identifier);
 
-    public Optional<TokenGrantInfo> getTokenGrantInfoByAccessToken(String accessToken) throws OAuthSystemException {
-        return tokenGrantDao.getTokenGrantInfoFromAccessToken(accessToken);
-    }
+    public boolean isIdentityAssociatedWithUser(String identifier, User user);
 
-    public void addTokenGrant(TokenGrant tokenGrant) {
-        tokenGrantDao.addTokenGrant(tokenGrant);
-    }
+    public Scope getDefaultScope();
 
-    public Optional<CodeGrant> getCodeGrantByAuthCode(String authCode) throws OAuthSystemException {
-        return codeGrantDao.getCodeGrantFromAuthCode(authCode);
-    }
+    public Optional<Scope> getScopeByName(String name);
 
-    public void updateTokenGrant(TokenGrant tokenGrant) {
-        tokenGrantDao.updateTokenGrant(tokenGrant);
-    }
+    public Optional<ClientApplication> getClient(String clientIdentifier);
 
-    public void addCodeGrant(CodeGrant grant) {
-        codeGrantDao.addCodeGrant(grant);
-    }
+    public Optional<OpenIdProvider> getOpenIdProvider(String providerUrl);
 
-    public void updateCodeGrant(CodeGrant grant) {
-        codeGrantDao.updateCodeGrant(grant);
-    }
+    public void addIdentity(Identity identity);
 
-    public Optional<Identity> getIdentity(String identifier) {
-        return identityDao.getIdentityFromIdentifier(identifier);
-    }
+    public void updateIdentity(Identity identity);
 
-    public Optional<IdentityInfo> getIdentityInfo(String identifier) {
-        return identityDao.getIdentityInfoFromIdentifier(identifier);
-    }
+    public void addUser(User user);
 
-    public Optional<UserInfo> getUserInfo(String identifier) {
-        Optional<Identity> identityFound = getIdentity(identifier);
-        if (! identityFound.isPresent()) {
-            log.warning("Could not find UserInfo for identifier " + identifier);
-            return Optional.absent();
-        }
-        return userDao.getUserInfoFromUser(identityFound.get().getUser());
-    }
+    public void updateUser(User user);
 
-    public boolean isIdentityAssociatedWithUser(String identifier, User user) {
-        Optional<Identity> identityFound = getIdentity(identifier);
-        if ((! identityFound.isPresent()) || user == null) return false;
-        return userDao.isIdentityAssociatedWithUser(identityFound.get(), user);
-    }
+    public void deleteUser(User user);
 
-    public Scope getDefaultScope() {
-        return scopeDao.getDefaultScope();
-    }
+    public void addClientApproval(ClientApproval clientApproval);
 
-    public Optional<Scope> getScopeByName(String name) {
-        return scopeDao.getScopeFromName(name);
-    }
-
-    public Optional<ClientApplication> getClient(String clientIdentifier) {
-        return clientApplicationDao.getClientApplicationFromClientIdentifier(clientIdentifier);
-    }
-
-    public Optional<OpenIdProvider> getOpenIdProvider(String providerUrl) {
-        return openIdProviderDao.getOpenIdProviderFromUrl(providerUrl);
-    }
-
-    public void addIdentity(Identity identity) {
-        identityDao.addIdentity(identity);
-    }
-
-    public void updateIdentity(Identity identity) {
-        identityDao.updateIdentity(identity);
-    }
-
-    public void addUser(User user) {
-        userDao.addUser(user);
-    }
-
-    public void updateUser(User user) {
-        userDao.updateUser(user);
-    }
-
-    public void deleteUser(User user) {
-        userDao.deleteUser(user);
-    }
-
-    public void addClientApproval(ClientApproval clientApproval) {
-        clientApprovalDao.addClientApproval(clientApproval);
-    }
-
-    public void updateClientApproval(ClientApproval clientApproval) {
-        clientApprovalDao.update(clientApproval);
-    }
+    public void updateClientApproval(ClientApproval clientApproval);
 }

@@ -4,6 +4,8 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.jboss.pressgang.belay.util.test.unit.BaseUnitTest;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @author kamiller@redhat.com (Katie Miller)

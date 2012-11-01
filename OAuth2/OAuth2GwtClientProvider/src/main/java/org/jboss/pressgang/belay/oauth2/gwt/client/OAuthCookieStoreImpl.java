@@ -22,7 +22,7 @@ import com.google.gwt.core.client.JavaScriptObject;
  * This a renamed copy of the CookieStoreImpl class from the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/).
  * It is recreated here as it is package private in the original library.
  * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
- *
+ * <p/>
  * Backup implementation of TokenStoreImpl storing tokens in cookies, for
  * browsers where localStorage is not supported.
  *

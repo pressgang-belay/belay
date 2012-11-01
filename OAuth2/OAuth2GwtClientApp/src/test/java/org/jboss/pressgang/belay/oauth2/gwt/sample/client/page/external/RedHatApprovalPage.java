@@ -12,7 +12,8 @@ import org.openqa.selenium.support.FindBy;
  */
 public class RedHatApprovalPage extends BasePage {
 
-    @FindBy(xpath = "html/body/form/input") private WebElement continueButton;
+    @FindBy(xpath = "html/body/form/input")
+    private WebElement continueButton;
 
     public RedHatApprovalPage(WebDriver driver) {
         super(driver);

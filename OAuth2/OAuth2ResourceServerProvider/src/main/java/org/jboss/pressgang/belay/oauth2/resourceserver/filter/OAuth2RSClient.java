@@ -1,6 +1,9 @@
 package org.jboss.pressgang.belay.oauth2.resourceserver.filter;
 
-import org.apache.amber.oauth2.rsfilter.OAuthClient;import java.lang.Override;import java.lang.String;
+import org.apache.amber.oauth2.rsfilter.OAuthClient;
+
+import java.lang.Override;
+import java.lang.String;
 
 /**
  * Implementation of OAuthClient for use during OAuth filtering.

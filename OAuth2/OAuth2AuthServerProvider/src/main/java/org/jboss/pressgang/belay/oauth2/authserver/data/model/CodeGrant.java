@@ -11,7 +11,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
-import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Persistence logic for OAuth authorization codes granted.
@@ -19,7 +19,7 @@ import static com.google.appengine.repackaged.com.google.common.collect.Sets.new
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="CODE_GRANT")
+@Table(name = "CODE_GRANT", uniqueConstraints = {@UniqueConstraint(columnNames = {"AUTH_CODE", "CODE_GRANT_TIMESTAMP"})})
 public class CodeGrant implements Serializable {
     private static final long serialVersionUID = -3556571368290708467L;
 
@@ -36,7 +36,7 @@ public class CodeGrant implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CODE_GRANT_ID")
     public BigInteger getCodeGrantId() {
         return codeGrantId;
@@ -56,20 +56,21 @@ public class CodeGrant implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
-    @Column(name = "CODE_GRANT_TIME_STAMP")
+    @Column(name = "CODE_GRANT_TIMESTAMP")
     public Date getGrantTimeStamp() {
         return grantTimeStamp;
     }
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "CLIENT_ID")
     public ClientApplication getGrantClient() {
         return grantClient;
     }
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "OPENID_USER_USER_ID")
+    @JoinColumn(name = "USER_ID")
     public User getGrantUser() {
         return grantUser;
     }
@@ -82,8 +83,8 @@ public class CodeGrant implements Serializable {
 
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "CODE_GRANT_SCOPE", joinColumns = { @JoinColumn(name = "CODE_GRANT_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
+    @JoinTable(name = "CODE_GRANT_SCOPE", joinColumns = {@JoinColumn(name = "CODE_GRANT_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "SCOPE_ID")})
     public Set<Scope> getGrantScopes() {
         return grantScopes;
     }

@@ -17,7 +17,7 @@ import static org.jboss.pressgang.belay.oauth2.gwt.client.Constants.OAUTH_HEADER
  */
 public class OAuthHandler {
 
-    AuthorizationRequest lastAuthRequest;
+    AuthorizationRequest lastSuccessfulAuthRequest;
     private String lastTokenResult;
     private static Authorizer auth;
 
@@ -39,8 +39,7 @@ public class OAuthHandler {
      * @param request  Request for authentication.
      * @param callback Callback for when access has been granted.
      */
-    public void sendAuthRequest(AuthorizationRequest request, final Callback<String, Throwable> callback) {
-        this.lastAuthRequest = request;
+    public void sendAuthRequest(final AuthorizationRequest request, final Callback<String, Throwable> callback) {
         auth.authorize(request, new Callback<String, Throwable>() {
             @Override
             public void onFailure(Throwable reason) {
@@ -50,6 +49,7 @@ public class OAuthHandler {
             @Override
             public void onSuccess(String result) {
                 lastTokenResult = result;
+                lastSuccessfulAuthRequest = request;
                 callback.onSuccess(result);
             }
         });
@@ -62,11 +62,11 @@ public class OAuthHandler {
      * @param callback RequestCallback defining actions when request succeeds or fails.
      */
     public void sendRequest(final OAuthRequest request, final RequestCallback callback) {
-        if (lastAuthRequest == null) {
+        if (lastSuccessfulAuthRequest == null) {
             callback.onError(null, new RuntimeException("You must be authorized before making requests"));
         }
 
-        final AuthorizationRequest lastAuthorizationRequest = lastAuthRequest;
+        final AuthorizationRequest lastAuthorizationRequest = lastSuccessfulAuthRequest;
 
         // Retrieve token or prompt authorization
         auth.authorize(lastAuthorizationRequest, new Callback<String, Throwable>() {
@@ -84,6 +84,22 @@ public class OAuthHandler {
     }
 
     /**
+     * Request a resource from an OAuth 2.0 provider using the credentials from a specific AuthorizationRequest.
+     *
+     * @param request     OAuthRequest for resource.
+     * @param callback    RequestCallback defining actions when request succeeds or fails.
+     * @param authRequest AuthorizationRequest to use for authorization credentials.
+     */
+    public void sendRequestWithSpecificAuthorization(final OAuthRequest request, final RequestCallback callback,
+                                                     final AuthorizationRequest authRequest) {
+        String token = getTokenForRequest(authRequest);
+        if (token == null) {
+            callback.onError(null, new RuntimeException("Invalid token"));
+        }
+        doOAuthRequest(request, token, authRequest, callback);
+    }
+
+    /**
      * Clears all stored tokens.
      */
     public void clearAllTokens() {
@@ -94,18 +110,27 @@ public class OAuthHandler {
      * Get the last token returned after a successful authorization attempt. Will be null if no such attempt
      * has been made.
      *
-     * @return OAuth2 access token String
+     * @return OAuth2 access token String.
      */
     public String getLastTokenResult() {
         return lastTokenResult;
     }
 
     /**
+     * Get the last successful authorization request. Will be null if there has been no successful requests.
+     *
+     * @return OAuth2 access token String.
+     */
+    public AuthorizationRequest getLastSuccessfulAuthorizationRequest() {
+        return lastSuccessfulAuthRequest;
+    }
+
+    /**
      * Get the last token returned after a successful authorization attempt using the given request parameter.
      * Will be null if no such request result is found.
      *
-     * @param request The AuthorizationRequest to query with
-     * @return OAuth2 access token String
+     * @param request The AuthorizationRequest to query with.
+     * @return OAuth2 access token String.
      */
     public String getTokenForRequest(AuthorizationRequest request) {
         Authorizer.TokenInfo tokenInfo = auth.getToken(request);
@@ -120,9 +145,9 @@ public class OAuthHandler {
     }
 
     private void doOAuthRequest(final OAuthRequest request, final String token,
-                                final AuthorizationRequest lastAuthorizationRequest, final RequestCallback callback) {
+                                final AuthorizationRequest authorization, final RequestCallback callback) {
         try {
-            request.sendRequest(token, this, lastAuthorizationRequest, callback);
+            request.sendRequest(token, this, authorization, callback);
         } catch (RequestException e) {
             callback.onError(null, e);
         }

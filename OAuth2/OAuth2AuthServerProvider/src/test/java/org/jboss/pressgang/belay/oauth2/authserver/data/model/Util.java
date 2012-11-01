@@ -28,4 +28,11 @@ public class Util {
         two.setIdentifier("http://jdoe.myopenid.com");
         return two;
     }
+
+    public static OpenIdProvider makeOpenIdProvider() {
+        OpenIdProvider openIdProvider = new OpenIdProvider();
+        openIdProvider.setProviderName("Test Provider");
+        openIdProvider.setProviderUrl("http://www.test.com");
+        return openIdProvider;
+    }
 }

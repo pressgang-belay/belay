@@ -15,7 +15,7 @@ import java.math.BigInteger;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="OPENID_PROVIDER", uniqueConstraints = @UniqueConstraint(columnNames = { "PROVIDER_URL"} ))
+@Table(name = "OPENID_PROVIDER")
 public class OpenIdProvider implements Serializable {
     private static final long serialVersionUID = -7790803759533859471L;
 
@@ -27,20 +27,20 @@ public class OpenIdProvider implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PROVIDER_ID")
     public BigInteger getProviderId() {
         return providerId;
     }
 
     @NotNull
-    @Column(name = "PROVIDER_NAME")
+    @Column(name = "PROVIDER_NAME", unique = true)
     public String getProviderName() {
         return providerName;
     }
 
     @NotNull
-    @Column(name = "PROVIDER_URL")
+    @Column(name = "PROVIDER_URL", unique = true)
     public String getProviderUrl() {
         return providerUrl;
     }

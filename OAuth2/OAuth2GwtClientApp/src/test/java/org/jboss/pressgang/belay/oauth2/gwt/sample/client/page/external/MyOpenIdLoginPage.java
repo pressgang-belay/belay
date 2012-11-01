@@ -18,9 +18,12 @@ import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriver
  */
 public class MyOpenIdLoginPage extends BasePage {
 
-    @FindBy(id = "password") private WebElement passwordInputField;
-    @FindBy(id = "stay_signed_in") private WebElement persistentLoginCheckbox;
-    @FindBy(id = "signin_button") private WebElement loginButton;
+    @FindBy(id = "password")
+    private WebElement passwordInputField;
+    @FindBy(id = "stay_signed_in")
+    private WebElement persistentLoginCheckbox;
+    @FindBy(id = "signin_button")
+    private WebElement loginButton;
 
     public MyOpenIdLoginPage(WebDriver driver) {
         super(driver);
@@ -46,7 +49,7 @@ public class MyOpenIdLoginPage extends BasePage {
         new Thread(resultCheck).start();
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.setApprovalPersistence(isOpenIdApprovalPersistent)
-                        .approve();
+                    .approve();
         }
         UserConsentPage consentPage = new UserConsentPage(getDriver());
         if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, consentPage).isPresent()) {

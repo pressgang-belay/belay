@@ -1,7 +1,5 @@
 package org.jboss.pressgang.belay.oauth2.authserver.data.model;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.persistence.*;
@@ -15,7 +13,7 @@ import java.math.BigInteger;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="SCOPE", uniqueConstraints = @UniqueConstraint(columnNames = { "SCOPE_NAME" }))
+@Table(name = "SCOPE")
 public class Scope implements Serializable {
     private static final long serialVersionUID = -255914952651554970L;
 
@@ -26,14 +24,14 @@ public class Scope implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SCOPE_ID")
     public BigInteger getScopeId() {
         return scopeId;
     }
 
     @NotNull
-    @Column(name = "SCOPE_NAME")
+    @Column(name = "SCOPE_NAME", unique = true)
     public String getScopeName() {
         return scopeName;
     }

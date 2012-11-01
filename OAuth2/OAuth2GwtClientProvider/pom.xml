@@ -30,6 +30,12 @@
             <groupId>com.google.api</groupId>
             <artifactId>gwt-oauth2</artifactId>
             <version>${gwtoauth2.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.gwt</groupId>
+                    <artifactId>gwt-dev</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jboss.pressgang.belay</groupId>
@@ -119,6 +125,7 @@
                             <Built-By>${author.name}</Built-By>
                         </manifestEntries>
                     </archive>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>

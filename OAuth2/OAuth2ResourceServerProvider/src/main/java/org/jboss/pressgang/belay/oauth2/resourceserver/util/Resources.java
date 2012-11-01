@@ -43,11 +43,11 @@ public class Resources {
         // Make sure RestEasy provider factory is registered
         RegisterBuiltin.register(ResteasyProviderFactory.getInstance());
 
-        tokenExpiryExtensionThreshold = (String)  resourceServerConfig.get("tokenExpiryExtensionThreshold");
+        tokenExpiryExtensionThreshold = (String) resourceServerConfig.get("tokenExpiryExtensionThreshold");
         try {
-        tokenExpiryThresholdSeconds = tokenExpiryExtensionThreshold == null || tokenExpiryExtensionThreshold.isEmpty()
-                ? Integer.parseInt(TOKEN_EXPIRY_THRESHOLD_DEFAULT)
-                : Integer.parseInt(tokenExpiryExtensionThreshold);
+            tokenExpiryThresholdSeconds = tokenExpiryExtensionThreshold == null || tokenExpiryExtensionThreshold.isEmpty()
+                    ? Integer.parseInt(TOKEN_EXPIRY_THRESHOLD_DEFAULT)
+                    : Integer.parseInt(tokenExpiryExtensionThreshold);
         } catch (NumberFormatException e) {
             log.severe("Could not set token expiry extension threshold property");
             throw new RuntimeException("Error: Resource server properties set incorrectly");

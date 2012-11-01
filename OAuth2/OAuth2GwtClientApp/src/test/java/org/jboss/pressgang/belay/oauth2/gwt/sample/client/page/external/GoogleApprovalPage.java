@@ -14,8 +14,10 @@ import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriver
  */
 public class GoogleApprovalPage extends BasePage {
 
-    @FindBy(id = "approve_button") private WebElement approveButton;
-    @FindBy(id = "remember_choices_checkbox") private WebElement persistenceCheckbox;
+    @FindBy(id = "approve_button")
+    private WebElement approveButton;
+    @FindBy(id = "remember_choices_checkbox")
+    private WebElement persistenceCheckbox;
 
     protected GoogleApprovalPage(WebDriver driver) {
         super(driver);

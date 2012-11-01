@@ -76,8 +76,8 @@ public class DefaultTokenIssuerTest extends BaseUnitTest {
         assertThat(result.isEmpty(), is(false));
         verify(tokenGrantDao, times(2)).getTokenGrantFromAccessToken(argumentCaptor.capture());
         List<String> tokensGenerated = argumentCaptor.getAllValues();
-        assertThat(result.equals(tokensGenerated.get(0)),is(false));
-        assertThat(result.equals(tokensGenerated.get(1)),is(true));
+        assertThat(result.equals(tokensGenerated.get(0)), is(false));
+        assertThat(result.equals(tokensGenerated.get(1)), is(true));
     }
 
     @Test
@@ -110,8 +110,8 @@ public class DefaultTokenIssuerTest extends BaseUnitTest {
         assertThat(result.isEmpty(), is(false));
         verify(tokenGrantDao, times(2)).getTokenGrantFromRefreshToken(argumentCaptor.capture());
         List<String> tokensGenerated = argumentCaptor.getAllValues();
-        assertThat(result.equals(tokensGenerated.get(0)),is(false));
-        assertThat(result.equals(tokensGenerated.get(1)),is(true));
+        assertThat(result.equals(tokensGenerated.get(0)), is(false));
+        assertThat(result.equals(tokensGenerated.get(1)), is(true));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class DefaultTokenIssuerTest extends BaseUnitTest {
         assertThat(result.isEmpty(), is(false));
         verify(codeGrantDao, times(2)).getCodeGrantFromAuthCode(argumentCaptor.capture());
         List<String> codesGenerated = argumentCaptor.getAllValues();
-        assertThat(result.equals(codesGenerated.get(0)),is(false));
-        assertThat(result.equals(codesGenerated.get(1)),is(true));
+        assertThat(result.equals(codesGenerated.get(0)), is(false));
+        assertThat(result.equals(codesGenerated.get(1)), is(true));
     }
 }

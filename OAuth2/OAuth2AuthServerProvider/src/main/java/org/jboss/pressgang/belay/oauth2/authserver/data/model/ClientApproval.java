@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Set;
 
-import static com.google.appengine.repackaged.com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newHashSet;
 
 /**
  * Persistence logic for client application user approvals.
@@ -18,7 +18,7 @@ import static com.google.appengine.repackaged.com.google.common.collect.Sets.new
  * @author kamiller@redhat.com (Katie Miller)
  */
 @Entity
-@Table(name="CLIENT_APPROVAL")
+@Table(name = "CLIENT_APPROVAL")
 public class ClientApproval implements Serializable {
     private static final long serialVersionUID = -5130955185279441324L;
 
@@ -31,7 +31,7 @@ public class ClientApproval implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CLIENT_APPROVAL_ID")
     public BigInteger getClientApprovalId() {
         return clientApprovalId;
@@ -39,22 +39,21 @@ public class ClientApproval implements Serializable {
 
     @NotNull
     @ManyToOne
-    @JoinTable(name="CLIENT_APPROVAL_CLIENT", joinColumns = { @JoinColumn(name = "CLIENT_APPROVAL_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "CLIENT_ID") })
+    @JoinColumn(name = "CLIENT_ID")
     public ClientApplication getClientApplication() {
         return clientApplication;
     }
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "OPENID_USER_USER_ID")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_ID")
     public User getApprover() {
         return approver;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name="CLIENT_APPROVAL_SCOPE", joinColumns = { @JoinColumn(name = "CLIENT_APPROVAL_ID") },
-            inverseJoinColumns = { @JoinColumn(name = "SCOPE_ID") })
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "CLIENT_APPROVAL_SCOPE", joinColumns = {@JoinColumn(name = "CLIENT_APPROVAL_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "SCOPE_ID")})
     public Set<Scope> getApprovedScopes() {
         return approvedScopes;
     }

@@ -29,21 +29,21 @@ public class PersonRepository {
     @Inject
     private Logger log;
 
-	public Optional<Person> findById(BigInteger id) {
-		Person person = em.find(Person.class, id);
+    public Optional<Person> findById(BigInteger id) {
+        Person person = em.find(Person.class, id);
         if (person == null) {
             log.fine("Could not find Person with id " + id);
             return Optional.absent();
         }
         log.fine("Returning Person with id " + id);
         return Optional.of(person);
-	}
+    }
 
-	public Optional<Person> findByEmail(String email) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
-		Root<Person> person = criteria.from(Person.class);
-		criteria.select(person).where(cb.equal(person.get(Person_.personEmail), email));
+    public Optional<Person> findByEmail(String email) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
+        Root<Person> person = criteria.from(Person.class);
+        criteria.select(person).where(cb.equal(person.get(Person_.personEmail), email));
         TypedQuery<Person> query = em.createQuery(criteria);
         if (query.getResultList().size() == 1) {
             log.fine("Returning Person with email " + email);
@@ -52,13 +52,13 @@ public class PersonRepository {
             log.fine("Could not find Person with email " + email);
             return Optional.absent();
         }
-	}
-	
-	public Optional<Person> findByUsername(String username) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
-		Root<Person> person = criteria.from(Person.class);
-		criteria.select(person).where(cb.equal(person.get(Person_.personUsername), username));
+    }
+
+    public Optional<Person> findByUsername(String username) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
+        Root<Person> person = criteria.from(Person.class);
+        criteria.select(person).where(cb.equal(person.get(Person_.personUsername), username));
         TypedQuery<Person> query = em.createQuery(criteria);
         if (query.getResultList().size() == 1) {
             log.fine("Returning Person with username " + username);
@@ -67,15 +67,15 @@ public class PersonRepository {
             log.fine("Could not find Person with username " + username);
             return Optional.absent();
         }
-	}
+    }
 
-	public List<Person> findAllOrderedByName() {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
-		Root<Person> person = criteria.from(Person.class);
-		criteria.select(person).orderBy(cb.asc(person.get(Person_.personName)));
+    public List<Person> findAllOrderedByName() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Person> criteria = cb.createQuery(Person.class);
+        Root<Person> person = criteria.from(Person.class);
+        criteria.select(person).orderBy(cb.asc(person.get(Person_.personName)));
         List<Person> resultList = em.createQuery(criteria).getResultList();
-        log.fine("Returning list of " + resultList.size()  + " Person objects ordered by name");
+        log.fine("Returning list of " + resultList.size() + " Person objects ordered by name");
         return resultList;
-	}
+    }
 }

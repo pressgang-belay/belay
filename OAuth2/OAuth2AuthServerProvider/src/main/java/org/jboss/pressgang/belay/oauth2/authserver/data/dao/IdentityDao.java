@@ -1,9 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.authserver.data.dao;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.Identity;
-import org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope;
 import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 import org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo;
 
@@ -15,11 +13,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.ImmutableSet.copyOf;
 import static org.jboss.pressgang.belay.oauth2.shared.data.model.IdentityInfo.IdentityInfoBuilder.identityInfoBuilder;
 
 /**
@@ -58,7 +53,7 @@ public class IdentityDao {
 
     public Optional<IdentityInfo> getIdentityInfoFromIdentifier(String identifier) {
         Optional<Identity> identityFound = getIdentityFromIdentifier(identifier);
-        if (! identityFound.isPresent()) {
+        if (!identityFound.isPresent()) {
             log.fine("Could not return IdentityInfo with identifier " + identifier);
             return Optional.absent();
         } else {

@@ -9,7 +9,7 @@ import com.google.gwt.core.client.Scheduler;
  * Includes code from the Auth class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),
  * written by Jason Hall. Library code has been modified.
  * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
- *
+ * <p/>
  * Provides methods to manage authentication flow.
  *
  * @author kamiller@redhat.com (Katie Miller)
@@ -44,12 +44,12 @@ public abstract class Authorizer {
     /**
      * Ensure the user has a valid access token from an OAuth 2.0 provider,
      * requesting one if necessary.
-     *
+     * <p/>
      * If it can be determined that the user has already granted access, and the
      * token has not yet expired, and that the token will not expire soon, the
      * existing token will be passed to the callback -- provided the request flag
      * is not set to force a call to the OAuth provider.
-     *
+     * <p/>
      * Otherwise, a popup window will be displayed which may prompt the user to
      * login and/or grant access. If the user has already granted access the popup
      * will close and the token will be passed to the callback. If access
@@ -262,7 +262,7 @@ public abstract class Authorizer {
 
     /**
      * Exports a function to the page's global scope that can be called from regular JavaScript.
-     *
+     * <p/>
      * Usage (in JavaScript):
      * <code>
      * oauth2win.authorize({

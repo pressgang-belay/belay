@@ -6,7 +6,8 @@
 
     <!-- Used to override Guice binding in the openid-filter library -->
     <listener>
-        <listener-class>org.jboss.pressgang.belay.oauth2.authserver.openid.GuiceOverrideServletContextListener</listener-class>
+        <listener-class>org.jboss.pressgang.belay.oauth2.authserver.openid.GuiceOverrideServletContextListener
+        </listener-class>
     </listener>
 
     <!-- The OpenID Filter handles identity authentication -->
@@ -19,11 +20,8 @@
     <filter-mapping>
         <filter-name>OpenID Filter</filter-name>
         <url-pattern>/rest/auth/authorize</url-pattern>
-        <url-pattern>/auth/confidential/authorize</url-pattern>
-        <url-pattern>/rest/auth/grant</url-pattern>
     </filter-mapping>
 
-    <!-- The OAuth Filter handles auth for identity services -->
     <filter>
         <filter-name>OAuth Filter</filter-name>
         <filter-class>org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSFilter</filter-class>
@@ -32,6 +30,9 @@
     <filter-mapping>
         <filter-name>OAuth Filter</filter-name>
         <url-pattern>/rest/auth/user/*</url-pattern>
+        <url-pattern>/auth/confidential/user/*</url-pattern>
+        <url-pattern>/rest/auth/invalidate</url-pattern>
+        <url-pattern>/rest/auth/confidential/invalidate</url-pattern>
     </filter-mapping>
 
     <context-param>
@@ -49,17 +50,17 @@
         <param-value>/rest/auth/authorize</param-value>
     </context-param>
 
-    <!-- Allowing query-style params on requests, required for user/identity service endpoints -->
+    <!-- Allowing only header-style params on requests -->
     <context-param>
         <param-name>oauth.rs.tokens</param-name>
-        <param-value>QUERY,HEADER</param-value>
+        <param-value>HEADER</param-value>
     </context-param>
 
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>ProtectedResources</web-resource-name>
-            <url-pattern>/rest/auth/info</url-pattern>
             <url-pattern>/rest/auth/token</url-pattern>
+            <url-pattern>/rest/auth/info</url-pattern>
             <url-pattern>/rest/auth/confidential/*</url-pattern>
         </web-resource-collection>
 

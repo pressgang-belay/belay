@@ -22,22 +22,22 @@ import static org.jboss.pressgang.belay.openid.provider.OpenIdProviderManager.Op
 /**
  * This class is based on org.picketlink.identity.federation.api.openid.provider.OpenIDProvider by Anil Saldhana.
  * It has been modified from the original, in 2012.
- *
+ * <p/>
  * JBoss, Home of Professional Open Source.
  * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
- *
+ * <p/>
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- *
+ * <p/>
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -56,7 +56,7 @@ public class OpenIdProvider {
 
     private OpenIdProviderManager providerManager = new OpenIdProviderManager();
 
-    @Produces({ APPLICATION_XRDS_XML, TEXT_PLAIN })
+    @Produces({APPLICATION_XRDS_XML, TEXT_PLAIN})
     @GET
     public Response redirectGet(@Context HttpServletRequest request, @QueryParam(ID) String id) throws IOException {
         if (id == null || id.length() == 0) {
@@ -67,17 +67,17 @@ public class OpenIdProvider {
                 String response = XMLBuilder.create(XRDS_TAG)
                         .a(XRDS_NS_TAG, XRDS_XRI)
                         .a(NS_TAG, XRD2_NS_XRI)
-                            .e(XRD_TAG)
-                                .e(SERVICE_TAG)
-                                .a(PRIORITY, FIRST)
-                                    .e(TYPE_TAG).t(OPENID2_SIGNON)
-                                    .up()
-                                    .e(TYPE_TAG).t(OPENID_AX_EXT)
-                                    .up()
-                                    .e(URI_TAG).t(createBaseUrl(request) + PROVIDER_ENDPOINT)
-                                    .up()
-                                .up()
-                            .up()
+                        .e(XRD_TAG)
+                        .e(SERVICE_TAG)
+                        .a(PRIORITY, FIRST)
+                        .e(TYPE_TAG).t(OPENID2_SIGNON)
+                        .up()
+                        .e(TYPE_TAG).t(OPENID_AX_EXT)
+                        .up()
+                        .e(URI_TAG).t(createBaseUrl(request) + PROVIDER_ENDPOINT)
+                        .up()
+                        .up()
+                        .up()
                         .up()
                         .asString();
                 return Response.ok(response).build();

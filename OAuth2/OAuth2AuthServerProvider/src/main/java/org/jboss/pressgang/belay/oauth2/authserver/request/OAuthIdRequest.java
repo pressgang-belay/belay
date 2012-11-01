@@ -7,8 +7,11 @@ import org.apache.amber.oauth2.common.exception.OAuthSystemException;
 import org.apache.amber.oauth2.common.message.types.ResponseType;
 import org.apache.amber.oauth2.common.utils.OAuthUtils;
 import org.apache.amber.oauth2.common.validators.OAuthValidator;
+import org.jboss.pressgang.belay.oauth2.authserver.util.Constants;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Set;
 
 import static org.apache.amber.oauth2.common.error.OAuthError.CodeResponse.UNSUPPORTED_RESPONSE_TYPE;
 
@@ -41,5 +44,96 @@ public class OAuthIdRequest extends OAuthRequest {
 
     public String getState() {
         return getParam(OAuth.OAUTH_STATE);
+    }
+
+    public String getProvider() {
+        return getParam(Constants.OPENID_PROVIDER);
+    }
+
+    public OAuthIdRequestParams copyOAuthParams() {
+        return new OAuthIdRequestParams()
+                .setClientId(this.getClientId())
+                .setClientSecret(this.getClientSecret())
+                .setProvider(this.getProvider())
+                .setRedirectUri(this.getRedirectURI())
+                .setScopes(this.getScopes())
+                .setResponseType(getParam(OAuth.OAUTH_RESPONSE_TYPE))
+                .setState(this.getState());
+    }
+
+    public static class OAuthIdRequestParams {
+        private String clientId;
+        private String clientSecret;
+        private String provider;
+        private String redirectUri;
+        private Set<String> scopes;
+        private String responseType;
+        private String state;
+
+        public OAuthIdRequestParams() {
+        }
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        public String getProvider() {
+            return provider;
+        }
+
+        public String getRedirectUri() {
+            return redirectUri;
+        }
+
+        public Set<String> getScopes() {
+            return scopes;
+        }
+
+        public String getResponseType() {
+            return responseType;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public OAuthIdRequestParams setClientId(String clientId) {
+            this.clientId = clientId;
+            return this;
+        }
+
+        public OAuthIdRequestParams setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
+            return this;
+        }
+
+        public OAuthIdRequestParams setProvider(String provider) {
+            this.provider = provider;
+            return this;
+        }
+
+        public OAuthIdRequestParams setRedirectUri(String redirectUri) {
+            this.redirectUri = redirectUri;
+            return this;
+        }
+
+        public OAuthIdRequestParams setScopes(Set<String> scopes) {
+            this.scopes = scopes;
+            return this;
+        }
+
+        public OAuthIdRequestParams setResponseType(String responseType) {
+            this.responseType = responseType;
+            return this;
+        }
+
+        public OAuthIdRequestParams setState(String state) {
+            this.state = state;
+            return this;
+        }
     }
 }

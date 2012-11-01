@@ -12,7 +12,8 @@ import org.openqa.selenium.support.FindBy;
  */
 public class YahooApprovalPage extends BasePage {
 
-    @FindBy(id = "agree") private WebElement approveButton;
+    @FindBy(id = "agree")
+    private WebElement approveButton;
 
     protected YahooApprovalPage(WebDriver driver) {
         super(driver);

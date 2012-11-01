@@ -57,7 +57,7 @@ public class AccessTokenExpiryInfo implements Serializable {
         if (this == o) return true;
         if (!(o instanceof IdentityInfo)) return false;
 
-        AccessTokenExpiryInfo that = (AccessTokenExpiryInfo)o;
+        AccessTokenExpiryInfo that = (AccessTokenExpiryInfo) o;
 
         return new EqualsBuilder()
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())

@@ -4,7 +4,7 @@ package org.jboss.pressgang.belay.oauth2.gwt.client;
  * Includes code from the AuthRequest class in the gwt-oauth2-0.2-alpha library (http://code.google.com/p/gwt-oauth2/),
  * written by Jason Hall. Library code has been modified.
  * This code is licensed under Apache License Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
- *
+ * <p/>
  * Represents a request for authentication to an OAuth 2.0 provider server, using an OpenId provider for authentication.
  *
  * @author kamiller@redhat.com (Katie Miller)
@@ -52,7 +52,7 @@ public class AuthorizationRequest {
      * Since some OAuth providers expect multiple scopes to be delimited with
      * spaces (conforming with spec), or spaces, or plus signs, you can set the
      * scope delimiter here that will be used for this AuthorizationRequest.
-     *
+     * <p/>
      * By default, this will be a single space, in conformance with the latest
      * draft of the OAuth 2.0 spec.
      */
@@ -84,7 +84,7 @@ public class AuthorizationRequest {
 
     /**
      * Returns a comma-delimited list of scopes.
-     *
+     * <p/>
      * These scopes will be URL-encoded if the given codex is not null.
      */
     private String scopesToString(Authorizer.UrlCodex urlCodex) {

@@ -132,7 +132,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                             <Dependencies>org.apache.httpcomponents</Dependencies>
+                            <Dependencies>org.apache.httpcomponents</Dependencies>
                         </manifestEntries>
                     </archive>
                 </configuration>

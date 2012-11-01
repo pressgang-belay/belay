@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.ws.rs.HeaderParam;
 import java.util.logging.Logger;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.oAuthTokenExpiry;
 
 /**
@@ -42,7 +43,7 @@ public class AuthInfoEndpointImpl implements AuthInfoEndpoint {
      */
     @Override
     public TokenGrantInfo getTokenGrantInfoForAccessToken(@HeaderParam(OAuth.OAUTH_TOKEN) String token) {
-        if (token == null || token.length() == 0) {
+        if (isNullOrEmpty(token)) {
             return null;
         }
         try {
@@ -51,8 +52,8 @@ public class AuthInfoEndpointImpl implements AuthInfoEndpoint {
                 log.info("Returning TokenGrantInfo for access token");
                 return tokenGrantInfoFound.get();
             }
-        } catch (OAuthSystemException e) {
-            log.warning("OAuthSystemException thrown while obtaining TokenGrantInfo: " + e);
+        } catch (Exception e) {
+            log.warning("Exception thrown while obtaining TokenGrantInfo: " + e);
         }
         log.info("Could not get TokenGrantInfo for access token");
         return null;
@@ -67,7 +68,7 @@ public class AuthInfoEndpointImpl implements AuthInfoEndpoint {
      */
     @Override
     public AccessTokenExpiryInfo extendAccessTokenExpiry(@HeaderParam(OAuth.OAUTH_TOKEN) String token) {
-        if (token == null || token.length() == 0) {
+        if (isNullOrEmpty(token)) {
             return null;
         }
         try {

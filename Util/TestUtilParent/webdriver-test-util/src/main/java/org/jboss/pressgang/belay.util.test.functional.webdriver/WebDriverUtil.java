@@ -180,7 +180,7 @@ public class WebDriverUtil {
      * Used as workaround for WebDriver bug.
      */
     public static FutureTask<String> createFutureTaskToGetLoginResultFromAlert(final WebDriver driver, final String windowHandle,
-                                                      final long waitMillis, final long timeout) {
+                                                                               final long waitMillis, final long timeout) {
         return new FutureTask<String>(new Callable<String>() {
             @Override
             public String call() throws Exception {

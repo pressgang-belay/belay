@@ -55,7 +55,7 @@ public class ScreenshotTestRule implements TestRule {
 
     public void captureScreenshot(String className, String testName) {
         try {
-            File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+            File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             String screenshotPath = screenshotDir + "/" + className + "/screenshot-" + testName + ".png";
             FileUtils.copyFile(screenshot, new File(screenshotPath));
             log.info("Screenshot saved to: " + screenshotPath);

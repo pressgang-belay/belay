@@ -10,21 +10,21 @@
     OF ANY KIND, either express or implied. See the License for the specific 
     language governing permissions and limitations under the License. -->
 <persistence version="2.0"
-   xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="
+             xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="
         http://java.sun.com/xml/ns/persistence
         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-   <persistence-unit name="sample">
-      <jta-data-source>java:jboss/datasources/OAuth2SecuredRestAppDS</jta-data-source>
-       <class>org.jboss.pressgang.belay.oauth2.sample.model.Person</class>
-       <exclude-unlisted-classes>true</exclude-unlisted-classes>
-       <!-- Demo database settings only. Not suitable for production environment -->
-       <properties>
-         <property name="hibernate.hbm2ddl.auto" value="create-drop" />
-         <property name="hibernate.hbm2ddl.import_files" value="import.sql" />
-         <property name="hibernate.show_sql" value="false" />
-      </properties>
-   </persistence-unit>
+    <persistence-unit name="sample">
+        <jta-data-source>java:jboss/datasources/OAuth2SecuredRestAppDS</jta-data-source>
+        <class>org.jboss.pressgang.belay.oauth2.sample.model.Person</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <!-- Demo database settings only. Not suitable for production environment -->
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.hbm2ddl.import_files" value="import.sql"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+    </persistence-unit>
     <persistence-unit name="oauth2-resourceserver">
         <jta-data-source>java:jboss/datasources/OAuth2ResourceServerDS</jta-data-source>
         <jar-file>resource-server-provider-1.0-SNAPSHOT.jar</jar-file>
@@ -35,10 +35,11 @@
         <properties>
             <!-- Set this so the library can access the entity manager factory for this data source -->
             <!-- Put this value in the resourceserver.properties file with the key entityManagerFactoryJndiAddress -->
-            <property name="jboss.entity.manager.factory.jndi.name" value="java:app/OAuth2ResourceServerManagerFactory" />
-            <property name="hibernate.hbm2ddl.auto" value="create-drop" />
-            <property name="hibernate.hbm2ddl.import_files" value="resourceserver-import.sql" />
-            <property name="hibernate.show_sql" value="false" />
+            <property name="jboss.entity.manager.factory.jndi.name"
+                      value="java:app/OAuth2ResourceServerManagerFactory"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.hbm2ddl.import_files" value="resourceserver-import.sql"/>
+            <property name="hibernate.show_sql" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>

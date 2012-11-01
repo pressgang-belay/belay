@@ -3,7 +3,7 @@ package org.jboss.pressgang.belay.oauth2.gwt.client;
 /**
  * Values common across classes.
  *
- *@author kamiller@redhat.com (Katie Miller)
+ * @author kamiller@redhat.com (Katie Miller)
  */
 class Constants {
     static final String SPACE = " ";
@@ -27,6 +27,10 @@ class Constants {
     static final String OAUTH_POPUP_NAME = "oAuthWindow.html";
     static final String PROVIDER = "provider";
     static final String NEW_IDENTITY_PRIMARY = "newIdentityPrimary";
+    static final String SECOND_TOKEN = "second_token";
+    static final String SECOND_USER_PRIMARY = "second_user_primary";
+    static final String CONTENT_TYPE = "Content-Type";
+    static final String URL_ENCODED_TYPE = "application/x-www-form-urlencoded";
     static final String ID = "id";
     static final String TRUE = "true";
     static final double ONE_MINUTE = 60 * 1000;

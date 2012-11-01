@@ -76,7 +76,7 @@ public class UserDao {
             Set<Identity> nonPrimaryIdentities = copyOf(filter(user.getUserIdentities(), new Predicate<Identity>() {
                 @Override
                 public boolean apply(Identity identity) {
-                    return ! identity.equals(user.getPrimaryIdentity());
+                    return !identity.equals(user.getPrimaryIdentity());
                 }
             }));
             Set<String> userIdentifiers = copyOf(transform(user.getUserIdentities(), new Function<Identity, String>() {

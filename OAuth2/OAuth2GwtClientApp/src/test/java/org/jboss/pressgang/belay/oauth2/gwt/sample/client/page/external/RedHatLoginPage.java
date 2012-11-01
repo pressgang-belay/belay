@@ -18,9 +18,12 @@ import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriver
  */
 public class RedHatLoginPage extends BasePage {
 
-    @FindBy(name = "j_username") private WebElement usernameInputField;
-    @FindBy(name = "j_password") private WebElement passwordInputField;
-    @FindBy(xpath = "html/body/form/input") private WebElement loginButton;
+    @FindBy(name = "j_username")
+    private WebElement usernameInputField;
+    @FindBy(name = "j_password")
+    private WebElement passwordInputField;
+    @FindBy(xpath = "html/body/form/input")
+    private WebElement loginButton;
 
     public RedHatLoginPage(WebDriver driver) {
         super(driver);

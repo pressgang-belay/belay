@@ -19,10 +19,14 @@ import static org.jboss.pressgang.belay.util.test.functional.webdriver.WebDriver
  */
 public class GoogleLoginPage extends BasePage {
 
-    @FindBy(id = "Email") private WebElement emailInputField;
-    @FindBy(id = "Passwd") private WebElement passwordInputField;
-    @FindBy(id = "PersistentCookie") private WebElement persistentLoginCheckbox;
-    @FindBy(id = "signIn") private WebElement loginButton;
+    @FindBy(id = "Email")
+    private WebElement emailInputField;
+    @FindBy(id = "Passwd")
+    private WebElement passwordInputField;
+    @FindBy(id = "PersistentCookie")
+    private WebElement persistentLoginCheckbox;
+    @FindBy(id = "signIn")
+    private WebElement loginButton;
 
     public GoogleLoginPage(WebDriver driver) {
         super(driver);
@@ -49,7 +53,7 @@ public class GoogleLoginPage extends BasePage {
         new Thread(resultCheck).start();
         if (waitToSeeIfPageDisplayed(getDriver(), TEN_SECONDS, approvalPage).isPresent()) {
             approvalPage.setApprovalPersistence(isOpenIdApprovalPersistent)
-                        .approve();
+                    .approve();
         }
         UserConsentPage consentPage = new UserConsentPage(getDriver());
         if (waitToSeeIfPageDisplayed(getDriver(), FIVE_SECONDS, consentPage).isPresent()) {
