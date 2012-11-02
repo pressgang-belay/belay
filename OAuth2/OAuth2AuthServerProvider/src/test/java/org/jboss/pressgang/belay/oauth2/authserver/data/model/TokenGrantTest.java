@@ -1,6 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.authserver.data.model;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.jboss.pressgang.belay.util.test.unit.BaseUnitTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ public class TokenGrantTest extends BaseUnitTest {
     public void shouldOverrideEqualsCorrectly() throws Exception {
         EqualsVerifier.forClass(TokenGrant.class)
                 .withPrefabValues(User.class, makeUser(), makeDifferentUser())
+                .suppress(Warning.NULL_FIELDS)
                 .verify();
     }
 }

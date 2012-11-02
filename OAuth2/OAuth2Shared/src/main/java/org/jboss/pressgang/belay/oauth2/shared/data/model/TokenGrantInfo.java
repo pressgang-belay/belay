@@ -223,7 +223,9 @@ public class TokenGrantInfo implements Serializable {
         }
 
         public TokenGrantInfoBuilder setGrantTimeStamp(Date grantTimeStamp) {
-            this.grantTimeStamp = new Date(grantTimeStamp.getTime());
+            if (grantTimeStamp != null) {
+                this.grantTimeStamp = new Date(grantTimeStamp.getTime());
+            }
             return this;
         }
 
