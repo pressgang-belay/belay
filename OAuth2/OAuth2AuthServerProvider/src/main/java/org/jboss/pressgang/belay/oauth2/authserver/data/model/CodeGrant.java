@@ -58,7 +58,7 @@ public class CodeGrant implements Serializable {
     @NotNull
     @Column(name = "CODE_GRANT_TIMESTAMP")
     public Date getGrantTimeStamp() {
-        return grantTimeStamp;
+        return new Date(grantTimeStamp.getTime());
     }
 
     @NotNull
@@ -102,7 +102,7 @@ public class CodeGrant implements Serializable {
     }
 
     public void setGrantTimeStamp(Date grantTimeStamp) {
-        this.grantTimeStamp = grantTimeStamp;
+        this.grantTimeStamp = new Date(grantTimeStamp.getTime());
     }
 
     public void setGrantClient(ClientApplication grantClient) {

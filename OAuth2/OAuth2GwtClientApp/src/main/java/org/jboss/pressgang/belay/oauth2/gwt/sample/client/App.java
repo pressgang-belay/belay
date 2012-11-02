@@ -41,7 +41,7 @@ public class App implements EntryPoint {
     private static final String BELAY_MAKE_PRIMARY_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/user/makeIdentityPrimary";
     private static final String BELAY_AUTH_URL = BELAY_AUTH_SERVER_URL + "/rest/auth/authorize";
     private static final String BELAY_CLIENT_ID = "pressgang_belay_id";
-    private final String PERFORM_USER_MANAGEMENT = "PERFORM_USER_MANAGEMENT";
+    private static final String PERFORM_USER_MANAGEMENT = "PERFORM_USER_MANAGEMENT";
 
     private final Label inputLabel = new Label("Input: ");
     private final TextBox inputTextBox = new TextBox();
@@ -209,7 +209,17 @@ public class App implements EntryPoint {
                         public void onSuccess(String result) {
                             final OAuthRequest request = RequestUtil.associateIdentitiesRequest(RequestBuilder.POST,
                                     BELAY_ASSOCIATE_URL, BELAY_CLIENT_ID, originalToken, false);
-                            AUTH_HANDLER.sendRequest(request, getStandardRequestCallback());
+                            AUTH_HANDLER.sendRequest(request, new RequestCallback() {
+                                @Override
+                                public void onResponseReceived(Request request1, Response response) {
+                                    Window.alert("Result: " + response.getText());
+                                }
+
+                                @Override
+                                public void onError(Request request1, Throwable exception) {
+                                    Window.alert("Error:\n" + exception.getMessage());
+                                }
+                            });
                         }
 
                         @Override
@@ -230,7 +240,17 @@ public class App implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 AUTH_HANDLER.sendRequest(RequestUtil.makeIdentityPrimaryRequest(RequestBuilder.GET,
-                        BELAY_MAKE_PRIMARY_URL, inputTextBox.getText()), getStandardRequestCallback());
+                        BELAY_MAKE_PRIMARY_URL, inputTextBox.getText()), new RequestCallback() {
+                    @Override
+                    public void onResponseReceived(Request request, Response response) {
+                        Window.alert("Result: " + response.getText());
+                    }
+
+                    @Override
+                    public void onError(Request request, Throwable exception) {
+                        Window.alert("Error:\n" + exception.getMessage());
+                    }
+                });
             }
         });
         RootPanel.get().add(button);
@@ -267,7 +287,17 @@ public class App implements EntryPoint {
             @Override
             public void onClick(ClickEvent event) {
                 AUTH_HANDLER.sendRequest(RequestUtil.invalidateTokenGrantRequest(RequestBuilder.GET,
-                        BELAY_INVALIDATE_URL, BELAY_CLIENT_ID), getStandardRequestCallback());
+                        BELAY_INVALIDATE_URL, BELAY_CLIENT_ID), new RequestCallback() {
+                    @Override
+                    public void onResponseReceived(Request request, Response response) {
+                        Window.alert("Result: " + response.getText());
+                    }
+
+                    @Override
+                    public void onError(Request request, Throwable exception) {
+                        Window.alert("Error:\n" + exception.getMessage());
+                    }
+                });
             }
         });
         RootPanel.get().add(button);

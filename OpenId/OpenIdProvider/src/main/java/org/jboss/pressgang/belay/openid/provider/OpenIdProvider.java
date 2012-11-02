@@ -49,7 +49,7 @@ import static org.jboss.pressgang.belay.openid.provider.OpenIdProviderManager.Op
 @RequestScoped
 public class OpenIdProvider {
 
-    private final String SECURE_PAGE_URL = "/OpenIdProvider/securepage.jsp";
+    private static final String SECURE_PAGE_URL = "/OpenIdProvider/securepage.jsp";
 
     @Inject
     private Logger log;
@@ -146,7 +146,7 @@ public class OpenIdProvider {
             Boolean authenticatedAndApproved;
 
             if ((session.getAttribute(AUTHENTICATED_APPROVED) == null) ||
-                    ((session.getAttribute(AUTHENTICATED_APPROVED)) == Boolean.FALSE)) {
+                    ((session.getAttribute(AUTHENTICATED_APPROVED)).equals(Boolean.FALSE))) {
                 log.info("User not yet authenticated");
                 session.setAttribute(PARAM_LIST, requestParameters);
                 URI redirectUri = URI.create(createBaseUrl(request) + this.SECURE_PAGE_URL);

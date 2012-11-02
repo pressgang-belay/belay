@@ -45,7 +45,7 @@ public class GuiceOverrideConsumerFactory extends ConsumerFactory {
     /**
      * Class to override the existing GuiceModule.
      */
-    public class GuiceOverrideModule implements Module {
+    public static class GuiceOverrideModule implements Module {
         @Override
         public void configure(Binder binder) {
             Log.info("Configuring binding for CustomHostMetaFetcher");

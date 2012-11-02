@@ -1,9 +1,8 @@
 
-insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, GRANTS_MUST_EXPIRE) values (-1, 'OAuth2AuthServer', 'OAuth2AuthServer', '/auth/user/associate/completeAssociation', true)
-insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, GRANTS_MUST_EXPIRE) values (-2, 'pressgang_belay_id', 'GwtOAuth2Client', 'https://localhost:8443/OAuth2GwtClientApp/org.jboss.pressgang.belay.oauth2.gwt.sample.App/oAuthWindow.html', true)
+insert into CLIENT (CLIENT_ID, CLIENT_IDENTIFIER, CLIENT_NAME, CLIENT_REDIRECT_URI, GRANTS_MUST_EXPIRE) values (-1, 'pressgang_belay_id', 'GwtOAuth2Client', 'https://localhost:8443/OAuth2GwtClientApp/org.jboss.pressgang.belay.oauth2.gwt.sample.App/oAuthWindow.html', true)
 
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-1, 'Google', 'gmail.com')
-insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-2, 'Red Hat', 'https://localhost:8443/OpenIdProvider')
+insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-2, 'BelayOpenID', 'https://localhost:8443/OpenIdProvider')
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-3, 'Yahoo', 'me.yahoo.com')
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-4, 'Facebook', 'facebook.com')
 insert into OPENID_PROVIDER (PROVIDER_ID, PROVIDER_NAME, PROVIDER_URL) values (-5, 'myOpenID', 'myopenid.com')

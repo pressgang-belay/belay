@@ -129,9 +129,7 @@ public class AuthEndpointImpl implements AuthEndpoint {
             } else if (endUserConsentResult.isPresent() && userApprovedAccess(endUserConsentResult)) {
                 log.info("User has consented to client application access");
                 user = (User) request.getSession().getAttribute(OAUTH2_USER);
-                if (user != null && user.getPrimaryIdentity() != null) {
-                    identifier = user.getPrimaryIdentity().getIdentifier();
-                } else {
+                if (user == null || user.getPrimaryIdentity() == null) {
                     throw OAuthEndpointUtil.createOAuthProblemException(OAuthError.CodeResponse.SERVER_ERROR, redirectUri,
                             oAuthRequestParams.getState());
                 }
@@ -200,8 +198,9 @@ public class AuthEndpointImpl implements AuthEndpoint {
                                 SC_FOUND, oAuthRequestParams.getState());
                 response = oAuthAuthorizationResponseBuilder.location(redirectUri).buildQueryMessage();
             }
+            Response result = Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
             request.getSession().invalidate();
-            return Response.status(response.getResponseStatus()).location(URI.create(response.getLocationUri())).build();
+            return result;
         } catch (OAuthProblemException e) {
             return handleOAuthProblemException(log, e);
         } catch (OAuthSystemException e) {

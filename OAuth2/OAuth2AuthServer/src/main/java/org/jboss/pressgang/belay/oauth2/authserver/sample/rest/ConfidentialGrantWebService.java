@@ -1,5 +1,6 @@
 package org.jboss.pressgang.belay.oauth2.authserver.sample.rest;
 
+import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.GrantEndpoint;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.impl.GrantEndpointImpl;
 
 import javax.enterprise.context.RequestScoped;
@@ -9,6 +10,6 @@ import javax.ws.rs.Path;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RequestScoped
-@Path("/auth/invalidate")
-public class PublicGrantEndpoint extends GrantEndpointImpl {
+@Path("/auth/confidential/invalidate")
+public class ConfidentialGrantWebService extends GrantEndpointImpl {
 }

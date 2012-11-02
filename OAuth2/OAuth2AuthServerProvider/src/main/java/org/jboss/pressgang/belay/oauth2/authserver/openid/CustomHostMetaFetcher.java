@@ -47,7 +47,7 @@ public class CustomHostMetaFetcher extends UrlHostMetaFetcher {
     /**
      * Extended class so protected method can be accessed.
      */
-    public class ExtendedGoogleHostedHostMetaFetcher extends GoogleHostedHostMetaFetcher {
+    public static class ExtendedGoogleHostedHostMetaFetcher extends GoogleHostedHostMetaFetcher {
 
         public ExtendedGoogleHostedHostMetaFetcher(HttpFetcher fetcher) {
             super(fetcher);
@@ -62,7 +62,7 @@ public class CustomHostMetaFetcher extends UrlHostMetaFetcher {
     /**
      * Extended class so protected method can be accessed.
      */
-    public class ExtendedDefaultHostMetaFetcher extends DefaultHostMetaFetcher {
+    public static class ExtendedDefaultHostMetaFetcher extends DefaultHostMetaFetcher {
 
         public ExtendedDefaultHostMetaFetcher(HttpFetcher fetcher) {
             super(fetcher);

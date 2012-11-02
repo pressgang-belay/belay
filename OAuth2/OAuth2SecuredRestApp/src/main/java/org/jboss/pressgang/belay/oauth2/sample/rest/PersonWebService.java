@@ -51,9 +51,10 @@ public class PersonWebService {
     @Path("/{id:[0-9][0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Person lookupPersonById(@PathParam("id") BigInteger id) {
-
+        if (id == null) {
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
         Optional<Person> personFound = personRepository.findById(id);
-
         if (!personFound.isPresent()) {
             log.warning("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -71,10 +72,11 @@ public class PersonWebService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createPerson(Person person) {
-
         Response.ResponseBuilder builder;
-
-        if (person != null && person.getPersonId() != null) {
+        if (person == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        if (person.getPersonId() != null) {
             String message = "Use PUT to update person with id "
                     + person.getPersonId();
             log.warning(message);
@@ -89,8 +91,6 @@ public class PersonWebService {
                         + person.getPersonId());
                 // Create an "ok" response
                 BigInteger id = person.getPersonId();
-                String result = "Person created with id " + id + " at: "
-                        + "/rest/people/" + id;
                 builder = Response.created(URI.create("/rest/people/" + id));
 
             } catch (ConstraintViolationException ce) {
@@ -118,10 +118,11 @@ public class PersonWebService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createOrUpdatePersonWithId(Person person) {
-
         Response.ResponseBuilder builder;
-
-        if (person != null && person.getPersonId() == null) {
+        if (person == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        if (person.getPersonId() == null) {
             String message = "Use POST to create a new person and generate an id";
             log.warning(message);
             builder = Response.status(Response.Status.BAD_REQUEST).entity(
@@ -174,9 +175,10 @@ public class PersonWebService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id:[0-9][0-9]*}")
     public Response deletePerson(@PathParam("id") BigInteger id) {
-
+        if (id == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         Response.ResponseBuilder builder;
-
         if (!(personRepository.findById(id).isPresent())) {
             log.warning("Could not find requested person with id: " + id);
             throw new WebApplicationException(Response.Status.NOT_FOUND);

@@ -44,7 +44,7 @@ public class TokenGrantInfo implements Serializable {
         this.grantClientName = builder.grantClientName;
         this.grantClientRedirectUri = builder.grantClientRedirectUri;
         this.grantClientTokensMustExpire = builder.grantClientTokensMustExpire;
-        this.grantTimeStamp = builder.grantTimeStamp;
+        this.grantTimeStamp = new Date(builder.grantTimeStamp.getTime());
         this.grantCurrent = builder.grantCurrent;
         this.grantScopeNames = builder.grantScopeNames;
     }
@@ -86,7 +86,7 @@ public class TokenGrantInfo implements Serializable {
     }
 
     public Date getGrantTimeStamp() {
-        return grantTimeStamp;
+        return new Date(grantTimeStamp.getTime());
     }
 
     public Boolean getGrantCurrent() {
@@ -223,7 +223,7 @@ public class TokenGrantInfo implements Serializable {
         }
 
         public TokenGrantInfoBuilder setGrantTimeStamp(Date grantTimeStamp) {
-            this.grantTimeStamp = grantTimeStamp;
+            this.grantTimeStamp = new Date(grantTimeStamp.getTime());
             return this;
         }
 

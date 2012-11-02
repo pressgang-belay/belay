@@ -235,7 +235,7 @@ class OAuthEndpointUtil {
         return ImmutableSet.copyOf(filter(grants, new Predicate<TokenGrant>() {
             @Override
             public boolean apply(TokenGrant grant) {
-                return grant.getGrantClient().getClientId().equals(clientId);
+                return grant.getGrantClient().getClientIdentifier().equals(clientId);
             }
         }));
     }
@@ -244,7 +244,7 @@ class OAuthEndpointUtil {
         return ImmutableSet.copyOf(filter(grants, new Predicate<CodeGrant>() {
             @Override
             public boolean apply(CodeGrant grant) {
-                return grant.getGrantClient().getClientId().equals(clientId);
+                return grant.getGrantClient().getClientIdentifier().equals(clientId);
             }
         }));
     }
