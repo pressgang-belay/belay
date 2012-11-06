@@ -3,8 +3,10 @@ PressGang Belay
 Contains prototype projects around REST web service security.
 
 The OpenId directory contains a sample OpenID server implementation.
-The OAuth2 directory contains an OAuth2 authorisation server library with sample webapp implementation and an OAuth2 resource server library with an example REST app that uses this library. It also contains a GWT OAuth2 client library and corresponding sample app.
+The OAuth2 directory contains an OAuth2 authorization server library with sample webapp implementation and an OAuth2 resource server library with an example REST app that uses this library. It also contains a GWT OAuth2 client library and corresponding sample app.
 
 Development work still in progress.
+
+See Developer Guide at http://pressgang-belay.github.com/belay/.
 
 Why the name? According to one online pirate dictionary (http://www.thepiratesrealm.com/pirate%20talk.html), belay means "either to tie something down tight and secure...or to stop or ignore, as in, 'Belay that last command'". This seemed appropriate for an auth project that will be part of the pirate-themed PressGang suite. 
