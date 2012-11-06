@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <name>PressGangBelayParent</name>
     <description>Facilitates RESTful web service security using OAuth2 and OpenID.</description>
-    <url>http://github.com/codemiller/belay</url>
+    <url>http://github.com/pressgang-belay/belay</url>
     <licenses>
         <license>
             <name>GNU Lesser General Public License, Version 2.1</name>
@@ -18,9 +18,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:git@github.com:codemiller/belay.git</connection>
-        <developerConnection>scm:git:git@github.com:codemiller/belay.git</developerConnection>
-        <url>git@github.com:codemiller/belay.git</url>
+        <connection>scm:git:git@github.com:pressgang-belay/belay.git</connection>
+        <developerConnection>scm:git:git@github.com:pressgang-belay/belay.git</developerConnection>
+        <url>git@github.com:pressgang-belay/belay.git</url>
     </scm>
     <developers>
         <developer>
