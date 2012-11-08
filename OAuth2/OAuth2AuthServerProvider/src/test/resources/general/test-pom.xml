@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.pressgang.belay</groupId>
+    <artifactId>auth-server-provider-test</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>OAuth2AuthServerProviderTest</name>
+
+    <repositories>
+        <!-- For Apache Amber -->
+        <repository>
+            <id>apache-snapshots-repo</id>
+            <name>Apache snapshots</name>
+            <url>http://repository.apache.org/snapshots/</url>
+        </repository>
+        <!-- For OpenID Filter -->
+        <repository>
+            <id>openid-filter-repo</id>
+            <name>Repository for openid-filter</name>
+            <url>http://openid-filter.googlecode.com/svn/repo</url>
+        </repository>
+        <repository>
+            <id>jboss-repo</id>
+            <name>JBoss repository</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+    </repositories>
+
+    <properties>
+        <jboss.jaxrs.api.version>1.0.0.Final</jboss.jaxrs.api.version>
+        <jboss.annotations.api.version>1.0.1.Final</jboss.annotations.api.version>
+        <jboss.ejb.api.version>1.0.2.Final</jboss.ejb.api.version>
+        <jboss.bom.version>1.0.1.CR2</jboss.bom.version>
+        <hibernate.jpa.api.version>1.0.1.Final</hibernate.jpa.api.version>
+        <hibernate.validator.version>4.3.0.Final</hibernate.validator.version>
+        <hibernate.jpamodelgen.version>1.2.0.Final</hibernate.jpamodelgen.version>
+        <hibernate.validator.annotationproc.version>4.3.0.Final</hibernate.validator.annotationproc.version>
+        <cdi.api.version>1.0-SP4</cdi.api.version>
+        <amber.version>0.22-incubating</amber.version>
+        <servletapi.version>2.5</servletapi.version>
+        <openid4java.version>0.9.6</openid4java.version>
+        <guice.version>2.0</guice.version>
+        <json.version>20090211</json.version>
+        <openidfilter.version>1.0-SNAPSHOT</openidfilter.version>
+        <jodatime.version>2.0</jodatime.version>
+        <xmlbuilder.version>0.4</xmlbuilder.version>
+        <hibernate.version>4.1.1.Final</hibernate.version>
+        <jatl.version>0.2.2</jatl.version>
+        <guava.version>13.0-rc1</guava.version>
+        <restassured.version>1.6.2</restassured.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.pressgang.belay</groupId>
+            <artifactId>oauth2-shared</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Used for identity services -->
+        <dependency>
+            <groupId>org.jboss.pressgang.belay</groupId>
+            <artifactId>resource-server-provider</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${cdi.api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.annotation</groupId>
+            <artifactId>jboss-annotations-api_1.1_spec</artifactId>
+            <version>${jboss.annotations.api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.ws.rs</groupId>
+            <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
+            <version>${jboss.jaxrs.api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>${hibernate.jpa.api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <version>${jboss.ejb.api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate.jpamodelgen.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator-annotation-processor</artifactId>
+            <version>${hibernate.validator.annotationproc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servletapi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.amber</groupId>
+            <artifactId>amber-oauth2-authzserver</artifactId>
+            <version>${amber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.amber</groupId>
+            <artifactId>amber-oauth2-resourceserver</artifactId>
+            <version>${amber.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <!-- 4.1.2 causes SSL issues -->
+            <version>4.1.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openid4java</groupId>
+            <artifactId>openid4java-nodeps</artifactId>
+            <version>${openid4java.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.guice</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code</groupId>
+            <artifactId>openid-filter</artifactId>
+            <version>${openidfilter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.google-collections</groupId>
+                    <artifactId>google-collect</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-jcl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>${xmlbuilder.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${jodatime.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.jatl</groupId>
+            <artifactId>jatl</artifactId>
+            <version>${jatl.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.pressgang.belay</groupId>
+            <artifactId>test-util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${restassured.version}</version>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>jboss-javaee-6.0-with-tools</artifactId>
+                <version>${jboss.bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>jboss-javaee-6.0-with-hibernate</artifactId>
+                <version>${jboss.bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

@@ -1,0 +1,84 @@
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+    <display-name>PressGang Belay OAuth2 Test Auth Server</display-name>
+
+    <!-- Used to override Guice binding in the openid-filter library -->
+    <listener>
+        <listener-class>org.jboss.pressgang.belay.oauth2.authserver.openid.GuiceOverrideServletContextListener
+        </listener-class>
+    </listener>
+
+    <!-- The OpenID Filter handles identity authentication -->
+    <filter>
+        <filter-name>OpenID Filter</filter-name>
+        <filter-class>com.google.code.openid.RelyingPartyFilter</filter-class>
+    </filter>
+
+    <!-- This defines the URL that requires OpenID authentication -->
+    <filter-mapping>
+        <filter-name>OpenID Filter</filter-name>
+        <url-pattern>/rest/auth/authorize</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>OAuth Filter</filter-name>
+        <filter-class>org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>OAuth Filter</filter-name>
+        <url-pattern>/rest/auth/user/*</url-pattern>
+        <url-pattern>/auth/confidential/user/*</url-pattern>
+        <url-pattern>/rest/auth/invalidate</url-pattern>
+        <url-pattern>/rest/auth/confidential/invalidate</url-pattern>
+    </filter-mapping>
+
+    <context-param>
+        <param-name>oauth.rs.provider-class</param-name>
+        <param-value>org.jboss.pressgang.belay.oauth2.resourceserver.filter.OAuth2RSProvider</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>oauth.provider.tokens.request</param-name>
+        <param-value>/rest/auth/token</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>oauth.provider.tokens.access</param-name>
+        <param-value>/rest/auth/authorize</param-value>
+    </context-param>
+
+    <!-- Allowing only header-style params on requests -->
+    <context-param>
+        <param-name>oauth.rs.tokens</param-name>
+        <param-value>HEADER</param-value>
+    </context-param>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>ProtectedResources</web-resource-name>
+            <url-pattern>/rest/auth/token</url-pattern>
+            <url-pattern>/rest/auth/info</url-pattern>
+            <url-pattern>/rest/auth/confidential/*</url-pattern>
+        </web-resource-collection>
+
+        <auth-constraint>
+            <role-name>clientapp</role-name>
+        </auth-constraint>
+
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>ApplicationRealm</realm-name>
+    </login-config>
+
+    <security-role>
+        <role-name>clientapp</role-name>
+    </security-role>
+</web-app>

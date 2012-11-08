@@ -3,6 +3,7 @@ package org.jboss.pressgang.belay.oauth2.authserver.rest.impl;
 import com.googlecode.jatl.Html;
 import org.jboss.pressgang.belay.oauth2.authserver.request.OAuthIdRequest;
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.UserConsentEndpoint;
+import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Resources.*;
 public class UserConsentEndpointImpl implements UserConsentEndpoint {
 
     @Inject
+    @AuthServer
     private Logger log;
 
     @Override

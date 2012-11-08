@@ -49,10 +49,12 @@ public class GrantEndpointImpl implements GrantEndpoint {
         // Check client
         Optional<ClientApplication> clientFound = authService.getClient(clientId);
         if (!clientFound.isPresent()) {
+            log.warning("Invalid clientID: " + clientId);
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid OAuth2 ClientID").build();
         }
         client = clientFound.get();
         if ((!isClientPublic(client)) && request.getAuthType() == null) {
+            log.warning("Attempt to use confidential client without authorization: " + clientId);
             return Response.status(Response.Status.UNAUTHORIZED).entity("Client unauthorized").build();
         }
 
@@ -60,6 +62,7 @@ public class GrantEndpointImpl implements GrantEndpoint {
             resourceRequest = new OAuthAccessResourceRequest(request);
             Optional<TokenGrant> tokenGrantFound = authService.getTokenGrantByAccessToken(resourceRequest.getAccessToken());
             if (!tokenGrantFound.isPresent()) {
+                log.warning("Invalid access token");
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
             tokenGrant = tokenGrantFound.get();
@@ -73,6 +76,7 @@ public class GrantEndpointImpl implements GrantEndpoint {
 
         tokenGrant.setGrantCurrent(false);
         authService.updateTokenGrant(tokenGrant);
+        log.info("Token grant invalidated");
         return Response.ok().entity("Operation completed successfully").build();
     }
 }

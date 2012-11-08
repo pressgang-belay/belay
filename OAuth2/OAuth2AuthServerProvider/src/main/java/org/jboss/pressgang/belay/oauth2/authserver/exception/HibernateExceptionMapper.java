@@ -1,6 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.authserver.exception;
 
 import org.hibernate.HibernateException;
+import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,6 +20,7 @@ import static org.apache.commons.lang.StringUtils.join;
 public class HibernateExceptionMapper implements ExceptionMapper<HibernateException> {
 
     @Inject
+    @AuthServer
     private Logger log;
 
     @Override

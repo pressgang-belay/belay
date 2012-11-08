@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns="http://www.jboss.org/ironjacamar/schema"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="
+        http://www.jboss.org/ironjacamar/schema
+        http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+    <datasource enabled="true"
+                jndi-name="java:jboss/datasources/OAuth2AuthServerTestDS"
+                pool-name="AuthServerTestEmbeddedH2Pool">
+        <connection-url>jdbc:h2:mem:oauth2authservertest;DB_CLOSE_ON_EXIT=FALSE</connection-url>
+        <driver>h2</driver>
+        <security>
+            <user-name>sa</user-name>
+            <password>sa</password>
+        </security>
+        <timeout>
+            <idle-timeout-minutes>99999999</idle-timeout-minutes>
+        </timeout>
+    </datasource>
+</datasources>

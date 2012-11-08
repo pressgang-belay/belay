@@ -1,5 +1,7 @@
 package org.jboss.pressgang.belay.oauth2.authserver.exception;
 
+import org.jboss.pressgang.belay.oauth2.authserver.util.AuthServer;
+
 import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -18,6 +20,7 @@ import static org.apache.commons.lang.StringUtils.join;
 public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplicationException> {
 
     @Inject
+    @AuthServer
     private Logger log;
 
     @Override
