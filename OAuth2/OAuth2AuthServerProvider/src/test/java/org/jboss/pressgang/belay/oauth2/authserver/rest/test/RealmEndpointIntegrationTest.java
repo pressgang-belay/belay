@@ -16,11 +16,11 @@ import static org.hamcrest.core.StringContains.containsString;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RunWith(Arquillian.class)
-public class RealmEndpointImplTest extends BaseArquillianEndpointImplTest {
+public class RealmEndpointIntegrationTest extends BaseArquillianIntegrationTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return BaseArquillianEndpointImplTest.createDeployment();
+        return BaseArquillianIntegrationTest.createDeployment();
     }
 
     @Test

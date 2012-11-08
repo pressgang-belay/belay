@@ -16,6 +16,7 @@
     </parent>
 
     <properties>
+        <skipIntTests>false</skipIntTests>
         <jboss.base.dir>${project.build.directory}/jboss</jboss.base.dir>
         <jboss.dir>${jboss.base.dir}/jboss-as-${jbossarquillian.version}</jboss.dir>
         <jboss.config.dir>${jboss.dir}/standalone/configuration</jboss.config.dir>
@@ -275,8 +276,8 @@
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
             <artifactId>arquillian-jacoco</artifactId>
-            <scope>test</scope>
             <version>${arquillianjacoco.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -455,18 +456,62 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipTests}</skip>
+                            <argLine>${argLine}</argLine>
+                            <excludes>
+                                <exclude>**/*IntegrationTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>integration-test</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipIntTests}</skip>
+                            <argLine>${argLine}</argLine>
+                            <includes>
+                                <include>**/*IntegrationTest.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+                <configuration>
+                    <skip>${skipTests}</skip>
+                    <destFile>${basedir}/target/jacoco.exec</destFile>
+                    <dataFile>${basedir}/target/jacoco.exec</dataFile>
+                    <output>file</output>
+                    <append>true</append>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>jacoco-initialize</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>report</id>
-                        <phase>prepare-package</phase>
+                        <id>jacoco-site</id>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>

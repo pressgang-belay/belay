@@ -13,11 +13,11 @@ import static com.jayway.restassured.RestAssured.given;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RunWith(Arquillian.class)
-public class GrantEndpointImplTest extends BaseArquillianEndpointImplTest {
+public class GrantEndpointIntegrationTest extends BaseArquillianIntegrationTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return BaseArquillianEndpointImplTest.createDeployment();
+        return BaseArquillianIntegrationTest.createDeployment();
     }
 
     @Test

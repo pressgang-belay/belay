@@ -2,7 +2,6 @@ package org.jboss.pressgang.belay.oauth2.authserver.rest.test;
 
 import org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint.TestJaxRsActivator;
 import org.jboss.pressgang.belay.oauth2.authserver.util.Resources;
-import org.jboss.pressgang.belay.util.test.unit.BaseUnitTest;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -15,7 +14,7 @@ import javax.persistence.EntityManager;
 /**
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class BaseArquillianEndpointImplTest extends BaseUnitTest {
+public class BaseArquillianIntegrationTest {
 
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, "arquilliantest.war")
