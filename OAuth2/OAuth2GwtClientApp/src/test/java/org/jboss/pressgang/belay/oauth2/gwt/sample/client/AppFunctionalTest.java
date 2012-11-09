@@ -13,7 +13,7 @@ import static org.junit.internal.matchers.StringContains.containsString;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AppTest extends BaseAppTest {
+public class AppFunctionalTest extends BaseAppFunctionalTest {
 
     private AppPage appPage;
 

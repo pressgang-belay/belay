@@ -51,7 +51,7 @@
         <oauth2authserver.project.name>OAuth2AuthServer</oauth2authserver.project.name>
         <securedrestapp.project.name>OAuth2SecuredRestApp</securedrestapp.project.name>
         <openidprovider.project.name>OpenIdProvider</openidprovider.project.name>
-        <skipIntTests>false</skipIntTests>
+        <skipIntTests>true</skipIntTests>
         <java.version>1.6</java.version>
         <junit.version>4.10</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
@@ -127,6 +127,29 @@
         </repository>
     </repositories>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <version>${arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-jacoco</artifactId>
+            <version>${arquillianjacoco.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.core</artifactId>
+            <version>${jacoco.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -164,6 +187,7 @@
                             <argLine>${argLine}</argLine>
                             <excludes>
                                 <exclude>**/*IntegrationTest.java</exclude>
+                                <exclude>**/*FunctionalTest.java</exclude>
                             </excludes>
                         </configuration>
                     </execution>
@@ -178,6 +202,7 @@
                             <argLine>${argLine}</argLine>
                             <includes>
                                 <include>**/*IntegrationTest.java</include>
+                                <include>**/*FunctionalTest.java</include>
                             </includes>
                         </configuration>
                     </execution>

@@ -17,9 +17,9 @@ import static org.junit.Assert.assertThat;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RunWith(Arquillian.class)
-public abstract class BaseWebDriverTest {
+public abstract class BaseFunctionalTest {
 
-    protected static final Logger log = Logger.getLogger(BaseWebDriverTest.class.getName());
+    protected static final Logger log = Logger.getLogger(BaseFunctionalTest.class.getName());
 
     @Drone
     WebDriver driver;

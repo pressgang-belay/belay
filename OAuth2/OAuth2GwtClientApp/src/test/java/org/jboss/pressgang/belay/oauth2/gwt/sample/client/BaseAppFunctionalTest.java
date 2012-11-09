@@ -1,13 +1,12 @@
 package org.jboss.pressgang.belay.oauth2.gwt.sample.client;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.pressgang.belay.util.test.functional.webdriver.BaseWebDriverTest;
+import org.jboss.pressgang.belay.util.test.functional.webdriver.BaseFunctionalTest;
 import org.jboss.pressgang.belay.util.test.functional.webdriver.ScreenshotTestRule;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.openqa.selenium.WebDriverException;
@@ -30,7 +29,7 @@ import static java.util.Arrays.asList;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class BaseAppTest extends BaseWebDriverTest {
+public class BaseAppFunctionalTest extends BaseFunctionalTest {
 
     private static Properties testProperties = new Properties();
     private static List<String> providers = asList("google", "yahoo", "fedora", "myOpenId", "redHat", "facebook");
