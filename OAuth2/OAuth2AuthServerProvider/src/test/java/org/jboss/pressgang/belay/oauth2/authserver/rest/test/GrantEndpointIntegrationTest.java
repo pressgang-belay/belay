@@ -26,7 +26,17 @@ public class GrantEndpointIntegrationTest extends BaseArquillianIntegrationTest 
         // When the request is sent
         // Then a 401 unauthenticated status code is given
         expect().statusCode(401)
-                .when().get(getBaseTestUrl() + "/auth/confidential/invalidate");
+                .when().get(getBaseTestUrl() + "/auth/confidential/invalidate?client_id=confidential_client_id");
+    }
+
+    @Test
+    public void shouldRequireValidClientId() {
+        // Given an otherwise valid request to the public grant endpoint with an invalid client ID
+        // When the request is sent
+        // Then the 400 bad request status code is given
+        given().header("Authorization", "Bearer access_token")
+                .expect().statusCode(400)
+                .when().get(getBaseTestUrl() + "/auth/confidential/invalidate?client_id=invalid_client_id");
     }
 
     @Test

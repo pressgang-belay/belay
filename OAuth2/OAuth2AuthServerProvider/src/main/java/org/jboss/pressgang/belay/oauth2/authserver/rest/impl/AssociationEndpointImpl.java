@@ -19,13 +19,14 @@ import javax.ws.rs.core.Response;
 import java.util.logging.Logger;
 
 import static com.google.appengine.repackaged.com.google.common.collect.ImmutableSet.copyOf;
-import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.amber.oauth2.common.OAuth.OAUTH_CLIENT_ID;
-import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.*;
-import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
+import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.invalidateTokenGrant;
+import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.isClientPublic;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.SECOND_TOKEN;
+import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.SECOND_USER_PRIMARY;
 
 /**
  * This endpoint allows two users and their sets of identities to be associated together to form one user and identity set.

@@ -80,7 +80,6 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <argLine>${argLine}</argLine>
                             <additionalClasspathElements>
                                 <additionalClasspathElement>${project.build.sourceDirectory}
                                 </additionalClasspathElement>

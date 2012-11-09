@@ -1,11 +1,13 @@
 package org.jboss.pressgang.belay.oauth2.gwt.sample.client;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.pressgang.belay.util.test.functional.webdriver.BaseFunctionalTest;
 import org.jboss.pressgang.belay.util.test.functional.webdriver.ScreenshotTestRule;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ExplodedImporter;
+import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -29,6 +31,7 @@ import static java.util.Arrays.asList;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
+@RunAsClient
 public class BaseAppFunctionalTest extends BaseFunctionalTest {
 
     private static Properties testProperties = new Properties();
@@ -38,14 +41,28 @@ public class BaseAppFunctionalTest extends BaseFunctionalTest {
     static final String BASE_URL = "https://localhost:8443/" + APP_NAME;
     static Map<String, String> testUsers = newHashMap();
 
-    // testable = false causes Arquillian to run in client mode
-    @Deployment(testable = false)
+    @Deployment(name = "gwtapp")
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, APP_NAME + ".war")
                 .merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
                         .importDirectory("target/gwt-gen").as(GenericArchive.class))
                 .addAsWebResource(new File(WEBAPP_SRC, "index.html"))
                 .addAsWebInfResource(new File(WEBAPP_SRC, "WEB-INF/web.xml"));
+    }
+
+    @Deployment
+    public static ZipImporter createAuthServerDeployment() {
+        return ShrinkWrap.create(ZipImporter.class, "OAuth2AuthServer.war").importFrom(new File("target/OAuth2AuthServer.war"));
+    }
+
+    @Deployment
+    public static ZipImporter createSecuredRestAppDeployment() {
+        return ShrinkWrap.create(ZipImporter.class, "OAuth2SecuredRestApp.war").importFrom(new File("target/OAuth2SecuredRestApp.war"));
+    }
+
+    @Deployment
+    public static ZipImporter createOpenIdProviderDeployment() {
+        return ShrinkWrap.create(ZipImporter.class, "OpenIdProvider.war").importFrom(new File("target/OpenIdProvider.war"));
     }
 
     @Rule

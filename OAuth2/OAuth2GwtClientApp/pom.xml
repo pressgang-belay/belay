@@ -303,7 +303,7 @@
                                     <destFileName>${openidprovider.project.name}.war</destFileName>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${jboss.deployments.dir}</outputDirectory>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -320,28 +320,28 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <delete file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.deployed"/>
-                                <delete file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.deployed"/>
-                                <delete file="${jboss.deployments.dir}/${openidprovider.project.name}.war.deployed"/>
+                                <!--<delete file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.deployed"/>-->
+                                <!--<delete file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.deployed"/>-->
+                                <!--<delete file="${jboss.deployments.dir}/${openidprovider.project.name}.war.deployed"/>-->
                                 <!-- JSE configuration will only work if bundled APR libs are removed -->
                                 <delete dir="${jboss.dir}/modules/org/jboss/as/web/main/lib"/>
                             </tasks>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>create-deploy-files</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>
-                                <touch file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.dodeploy"/>
-                                <touch file="${jboss.deployments.dir}/${openidprovider.project.name}.war.dodeploy"/>
-                            </tasks>
-                        </configuration>
-                    </execution>
+                    <!--<execution>-->
+                        <!--<id>create-deploy-files</id>-->
+                        <!--<phase>process-test-classes</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>run</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<tasks>-->
+                                <!--<touch file="${jboss.deployments.dir}/${oauth2authserver.project.name}.war.dodeploy"/>-->
+                                <!--<touch file="${jboss.deployments.dir}/${securedrestapp.project.name}.war.dodeploy"/>-->
+                                <!--<touch file="${jboss.deployments.dir}/${openidprovider.project.name}.war.dodeploy"/>-->
+                            <!--</tasks>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
                 </executions>
             </plugin>
             <plugin>
