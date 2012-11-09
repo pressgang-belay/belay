@@ -5,16 +5,15 @@ package org.jboss.pressgang.belay.oauth2.gwt.client;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class AuthorizerImplGwtTest extends BaseGwtTest {
+public class AuthorizerImplGwtIntegrationTest extends GwtTestBase {
 
-    private AuthorizerImpl.UrlCodex urlCodex;
+    private AuthorizerImpl.UrlCodex urlCodex = new AuthorizerImpl.RealUrlCodex();
     private String unencodedUrl = "http://www.example.com/test address";
     private String encodedUrl = "http%3A%2F%2Fwww.example.com%2Ftest+address";
 
     @Override
     protected void gwtSetUp() throws Exception {
         super.gwtSetUp();
-        urlCodex = new AuthorizerImpl.RealUrlCodex();
     }
 
     public void testUrlCodexEncode() {

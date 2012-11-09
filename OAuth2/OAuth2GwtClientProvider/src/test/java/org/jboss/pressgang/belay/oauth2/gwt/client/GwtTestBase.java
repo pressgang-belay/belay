@@ -7,7 +7,7 @@ import com.google.gwt.junit.client.GWTTestCase;
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
-public class BaseGwtTest extends GWTTestCase {
+public class GwtTestBase extends GWTTestCase {
     @Override
     public String getModuleName() {
         return "org.jboss.pressgang.belay.oauth2.gwt.OAuth2GwtClientProvider";

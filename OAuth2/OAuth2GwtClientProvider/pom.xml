@@ -15,11 +15,6 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <properties>
-        <cobertura.totalbranchrate>60</cobertura.totalbranchrate>
-        <cobertura.totallinerate>60</cobertura.totallinerate>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.google.gwt</groupId>
@@ -36,6 +31,12 @@
                     <artifactId>gwt-dev</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <version>${gwtdev.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.pressgang.belay</groupId>
@@ -72,28 +73,62 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefireplugin.version}</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*GwtTest.java</exclude>
-                        <exclude>**/BaseGwtTest.java</exclude>
-                    </excludes>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>${project.build.sourceDirectory}
+                                </additionalClasspathElement>
+                                <additionalClasspathElement>${project.build.testSourceDirectory}
+                                </additionalClasspathElement>
+                            </additionalClasspathElements>
+                            <useSystemClassLoader>true</useSystemClassLoader>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-            <!-- Cobertura results do not include these tests -->
+            <plugin>
+                <groupId>org.jboss.errai</groupId>
+                <artifactId>jacoco-gwt-maven-plugin</artifactId>
+                <version>${jacocogwtmavenplugin.version}</version>
+                <configuration>
+                    <skip>${skipIntTests}</skip>
+                    <includes>
+                        <include>**/*GwtIntegrationTest.java</include>
+                    </includes>
+                    <destFile>${basedir}/target/jacoco.exec</destFile>
+                    <dataFile>${basedir}/target/jacoco.exec</dataFile>
+                    <output>file</output>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-initialize</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>${gwtplugin.version}</version>
                 <configuration>
                     <mode>headless</mode>
-                    <includes>**/*GwtTest.java</includes>
-                    <skipTests>${skipGwtTests}</skipTests>
+                    <includes>**/*GwtIntegrationTest.java</includes>
+                    <skipTests>${skipIntTests}</skipTests>
                     <timeOut>120</timeOut>
                     <productionMode>true</productionMode>
                 </configuration>
                 <executions>
                     <execution>
+                        <phase>integration-test</phase>
                         <goals>
                             <goal>test</goal>
                         </goals>
@@ -135,10 +170,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
