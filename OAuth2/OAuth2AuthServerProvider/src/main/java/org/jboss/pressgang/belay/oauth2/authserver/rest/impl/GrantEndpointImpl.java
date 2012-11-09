@@ -49,12 +49,12 @@ public class GrantEndpointImpl implements GrantEndpoint {
         // Check client
         Optional<ClientApplication> clientFound = authService.getClient(clientId);
         if (!clientFound.isPresent()) {
-            log.warning("Invalid clientID: " + clientId);
+            log.warning("Invalid client ID: " + clientId);
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid OAuth2 ClientID").build();
         }
         client = clientFound.get();
-        if ((!isClientPublic(client)) && request.getAuthType() == null) {
-            log.warning("Attempt to use confidential client without authorization: " + clientId);
+        if ((!isClientPublic(client)) && (request.getAuthType() == null || (!request.getUserPrincipal().getName().equals(clientId)))) {
+            log.warning("Attempt to use confidential client id without proper authorization: " + clientId);
             return Response.status(Response.Status.UNAUTHORIZED).entity("Client unauthorized").build();
         }
 
