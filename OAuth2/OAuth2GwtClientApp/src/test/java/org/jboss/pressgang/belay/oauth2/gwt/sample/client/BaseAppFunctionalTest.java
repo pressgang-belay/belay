@@ -41,7 +41,7 @@ public class BaseAppFunctionalTest extends BaseFunctionalTest {
     static final String BASE_URL = "https://localhost:8443/" + APP_NAME;
     static Map<String, String> testUsers = newHashMap();
 
-    @Deployment(name = "gwtapp")
+    @Deployment(name = "gwtApp")
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class, APP_NAME + ".war")
                 .merge(ShrinkWrap.create(GenericArchive.class).as(ExplodedImporter.class)
@@ -50,21 +50,21 @@ public class BaseAppFunctionalTest extends BaseFunctionalTest {
                 .addAsWebInfResource(new File(WEBAPP_SRC, "WEB-INF/web.xml"));
     }
 
-    @Deployment
+    @Deployment(name = "authServer")
     public static WebArchive createAuthServerDeployment() {
         return ShrinkWrap.create(ZipImporter.class, "OAuth2AuthServer.war")
                 .importFrom(new File("target/OAuth2AuthServer.war"))
                 .as(WebArchive.class);
     }
 
-    @Deployment
+    @Deployment(name = "securedRestApp")
     public static WebArchive createSecuredRestAppDeployment() {
         return ShrinkWrap.create(ZipImporter.class, "OAuth2SecuredRestApp.war")
                 .importFrom(new File("target/OAuth2SecuredRestApp.war"))
                 .as(WebArchive.class);
     }
 
-    @Deployment
+    @Deployment(name = "openIdProvider")
     public static WebArchive createOpenIdProviderDeployment() {
         return ShrinkWrap.create(ZipImporter.class, "OpenIdProvider.war")
                 .importFrom(new File("target/OpenIdProvider.war"))

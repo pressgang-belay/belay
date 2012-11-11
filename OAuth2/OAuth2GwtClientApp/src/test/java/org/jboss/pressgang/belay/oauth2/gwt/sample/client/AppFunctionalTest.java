@@ -29,32 +29,32 @@ public class AppFunctionalTest extends BaseAppFunctionalTest {
         this.appPage = waitUntilPageDisplayed(getDriver(), TEN_SECONDS, new AppPage(getDriver())).clearStoredTokens();
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void loginWithGoogle() throws Exception {
         appPage.loginWithGoogle(testUsers.get("googleUser"), testUsers.get("googlePassword"), false, false);
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void loginWithYahoo() throws Exception {
         appPage.loginWithYahoo(testUsers.get("yahooUser"), testUsers.get("yahooPassword"), false);
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void loginWithFedora() throws Exception {
         appPage.loginWithFedora(testUsers.get("fedoraUser"), testUsers.get("fedoraPassword"));
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void loginWithMyOpenId() throws Exception {
         appPage.loginWithMyOpenId(testUsers.get("myOpenIdUser"), testUsers.get("myOpenIdPassword"), false, false);
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void loginWithRedHat() throws Exception {
         appPage.loginWithRedHat(testUsers.get("redHatUser"), testUsers.get("redHatPassword"));
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void loginAndGetResource() throws Exception {
         // Given a valid user is logged in
         appPage.loginWithRedHat(testUsers.get("redHatUser"), testUsers.get("redHatPassword"));
@@ -70,7 +70,7 @@ public class AppFunctionalTest extends BaseAppFunctionalTest {
         assertThat(result, containsString("{\"personId\":0,\"personName\":\"John Smith\",\"personUsername\":\"smithy\",\"personEmail\":\"john.smith@mail.com\"}"));
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void getResourceBeforeLoginFails() throws Exception {
         // Given no login attempts have been made
 
@@ -81,7 +81,7 @@ public class AppFunctionalTest extends BaseAppFunctionalTest {
         assertThat(result, containsString("You must be authorized before making requests"));
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void associateSecondIdentity() throws Exception {
         // Given a valid user is logged in
         appPage.loginWithRedHat(testUsers.get("redHatUser"), testUsers.get("redHatPassword"));
@@ -96,7 +96,7 @@ public class AppFunctionalTest extends BaseAppFunctionalTest {
         assertThat(result, containsString("/OpenIdProvider/openid/provider?id="));
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void makeIdentityPrimary() throws Exception {
         // Given a valid user is logged in and has two identities, with the logged in identity the primary
         appPage.loginWithFedora(testUsers.get("fedoraUser"), testUsers.get("fedoraPassword"));
@@ -117,7 +117,7 @@ public class AppFunctionalTest extends BaseAppFunctionalTest {
         assertThat(userInfo, containsString("\"primaryIdentity\":true"));
     }
 
-    @Test @OperateOnDeployment("gwtapp")
+    @Test @OperateOnDeployment("gwtApp")
     public void getIdentityInfo() throws Exception {
         // Given a valid user is logged in
         appPage.loginWithRedHat(testUsers.get("redHatUser"), testUsers.get("redHatPassword"));
