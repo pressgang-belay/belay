@@ -51,18 +51,24 @@ public class BaseAppFunctionalTest extends BaseFunctionalTest {
     }
 
     @Deployment
-    public static ZipImporter createAuthServerDeployment() {
-        return ShrinkWrap.create(ZipImporter.class, "OAuth2AuthServer.war").importFrom(new File("target/OAuth2AuthServer.war"));
+    public static WebArchive createAuthServerDeployment() {
+        return ShrinkWrap.create(ZipImporter.class, "OAuth2AuthServer.war")
+                .importFrom(new File("target/OAuth2AuthServer.war"))
+                .as(WebArchive.class);
     }
 
     @Deployment
-    public static ZipImporter createSecuredRestAppDeployment() {
-        return ShrinkWrap.create(ZipImporter.class, "OAuth2SecuredRestApp.war").importFrom(new File("target/OAuth2SecuredRestApp.war"));
+    public static WebArchive createSecuredRestAppDeployment() {
+        return ShrinkWrap.create(ZipImporter.class, "OAuth2SecuredRestApp.war")
+                .importFrom(new File("target/OAuth2SecuredRestApp.war"))
+                .as(WebArchive.class);
     }
 
     @Deployment
-    public static ZipImporter createOpenIdProviderDeployment() {
-        return ShrinkWrap.create(ZipImporter.class, "OpenIdProvider.war").importFrom(new File("target/OpenIdProvider.war"));
+    public static WebArchive createOpenIdProviderDeployment() {
+        return ShrinkWrap.create(ZipImporter.class, "OpenIdProvider.war")
+                .importFrom(new File("target/OpenIdProvider.war"))
+                .as(WebArchive.class);
     }
 
     @Rule
