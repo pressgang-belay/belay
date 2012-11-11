@@ -72,7 +72,8 @@ public class BaseAppFunctionalTest extends BaseFunctionalTest {
     }
 
     @Rule
-    public ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule(testProperties.get("projectBaseDir") + "/target/surefire-reports", true);
+    public ScreenshotTestRule screenshotTestRule = new ScreenshotTestRule(testProperties.get("projectBaseDir")
+            + "/target/surefire-reports", true);
 
     @BeforeClass
     public static void initialize() throws IOException {
