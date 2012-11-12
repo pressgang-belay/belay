@@ -9,6 +9,6 @@ import javax.ws.rs.Path;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RequestScoped
-@Path("/auth/confidential/invalidate")
-public class ConfidentialGrantTestWebService extends GrantEndpointImpl {
+@Path("/auth/invalidate")
+public class GrantTestWebService extends GrantEndpointImpl {
 }

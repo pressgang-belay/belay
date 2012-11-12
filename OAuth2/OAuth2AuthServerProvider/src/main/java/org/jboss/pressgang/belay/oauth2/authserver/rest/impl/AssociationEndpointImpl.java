@@ -30,9 +30,8 @@ import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.SECOND_
 
 /**
  * This endpoint allows two users and their sets of identities to be associated together to form one user and identity set.
- * It can be used for confidential clients or public clients; if for confidential clients, it must be protected by Basic
- * or some other authentication. It must be protected by OAuth2 for both confidential and public clients; the user associated
- * with the access token presented is the authorized user to which the second set of identities are associated.
+ * It must be protected by OAuth2; the user associated with the access token presented is the authorized user to which the
+ * second set of identities are associated.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -87,14 +86,10 @@ public class AssociationEndpointImpl implements AssociationEndpoint {
         try {
             resourceRequest = new OAuthAccessResourceRequest(request);
             if (!clientFound.isPresent()) {
-                log.warning("Invalid OAuth2 client id: " + clientId);
-                return Response.status(Response.Status.BAD_REQUEST).entity("Invalid OAuth2 ClientID").build();
+                log.warning("Invalid OAuth2 client ID: " + clientId);
+                return Response.status(Response.Status.BAD_REQUEST).entity("Invalid OAuth2 Client ID").build();
             }
             client = clientFound.get();
-            if ((!isClientPublic(client)) && request.getAuthType() == null) {
-                log.warning("Unauthorized client: " + clientId);
-                return Response.status(Response.Status.UNAUTHORIZED).entity("Client unauthorized").build();
-            }
             if (isNullOrEmpty(secondToken)
                     || secondToken.equals(resourceRequest.getAccessToken())
                     || (!authService.getTokenGrantByAccessToken(secondToken).isPresent())
@@ -115,6 +110,10 @@ public class AssociationEndpointImpl implements AssociationEndpoint {
             if (secondUser.getUserIdentities().contains(request.getUserPrincipal().getName())) {
                 log.severe("Authorized identity already associated with second user");
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+            if ((!firstUserTokenGrant.getGrantClient().equals(client)) || (!secondUserTokenGrant.getGrantClient().equals(client))) {
+                log.warning("Client is not associated with both token grants: " + clientId);
+                return Response.status(Response.Status.BAD_REQUEST).build();
             }
         } catch (OAuthSystemException e) {
             log.warning("OAuthSystemException thrown during identity association attempt: " + e.getMessage());

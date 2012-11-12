@@ -30,9 +30,7 @@
     <filter-mapping>
         <filter-name>OAuth Filter</filter-name>
         <url-pattern>/rest/auth/user/*</url-pattern>
-        <url-pattern>/auth/confidential/user/*</url-pattern>
         <url-pattern>/rest/auth/invalidate</url-pattern>
-        <url-pattern>/rest/auth/confidential/invalidate</url-pattern>
     </filter-mapping>
 
     <context-param>
@@ -61,7 +59,6 @@
             <web-resource-name>ProtectedResources</web-resource-name>
             <url-pattern>/rest/auth/token</url-pattern>
             <url-pattern>/rest/auth/info</url-pattern>
-            <url-pattern>/rest/auth/confidential/*</url-pattern>
         </web-resource-collection>
 
         <auth-constraint>

@@ -1,4 +1,4 @@
-package org.jboss.pressgang.belay.oauth2.authserver.sample.rest;
+package org.jboss.pressgang.belay.oauth2.authserver.rest.endpoint;
 
 import org.jboss.pressgang.belay.oauth2.authserver.rest.impl.AssociationEndpointImpl;
 
@@ -9,6 +9,6 @@ import javax.ws.rs.Path;
  * @author kamiller@redhat.com (Katie Miller)
  */
 @RequestScoped
-@Path("/auth/confidential/user/associate")
-public class ConfidentialClientAssociationWebService extends AssociationEndpointImpl {
+@Path("/auth/user/associate")
+public class AssociationTestWebService extends AssociationEndpointImpl {
 }

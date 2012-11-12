@@ -46,20 +46,16 @@ insert into RS_SCOPE (SCOPE_ID, SCOPE_NAME) values (-1, 'DEFAULT')
 insert into RS_SCOPE (SCOPE_ID, SCOPE_NAME) values (-2, 'PERFORM_USER_MANAGEMENT')
 
 insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-1, 'https://localhost:8443/OAuth2AuthServer/rest/auth/user/associate', 'POST')
-insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-2, 'https://localhost:8443/OAuth2AuthServer/rest/auth/confidential/user/associate', 'POST')
-insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-3, 'https://localhost:8443/OAuth2AuthServer/rest/auth/user/makeIdentityPrimary', 'GET')
-insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-4, 'https://localhost:8443/OAuth2AuthServer/rest/auth/user/queryIdentity', 'GET')
-insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-5, 'https://localhost:8443/OAuth2AuthServer/rest/auth/user/queryUser', 'GET')
-insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-6, 'https://localhost:8443/OAuth2AuthServer/rest/auth/invalidate', 'GET')
-insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-7, 'https://localhost:8443/OAuth2AuthServer/rest/auth/confidential/invalidate', 'GET')
+insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-2, 'https://localhost:8443/OAuth2AuthServer/rest/auth/user/makeIdentityPrimary', 'GET')
+insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-3, 'https://localhost:8443/OAuth2AuthServer/rest/auth/user/queryIdentity', 'GET')
+insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-4, 'https://localhost:8443/OAuth2AuthServer/rest/auth/user/queryUser', 'GET')
+insert into RS_ENDPOINT (ENDPOINT_ID, ENDPOINT_URL_PATTERN, ENDPOINT_METHOD) values (-5, 'https://localhost:8443/OAuth2AuthServer/rest/auth/invalidate', 'GET')
 
 insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-2, -1)
 insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-2, -2)
 insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-2, -3)
 insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-2, -4)
-insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-2, -5)
-insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -6)
-insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -7)
+insert into RS_SCOPE_RS_ENDPOINT (SCOPE_ID, ENDPOINT_ID) values (-1, -5)
 
 
 

@@ -21,11 +21,9 @@ import static org.apache.amber.oauth2.common.OAuth.OAUTH_CLIENT_ID;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.isClientPublic;
 
 /**
- * This endpoint allows client applications to invalidate a current token grant. It should be protected by Basic or
- * some other authentication when used by confidential clients. It must be protected by OAuth2.
+ * This endpoint allows client applications to invalidate a current token grant. It must be protected by OAuth2.
  * <p/>
- * The status code 200 (OK) will be returned if the operation was successful. OK will be returned even if the token
- * grant was already invalidated.
+ * The status code 200 (OK) will be returned if the operation was successful.
  *
  * @author kamiller@redhat.com (Katie Miller)
  */
@@ -46,17 +44,12 @@ public class GrantEndpointImpl implements GrantEndpoint {
         ClientApplication client;
         TokenGrant tokenGrant;
 
-        // Check client
         Optional<ClientApplication> clientFound = authService.getClient(clientId);
         if (!clientFound.isPresent()) {
             log.warning("Invalid client ID: " + clientId);
             return Response.status(Response.Status.BAD_REQUEST).entity("Invalid OAuth2 ClientID").build();
         }
         client = clientFound.get();
-        if ((!isClientPublic(client)) && (request.getAuthType() == null || (!request.getUserPrincipal().getName().equals(clientId)))) {
-            log.warning("Attempt to use confidential client id without proper authorization: " + clientId);
-            return Response.status(Response.Status.UNAUTHORIZED).entity("Client unauthorized").build();
-        }
 
         try {
             resourceRequest = new OAuthAccessResourceRequest(request);
@@ -66,6 +59,10 @@ public class GrantEndpointImpl implements GrantEndpoint {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
             tokenGrant = tokenGrantFound.get();
+            if (! tokenGrant.getGrantClient().equals(client)) {
+                log.warning("Client identified does not match client associated with grant: " + clientId);
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
         } catch (OAuthSystemException e) {
             log.warning("OAuthSystemException thrown during token grant invalidation attempt: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

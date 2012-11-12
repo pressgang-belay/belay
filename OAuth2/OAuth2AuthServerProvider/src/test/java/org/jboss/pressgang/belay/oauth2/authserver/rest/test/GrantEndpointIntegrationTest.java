@@ -6,7 +6,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 
 /**
@@ -21,53 +20,37 @@ public class GrantEndpointIntegrationTest extends BaseArquillianIntegrationTest 
     }
 
     @Test
-    public void shouldRequireClientAuthenticationForConfidentialGrantEndpoint() {
-        // Given a request to the confidential client grant endpoint without authentication
-        // When the request is sent
-        // Then a 401 unauthenticated status code is given
-        expect().statusCode(401)
-                .when().get(getBaseTestUrl() + "/auth/confidential/invalidate?client_id=confidential_client_id");
-    }
-
-    @Test
     public void shouldRequireValidClientId() {
-        // Given an otherwise valid request to the confidential grant endpoint with an invalid client ID
+        // Given an otherwise valid request to the grant endpoint with an invalid client ID
         // When the request is sent
         // Then the 400 bad request status code is given
-        //TODO
-//        given().auth().basic("confidential_client_id", "clientsecret")
-//               .header("Authorization", "Bearer cc_access_token")
-//               .expect().statusCode(400)
-//               .when().get(getBaseTestUrl() + "/auth/confidential/invalidate?client_id=invalid_client_id");
+        given().header("Authorization", "Bearer access_token")
+               .expect().statusCode(400)
+               .when().get(getBaseTestUrl() + "/auth/invalidate?client_id=invalidclientid");
     }
 
     @Test
-    public void shouldReturnUnauthorizedStatusIfConfidentialClientAttemptsToUsePublicGrantEndpoint() {
-        // Given an otherwise valid request from a confidential client to a public grant endpoint without authentication
+    public void shouldProvideClientIdMatchingTokenGrantClient() {
+        // Given an otherwise valid request with an access token supplied that is not associated with the given client
         // When the request is sent
-        // Then a 401 unauthenticated status code is given
-        given().header("Authorization", "Bearer cc_access_token")
-               .expect().statusCode(401)
-               .when().get(getBaseTestUrl() + "/auth/confidential/invalidate?client_id=confidential_client_id");
+        // Then the 400 bad request status code is given
+        given().header("Authorization", "Bearer access_token")
+                .expect().statusCode(400)
+                .when().get(getBaseTestUrl() + "/auth/invalidate?client_id=confidentialclientid");
     }
 
     @Test
     public void shouldInvalidateTokenGrant() {
-        // Given a valid request to the public grant endpoint
+        // Given a valid request to the grant endpoint
         // When the request is sent
-
         // Then the request should be successful
-        given().header("Authorization", "Bearer access_token")
-               .header("client_id", "public_client_id")
+        given().header("Authorization", "Bearer pc_access_token")
                .expect().statusCode(200)
-               .when().get(getBaseTestUrl() + "/auth/invalidate?client_id=public_client_id");
+               .when().get(getBaseTestUrl() + "/auth/invalidate?client_id=publicclientid");
 
-        // And the associated token should be invalidated
-        given().header("Authorization", "Bearer access_token")
+        // And the associated token should not longer give resource access
+        given().header("Authorization", "Bearer pc_access_token")
                .expect().statusCode(401)
-               .when().get(getBaseTestUrl() + "/auth/invalidate?client_id=public_client_id");
+               .when().get(getBaseTestUrl() + "/auth/invalidate?client_id=publicclientid");
     }
-
-    //TODO test that confidential client can't pass another confidential client's valid id
-    // ensure confidential client attached to token grant matches grant client id given
 }
