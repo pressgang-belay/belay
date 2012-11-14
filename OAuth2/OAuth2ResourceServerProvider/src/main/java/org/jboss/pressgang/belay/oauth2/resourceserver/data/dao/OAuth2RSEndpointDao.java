@@ -36,7 +36,8 @@ public class OAuth2RSEndpointDao {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<OAuth2RSEndpoint> criteria = cb.createQuery(OAuth2RSEndpoint.class);
         Root<OAuth2RSEndpoint> endpoint = criteria.from(OAuth2RSEndpoint.class);
-        criteria.select(endpoint).where(cb.equal(endpoint.get("endpointUrlPattern"), requestUrl));
+        criteria.select(endpoint).where(cb.isFalse(endpoint.get("urlRegularExpression").as(Boolean.class)),
+                                                        cb.equal(endpoint.get("endpointUrl"), requestUrl));
         TypedQuery<OAuth2RSEndpoint> query = em.createQuery(criteria);
         if (query.getResultList().size() > 0) {
             // Found at least one exact match for endpoint
@@ -44,7 +45,7 @@ public class OAuth2RSEndpointDao {
                 // Just one match so check its method directly
                 OAuth2RSEndpoint e = query.getSingleResult();
                 if (methodMatches(request, e)) {
-                    log.fine("Returning Endpoint with URL " + e.getEndpointUrlPattern()
+                    log.fine("Returning Endpoint with URL " + e.getEndpointUrl()
                             + " and method " + e.getEndpointMethod());
                     return Optional.of(e);
                 }
@@ -52,7 +53,7 @@ public class OAuth2RSEndpointDao {
                 // Multiple matches, so find the one with the matching method
                 for (OAuth2RSEndpoint e : query.getResultList()) {
                     if (e.getEndpointMethod() != null && endpointMethodMatchesRequest(request, e.getEndpointMethod())) {
-                        log.fine("Returning Endpoint with URL " + e.getEndpointUrlPattern()
+                        log.fine("Returning Endpoint with URL " + e.getEndpointUrl()
                                 + " method " + e.getEndpointMethod());
                         return Optional.of(e);
                     }
@@ -63,18 +64,19 @@ public class OAuth2RSEndpointDao {
                 return Optional.absent();
             }
         } else {
-            log.fine("Checking URL against endpoint patterns");
+            log.fine("Checking URL against endpoint regular expressions");
             // No exact match for endpoint, so check if it matches a pattern
             // Find all endpoints, ordered by URL pattern
             cb = em.getCriteriaBuilder();
             criteria = cb.createQuery(OAuth2RSEndpoint.class);
             endpoint = criteria.from(OAuth2RSEndpoint.class);
-            criteria.select(endpoint).orderBy(cb.asc(endpoint.get("endpointUrlPattern")));
+            criteria.select(endpoint).where(cb.isTrue(endpoint.get("urlRegularExpression").as(Boolean.class)))
+                                     .orderBy(cb.asc(endpoint.get("endpointUrl")));
             List<OAuth2RSEndpoint> resultList = em.createQuery(criteria).getResultList();
             for (OAuth2RSEndpoint e : resultList) {
-                if (requestUrl.matches(e.getEndpointUrlPattern())
+                if (requestUrl.matches(e.getEndpointUrl())
                         && methodMatches(request, e)) {
-                    log.fine("Returning Endpoint with URL pattern " + e.getEndpointUrlPattern()
+                    log.fine("Returning Endpoint with URL pattern " + e.getEndpointUrl()
                             + " and method " + e.getEndpointMethod() + " to match request URL "
                             + requestUrl);
                     return Optional.of(e);

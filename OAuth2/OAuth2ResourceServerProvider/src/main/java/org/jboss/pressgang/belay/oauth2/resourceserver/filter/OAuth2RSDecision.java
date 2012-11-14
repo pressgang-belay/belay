@@ -155,7 +155,7 @@ public class OAuth2RSDecision implements OAuthDecision {
             }
             for (OAuth2RSEndpoint scopeEndpoint : scopeEndpoints) {
                 if (requestEndpoint.equals(scopeEndpoint)) {
-                    log.info("Endpoint " + requestEndpoint.getEndpointUrlPattern() + " matches grant scope "
+                    log.info("Endpoint " + requestEndpoint.getEndpointUrl() + " matches grant scope "
                             + scopeName);
                     return true;
                 }
