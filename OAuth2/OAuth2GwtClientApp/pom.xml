@@ -271,7 +271,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>deploy-wars</id>
+                        <id>get-wars</id>
                         <phase>process-test-classes</phase>
                         <goals>
                             <goal>copy</goal>

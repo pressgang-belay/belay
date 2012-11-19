@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ public class TokenGrant implements Serializable {
 
     private static final long serialVersionUID = -2401887340233987092L;
 
-    private BigInteger tokenGrantId;
+    private long tokenGrantId;
     private String accessToken;
     private String refreshToken;
     private Boolean accessTokenExpires;
@@ -42,7 +41,7 @@ public class TokenGrant implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TOKEN_GRANT_ID")
-    public BigInteger getTokenGrantId() {
+    public long getTokenGrantId() {
         return tokenGrantId;
     }
 
@@ -104,7 +103,7 @@ public class TokenGrant implements Serializable {
         return grantScopes;
     }
 
-    public void setTokenGrantId(BigInteger tokenGrantId) {
+    public void setTokenGrantId(long tokenGrantId) {
         this.tokenGrantId = tokenGrantId;
     }
 

@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -23,7 +22,7 @@ public class ClientApplication implements Serializable {
 
     private static final long serialVersionUID = 2098266256101575627L;
 
-    private BigInteger clientId;
+    private long clientId;
     private String clientIdentifier;
     private String clientName;
     private String clientSecret;
@@ -38,7 +37,7 @@ public class ClientApplication implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CLIENT_ID")
-    public BigInteger getClientId() {
+    public long getClientId() {
         return clientId;
     }
 
@@ -81,7 +80,7 @@ public class ClientApplication implements Serializable {
         return codeGrants;
     }
 
-    public void setClientId(BigInteger clientId) {
+    public void setClientId(long clientId) {
         this.clientId = clientId;
     }
 

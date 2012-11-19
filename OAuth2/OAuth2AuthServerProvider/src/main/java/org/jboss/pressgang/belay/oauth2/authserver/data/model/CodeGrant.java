@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.Set;
 
@@ -23,7 +22,7 @@ import static com.google.common.collect.Sets.newHashSet;
 public class CodeGrant implements Serializable {
     private static final long serialVersionUID = -3556571368290708467L;
 
-    private BigInteger codeGrantId;
+    private long codeGrantId;
     private String authCode;
     private String codeExpiry; // In seconds, from time granted
     private Date grantTimeStamp;
@@ -38,7 +37,7 @@ public class CodeGrant implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CODE_GRANT_ID")
-    public BigInteger getCodeGrantId() {
+    public long getCodeGrantId() {
         return codeGrantId;
     }
 
@@ -89,7 +88,7 @@ public class CodeGrant implements Serializable {
         return grantScopes;
     }
 
-    public void setCodeGrantId(BigInteger codeGrantId) {
+    public void setCodeGrantId(long codeGrantId) {
         this.codeGrantId = codeGrantId;
     }
 

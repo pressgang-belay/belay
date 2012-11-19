@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -22,7 +21,7 @@ import static com.google.common.collect.Sets.newHashSet;
 public class OAuth2RSScope implements Serializable {
     private static final long serialVersionUID = -255914952651554970L;
 
-    private BigInteger scopeId;
+    private long scopeId;
     private String scopeName;
     private Set<OAuth2RSEndpoint> scopeEndpoints = newHashSet();
 
@@ -32,7 +31,7 @@ public class OAuth2RSScope implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SCOPE_ID")
-    public BigInteger getScopeId() {
+    public long getScopeId() {
         return scopeId;
     }
 
@@ -49,7 +48,7 @@ public class OAuth2RSScope implements Serializable {
         return scopeEndpoints;
     }
 
-    public void setScopeId(BigInteger scopeId) {
+    public void setScopeId(long scopeId) {
         this.scopeId = scopeId;
     }
 

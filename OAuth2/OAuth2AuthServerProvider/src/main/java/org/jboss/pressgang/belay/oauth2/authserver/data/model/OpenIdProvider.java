@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  * Persistence logic for OpenID Providers.
@@ -19,7 +18,7 @@ import java.math.BigInteger;
 public class OpenIdProvider implements Serializable {
     private static final long serialVersionUID = -7790803759533859471L;
 
-    private BigInteger providerId;
+    private long providerId;
     private String providerName;
     private String providerUrl;
 
@@ -29,7 +28,7 @@ public class OpenIdProvider implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PROVIDER_ID")
-    public BigInteger getProviderId() {
+    public long getProviderId() {
         return providerId;
     }
 
@@ -45,7 +44,7 @@ public class OpenIdProvider implements Serializable {
         return providerUrl;
     }
 
-    public void setProviderId(BigInteger providerId) {
+    public void setProviderId(long providerId) {
         this.providerId = providerId;
     }
 

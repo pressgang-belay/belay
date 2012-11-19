@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.Email;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  * Persistence logic for authenticated users.
@@ -21,7 +20,7 @@ public class Identity implements Serializable {
 
     private static final long serialVersionUID = -2816937391756095960L;
 
-    private BigInteger identityId;
+    private long identityId;
     private String identifier;
     private String firstName;
     private String lastName;
@@ -38,7 +37,7 @@ public class Identity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "IDENTITY_ID")
-    public BigInteger getIdentityId() {
+    public long getIdentityId() {
         return identityId;
     }
 
@@ -93,7 +92,7 @@ public class Identity implements Serializable {
         return user;
     }
 
-    public void setIdentityId(BigInteger identityId) {
+    public void setIdentityId(long identityId) {
         this.identityId = identityId;
     }
 

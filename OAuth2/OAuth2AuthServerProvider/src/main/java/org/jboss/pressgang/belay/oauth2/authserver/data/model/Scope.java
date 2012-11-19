@@ -5,7 +5,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  * Persistence logic for OAuth scopes.
@@ -17,7 +16,7 @@ import java.math.BigInteger;
 public class Scope implements Serializable {
     private static final long serialVersionUID = -255914952651554970L;
 
-    private BigInteger scopeId;
+    private long scopeId;
     private String scopeName;
 
     public Scope() {
@@ -26,7 +25,7 @@ public class Scope implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SCOPE_ID")
-    public BigInteger getScopeId() {
+    public long getScopeId() {
         return scopeId;
     }
 
@@ -36,7 +35,7 @@ public class Scope implements Serializable {
         return scopeName;
     }
 
-    public void setScopeId(BigInteger scopeId) {
+    public void setScopeId(long scopeId) {
         this.scopeId = scopeId;
     }
 

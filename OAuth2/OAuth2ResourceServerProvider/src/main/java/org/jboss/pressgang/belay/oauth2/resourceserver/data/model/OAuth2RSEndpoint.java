@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  * Persistence logic for application endpoints.
@@ -19,7 +18,7 @@ import java.math.BigInteger;
 public class OAuth2RSEndpoint implements Serializable {
     private static final long serialVersionUID = -7272768043550790917L;
 
-    private BigInteger endpointId;
+    private long endpointId;
     private String endpointUrl;  // URL String or Java regex String if URL contains variable parts
     private String endpointMethod;
     private Boolean urlRegularExpression; // True if the endpoint URL is a regular expression, false if it is an exact URL
@@ -30,7 +29,7 @@ public class OAuth2RSEndpoint implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ENDPOINT_ID")
-    public BigInteger getEndpointId() {
+    public long getEndpointId() {
         return endpointId;
     }
 
@@ -51,7 +50,7 @@ public class OAuth2RSEndpoint implements Serializable {
         return urlRegularExpression;
     }
 
-    public void setEndpointId(BigInteger endpointId) {
+    public void setEndpointId(long endpointId) {
         this.endpointId = endpointId;
     }
 

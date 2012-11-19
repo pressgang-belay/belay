@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -22,7 +21,7 @@ import static com.google.common.collect.Sets.newHashSet;
 public class ClientApproval implements Serializable {
     private static final long serialVersionUID = -5130955185279441324L;
 
-    private BigInteger clientApprovalId;
+    private long clientApprovalId;
     private ClientApplication clientApplication;
     private User approver;
     private Set<Scope> approvedScopes = newHashSet();
@@ -33,7 +32,7 @@ public class ClientApproval implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CLIENT_APPROVAL_ID")
-    public BigInteger getClientApprovalId() {
+    public long getClientApprovalId() {
         return clientApprovalId;
     }
 
@@ -58,7 +57,7 @@ public class ClientApproval implements Serializable {
         return approvedScopes;
     }
 
-    public void setClientApprovalId(BigInteger clientApprovalId) {
+    public void setClientApprovalId(long clientApprovalId) {
         this.clientApprovalId = clientApprovalId;
     }
 

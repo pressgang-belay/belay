@@ -7,7 +7,6 @@ import org.jboss.pressgang.belay.oauth2.authserver.data.constraint.PrimaryIdenti
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
@@ -23,7 +22,7 @@ import static com.google.common.collect.Sets.newHashSet;
 public class User implements Serializable {
     private static final long serialVersionUID = 6622976631392573530L;
 
-    private BigInteger userId;
+    private long userId;
     private Identity primaryIdentity;
     private String username;
     private Set<Identity> userIdentities = newHashSet();
@@ -38,7 +37,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    public BigInteger getUserId() {
+    public long getUserId() {
         return userId;
     }
 
@@ -80,7 +79,7 @@ public class User implements Serializable {
         return clientApprovals;
     }
 
-    public void setUserId(BigInteger userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
