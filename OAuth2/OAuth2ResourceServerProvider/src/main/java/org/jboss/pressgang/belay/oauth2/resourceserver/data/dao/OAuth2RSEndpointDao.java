@@ -73,16 +73,17 @@ public class OAuth2RSEndpointDao {
             criteria.select(endpoint).where(cb.isTrue(endpoint.get("urlRegularExpression").as(Boolean.class)));
             List<OAuth2RSEndpoint> resultList = em.createQuery(criteria).getResultList();
             for (OAuth2RSEndpoint e : resultList) {
+                log.fine("Checking for match with endpoint pattern: " + e.getEndpointUrl());
                 if (requestUrl.matches(e.getEndpointUrl())
                         && methodMatches(request, e)) {
-                    log.fine("Returning Endpoint with URL pattern " + e.getEndpointUrl()
+                    log.fine("Returning endpoint with URL pattern " + e.getEndpointUrl()
                             + " and method " + e.getEndpointMethod() + " to match request URL "
                             + requestUrl);
                     return Optional.of(e);
                 }
             }
         }
-        log.info("Could not find matching Endpoint");
+        log.info("Could not find matching endpoint mapping for: " + requestUrl);
         return Optional.absent();
     }
 
