@@ -134,7 +134,7 @@ public class OAuth2RSDecision implements OAuthDecision {
         Optional<OAuth2RSEndpoint> requestEndpointFound = authService.getEndpointForRequest(request);
         if (!requestEndpointFound.isPresent()) {
             log.severe("Could not find endpoint matching " + request.getMethod() + " request for: "
-                    + request.getRequestURL());
+                    + request.getRequestURL().toString());
             throw OAuthProblemException.error(OAuthError.ResourceResponse.INVALID_REQUEST);
         }
         return requestEndpointFound.get();

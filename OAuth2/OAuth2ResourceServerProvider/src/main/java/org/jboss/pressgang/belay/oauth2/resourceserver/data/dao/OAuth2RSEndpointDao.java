@@ -70,8 +70,7 @@ public class OAuth2RSEndpointDao {
             cb = em.getCriteriaBuilder();
             criteria = cb.createQuery(OAuth2RSEndpoint.class);
             endpoint = criteria.from(OAuth2RSEndpoint.class);
-            criteria.select(endpoint).where(cb.isTrue(endpoint.get("urlRegularExpression").as(Boolean.class)))
-                                     .orderBy(cb.asc(endpoint.get("endpointUrl")));
+            criteria.select(endpoint).where(cb.isTrue(endpoint.get("urlRegularExpression").as(Boolean.class)));
             List<OAuth2RSEndpoint> resultList = em.createQuery(criteria).getResultList();
             for (OAuth2RSEndpoint e : resultList) {
                 if (requestUrl.matches(e.getEndpointUrl())
@@ -93,6 +92,6 @@ public class OAuth2RSEndpointDao {
     }
 
     private boolean endpointMethodMatchesRequest(HttpServletRequest request, String method) {
-        return request.getMethod().equals(method);
+        return request.getMethod().equalsIgnoreCase(method);
     }
 }
