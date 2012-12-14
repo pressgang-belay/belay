@@ -16,7 +16,7 @@ public interface OAuth2RSAuthService {
 
     public Set<OAuth2RSEndpoint> getEndpointsForScopeName(String scopeName);
 
-    public Optional<TokenGrantInfo> getTokenGrantInfoForAccessToken(final String accessToken);
+    public Optional<TokenGrantInfo> getTokenGrantInfoByAccessToken(final String accessToken);
 
-    public Optional<AccessTokenExpiryInfo> extendAccessTokenExpiry(final String accessToken);
+    public Optional<AccessTokenExpiryInfo> extendAccessTokenExpirySeconds(final String accessToken);
 }

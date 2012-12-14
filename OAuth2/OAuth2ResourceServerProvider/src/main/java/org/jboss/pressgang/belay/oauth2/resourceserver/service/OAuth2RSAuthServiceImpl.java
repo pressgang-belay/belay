@@ -4,6 +4,8 @@ import com.google.common.base.Optional;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CookieStore;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.pressgang.belay.oauth2.resourceserver.data.dao.OAuth2RSEndpointDao;
@@ -23,6 +25,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -76,7 +80,7 @@ public class OAuth2RSAuthServiceImpl implements OAuth2RSAuthService {
     }
 
     @Override
-    public Optional<TokenGrantInfo> getTokenGrantInfoForAccessToken(final String accessToken) {
+    public Optional<TokenGrantInfo> getTokenGrantInfoByAccessToken(final String accessToken) {
         log.info("Requesting token grant info from OAuth2 auth server");
         checkProperties();
         TokenGrantInfoEndpoint client = ProxyFactory.create(TokenGrantInfoEndpoint.class, authServerInfoUrl, getClientExecutor());
@@ -88,7 +92,7 @@ public class OAuth2RSAuthServiceImpl implements OAuth2RSAuthService {
     }
 
     @Override
-    public Optional<AccessTokenExpiryInfo> extendAccessTokenExpiry(final String accessToken) {
+    public Optional<AccessTokenExpiryInfo> extendAccessTokenExpirySeconds(final String accessToken) {
         log.info("Requesting OAuth2 auth server extend access token expiry");
         checkProperties();
         TokenExpiryExtensionEndpoint client = ProxyFactory.create(TokenExpiryExtensionEndpoint.class,

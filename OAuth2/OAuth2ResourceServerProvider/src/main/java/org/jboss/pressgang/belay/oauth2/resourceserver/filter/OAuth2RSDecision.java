@@ -49,7 +49,7 @@ public class OAuth2RSDecision implements OAuthDecision {
         log.info("Processing decision on access token " + token);
         Optional<TokenGrantInfo> tokenGrantInfoFound;
         authService = getAuthService();
-        tokenGrantInfoFound = authService.getTokenGrantInfoForAccessToken(token);
+        tokenGrantInfoFound = authService.getTokenGrantInfoByAccessToken(token);
         if (tokenGrantInfoFound.isPresent()) {
             log.info("Found match for token " + token);
             TokenGrantInfo tokenGrantInfo = tokenGrantInfoFound.get();
@@ -78,7 +78,7 @@ public class OAuth2RSDecision implements OAuthDecision {
                     && tokenCloseToExpiring(tokenGrantInfo)
                     && response != null) {
                 log.info("Requesting token expiry time be extended");
-                Optional<AccessTokenExpiryInfo> newExpiryInfo = authService.extendAccessTokenExpiry(tokenGrantInfo.getAccessToken());
+                Optional<AccessTokenExpiryInfo> newExpiryInfo = authService.extendAccessTokenExpirySeconds(tokenGrantInfo.getAccessToken());
                 if (newExpiryInfo.isPresent()) {
                     Map<String, Object> entries = Maps.newHashMap();
                     String accessTimeRemaining = newExpiryInfo.get().getAccessTokenTimeRemaining();
