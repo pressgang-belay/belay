@@ -88,13 +88,17 @@ public class TokenGrantDao {
                     .setAccessTokenExpires(tokenGrant.getAccessTokenExpires())
                     .setAccessTokenExpiry(tokenGrant.getAccessTokenExpiry())
                     .setHasRefreshToken(tokenGrant.getRefreshToken() != null)
-                    .setGrantUserPrimaryIdentifier(tokenGrant.getGrantUser().getPrimaryIdentity().getIdentifier())
                     .setGrantClientIdentifier(tokenGrant.getGrantClient().getClientIdentifier())
                     .setGrantClientName(tokenGrant.getGrantClient().getClientName())
                     .setGrantClientRedirectUri(tokenGrant.getGrantClient().getClientRedirectUri())
                     .setGrantClientTokensMustExpire(tokenGrant.getGrantClient().getTokenGrantsMustExpire())
                     .setGrantCurrent(tokenGrant.getGrantCurrent())
                     .setGrantTimeStamp(tokenGrant.getGrantTimeStamp());
+
+            if (tokenGrant.getGrantUser().getPrimaryIdentity() != null
+                    && tokenGrant.getGrantUser().getPrimaryIdentity().getIdentifier() != null) {
+                builder.setGrantUserPrimaryIdentifier(tokenGrant.getGrantUser().getPrimaryIdentity().getIdentifier());
+            }
 
             // Transform grant scopes to a set of scope names
             Set<String> grantScopes = copyOf(transform(tokenGrant.getGrantScopes(),
