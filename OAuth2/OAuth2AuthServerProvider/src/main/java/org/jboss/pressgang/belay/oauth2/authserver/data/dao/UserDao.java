@@ -90,7 +90,9 @@ public class UserDao {
             return Optional.absent();
         } else {
             UserInfo.UserInfoBuilder builder = UserInfo.UserInfoBuilder.identityInfoBuilder(user.getUsername());
-            builder.setPrimaryIdentifier(user.getPrimaryIdentity().getIdentifier());
+            if (user.getPrimaryIdentity() != null) {
+                builder.setPrimaryIdentifier(user.getPrimaryIdentity().getIdentifier());
+            }
             Set<Identity> nonPrimaryIdentities = copyOf(filter(user.getUserIdentities(), new Predicate<Identity>() {
                 @Override
                 public boolean apply(Identity identity) {
