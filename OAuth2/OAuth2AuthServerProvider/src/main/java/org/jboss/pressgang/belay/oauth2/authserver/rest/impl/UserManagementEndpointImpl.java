@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.createWebApplicationException;
-import static org.jboss.pressgang.belay.oauth2.authserver.rest.impl.OAuthEndpointUtil.urlDecodeString;
 import static org.jboss.pressgang.belay.oauth2.authserver.util.Constants.*;
 
 /**
@@ -103,10 +102,13 @@ public class UserManagementEndpointImpl implements UserManagementEndpoint {
     @Override
     public UserInfo getUserInfo(@Context HttpServletRequest request) {
         String identifier = request.getUserPrincipal().getName();
-        Optional<UserInfo> userInfoFound = authService.getUserInfo(identifier);
+        Optional<UserInfo> userInfoFound = authService.getUserInfoByIdentifier(identifier);
         if (!userInfoFound.isPresent()) {
-            log.warning("User query failed; could not find user info for identity " + identifier);
-            throw createWebApplicationException(USER_QUERY_ERROR, HttpServletResponse.SC_NOT_FOUND);
+            userInfoFound = authService.getUserInfoByUsername(identifier);
+            if (!userInfoFound.isPresent()) {
+                log.warning("User query failed; could not find user info for identity " + identifier);
+                throw createWebApplicationException(USER_QUERY_ERROR, HttpServletResponse.SC_NOT_FOUND);
+            }
         }
         log.info("Returning user info for " + identifier);
         return userInfoFound.get();

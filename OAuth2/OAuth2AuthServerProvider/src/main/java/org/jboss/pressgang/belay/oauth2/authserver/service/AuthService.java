@@ -32,7 +32,9 @@ public interface AuthService {
 
     public Optional<IdentityInfo> getIdentityInfo(String identifier);
 
-    public Optional<UserInfo> getUserInfo(String identifier);
+    public Optional<UserInfo> getUserInfoByIdentifier(String identifier);
+
+    public Optional<UserInfo> getUserInfoByUsername(String username);
 
     public boolean isIdentityAssociatedWithUser(String identifier, User user);
 

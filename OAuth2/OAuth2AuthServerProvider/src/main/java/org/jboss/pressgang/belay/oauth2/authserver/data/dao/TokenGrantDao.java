@@ -88,6 +88,7 @@ public class TokenGrantDao {
                     .setAccessTokenExpires(tokenGrant.getAccessTokenExpires())
                     .setAccessTokenExpiry(tokenGrant.getAccessTokenExpiry())
                     .setHasRefreshToken(tokenGrant.getRefreshToken() != null)
+                    .setGrantUsername(tokenGrant.getGrantUser().getUsername())
                     .setGrantClientIdentifier(tokenGrant.getGrantClient().getClientIdentifier())
                     .setGrantClientName(tokenGrant.getGrantClient().getClientName())
                     .setGrantClientRedirectUri(tokenGrant.getGrantClient().getClientRedirectUri())

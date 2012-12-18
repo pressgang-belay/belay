@@ -26,7 +26,8 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
     @Override
     public Response toResponse(WebApplicationException e) {
         log.warning("Mapping WebApplicationException: " + e.getMessage() + "\n" + join(e.getStackTrace(), '\n'));
-        if (e.getResponse().getStatus() == Response.Status.BAD_REQUEST.getStatusCode()) {
+        if (e.getResponse().getStatus() == Response.Status.BAD_REQUEST.getStatusCode()
+            || e.getResponse().getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
             return e.getResponse();
         }
         return Response.serverError().build();

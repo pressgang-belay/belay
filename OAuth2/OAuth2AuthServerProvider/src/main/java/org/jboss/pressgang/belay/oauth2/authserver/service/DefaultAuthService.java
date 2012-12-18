@@ -100,13 +100,23 @@ public class DefaultAuthService implements AuthService {
     }
 
     @Override
-    public Optional<UserInfo> getUserInfo(String identifier) {
+    public Optional<UserInfo> getUserInfoByIdentifier(String identifier) {
         Optional<Identity> identityFound = getIdentity(identifier);
         if (!identityFound.isPresent()) {
             log.warning("Could not find UserInfo for identifier " + identifier);
             return Optional.absent();
         }
         return userDao.getUserInfoFromUser(identityFound.get().getUser());
+    }
+
+    @Override
+    public Optional<UserInfo> getUserInfoByUsername(String username) {
+        Optional<User> userFound = userDao.getUserByUsername(username);
+        if (!userFound.isPresent()) {
+            log.warning("Could not find User for username " + username);
+            return Optional.absent();
+        }
+        return userDao.getUserInfoFromUser(userFound.get());
     }
 
     @Override

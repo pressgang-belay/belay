@@ -5,7 +5,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.Identity;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.Scope;
 import org.jboss.pressgang.belay.oauth2.authserver.data.model.User;
@@ -16,6 +15,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -64,6 +67,21 @@ public class UserDao {
     public void deleteUser(User user) {
         log.info("Deleting user");
         em.remove(em.merge(user));
+    }
+
+    public Optional<User> getUserByUsername(String username) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<User> criteria = cb.createQuery(User.class);
+        Root<User> user = criteria.from(User.class);
+        criteria.select(user).where(cb.equal(user.get("username"), username));
+        TypedQuery<User> query = em.createQuery(criteria);
+        if (query.getResultList().size() == 1) {
+            log.fine("Returning User with username " + username);
+            return Optional.of(query.getSingleResult());
+        } else {
+            log.fine("Could not find User with username " + username);
+            return Optional.absent();
+        }
     }
 
     public Optional<UserInfo> getUserInfoFromUser(final User user) {

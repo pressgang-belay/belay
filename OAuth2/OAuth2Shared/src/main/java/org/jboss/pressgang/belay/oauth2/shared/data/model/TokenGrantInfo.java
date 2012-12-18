@@ -23,6 +23,7 @@ public class TokenGrantInfo implements Serializable {
     private String accessTokenExpiry;
     private Boolean hasRefreshToken;
     private String grantUserPrimaryIdentifier;
+    private String grantUsername;
     private String grantClientIdentifier;
     private String grantClientName;
     private String grantClientRedirectUri;
@@ -40,6 +41,7 @@ public class TokenGrantInfo implements Serializable {
         this.accessTokenExpiry = builder.accessTokenExpiry;
         this.hasRefreshToken = builder.hasRefreshToken;
         this.grantUserPrimaryIdentifier = builder.grantUserPrimaryIdentifier;
+        this.grantUsername = builder.grantUsername;
         this.grantClientIdentifier = builder.grantClientIdentifier;
         this.grantClientName = builder.grantClientName;
         this.grantClientRedirectUri = builder.grantClientRedirectUri;
@@ -51,6 +53,10 @@ public class TokenGrantInfo implements Serializable {
 
     public String getGrantUserPrimaryIdentifier() {
         return grantUserPrimaryIdentifier;
+    }
+
+    public String getGrantUsername() {
+        return grantUsername;
     }
 
     public String getGrantClientIdentifier() {
@@ -110,6 +116,7 @@ public class TokenGrantInfo implements Serializable {
                 .append(accessTokenExpiry, that.getAccessTokenExpiry())
                 .append(hasRefreshToken, that.getHasRefreshToken())
                 .append(grantUserPrimaryIdentifier, that.getGrantUserPrimaryIdentifier())
+                .append(grantUsername, that.getGrantUsername())
                 .append(grantClientIdentifier, that.getGrantClientIdentifier())
                 .append(grantClientName, that.getGrantClientName())
                 .append(grantClientRedirectUri, that.getGrantClientRedirectUri())
@@ -128,6 +135,7 @@ public class TokenGrantInfo implements Serializable {
                 .append(accessTokenExpiry)
                 .append(hasRefreshToken)
                 .append(grantUserPrimaryIdentifier)
+                .append(grantUsername)
                 .append(grantClientIdentifier)
                 .append(grantClientName)
                 .append(grantClientRedirectUri)
@@ -146,6 +154,7 @@ public class TokenGrantInfo implements Serializable {
                 .append("accessTokenExpiry", accessTokenExpiry)
                 .append("hasRefreshToken", hasRefreshToken)
                 .append("grantUserPrimaryIdentifier", grantUserPrimaryIdentifier)
+                .append("grantUsername", grantUsername)
                 .append("grantClientIdentifier", grantClientIdentifier)
                 .append("grantClientName", grantClientName)
                 .append("grantClientRedirectUri", grantClientRedirectUri)
@@ -165,6 +174,7 @@ public class TokenGrantInfo implements Serializable {
         private String accessTokenExpiry;
         private boolean hasRefreshToken;
         private String grantUserPrimaryIdentifier;
+        private String grantUsername;
         private String grantClientIdentifier;
         private String grantClientName;
         private String grantClientRedirectUri;
@@ -199,6 +209,11 @@ public class TokenGrantInfo implements Serializable {
 
         public TokenGrantInfoBuilder setGrantUserPrimaryIdentifier(String grantUserPrimaryIdentifier) {
             this.grantUserPrimaryIdentifier = grantUserPrimaryIdentifier;
+            return this;
+        }
+
+        public TokenGrantInfoBuilder setGrantUsername(String grantUsername) {
+            this.grantUsername = grantUsername;
             return this;
         }
 
