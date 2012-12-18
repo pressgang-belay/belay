@@ -41,13 +41,13 @@ public class AlternativeOAuth2RSAuthService implements OAuth2RSAuthService {
     }
 
     @Override
-    public Optional<TokenGrantInfo> getTokenGrantInfoForAccessToken(String s) {
+    public Optional<TokenGrantInfo> getTokenGrantInfoByAccessToken(String s) {
         log.info("AlternativeOAuth2RSAuthService's getTokenGrantInfoForAccessToken method called");
         return Optional.absent();
     }
 
     @Override
-    public Optional<AccessTokenExpiryInfo> extendAccessTokenExpiry(String s) {
+    public Optional<AccessTokenExpiryInfo> extendAccessTokenExpirySeconds(String s) {
         log.info("AlternativeOAuth2RSAuthService's extendAccessTokenExpiry method called");
         return Optional.absent();
     }
