@@ -92,47 +92,48 @@ public class UserDao {
             UserInfo.UserInfoBuilder builder = UserInfo.UserInfoBuilder.identityInfoBuilder(user.getUsername());
             if (user.getPrimaryIdentity() != null) {
                 builder.setPrimaryIdentifier(user.getPrimaryIdentity().getIdentifier());
-            }
-            Set<Identity> nonPrimaryIdentities = copyOf(filter(user.getUserIdentities(), new Predicate<Identity>() {
-                @Override
-                public boolean apply(Identity identity) {
-                    return !identity.equals(user.getPrimaryIdentity());
+
+                Set<Identity> nonPrimaryIdentities = copyOf(filter(user.getUserIdentities(), new Predicate<Identity>() {
+                    @Override
+                    public boolean apply(Identity identity) {
+                        return !identity.equals(user.getPrimaryIdentity());
+                    }
+                }));
+                Set<String> userIdentifiers = copyOf(transform(user.getUserIdentities(), new Function<Identity, String>() {
+                    public String apply(Identity identity) {
+                        return identity.getIdentifier();
+                    }
+                }));
+                builder.setUserIdentifiers(userIdentifiers);
+
+                // Amalgamate the different identity values for the following attributes, and filter any nulls
+                // Always list the primary identity's value, if any, first
+                List<String> firstNames = newArrayList(user.getPrimaryIdentity().getFirstName());
+                List<String> lastNames = newArrayList(user.getPrimaryIdentity().getLastName());
+                List<String> fullNames = newArrayList(user.getPrimaryIdentity().getFullName());
+                List<String> emails = newArrayList(user.getPrimaryIdentity().getEmail());
+                List<String> languages = newArrayList(user.getPrimaryIdentity().getLanguage());
+                List<String> countries = newArrayList(user.getPrimaryIdentity().getCountry());
+                List<String> openIdProviderUrls = newArrayList(user.getPrimaryIdentity().getOpenIdProvider().getProviderUrl());
+
+                for (Identity identity : nonPrimaryIdentities) {
+                    firstNames.add(identity.getFirstName());
+                    lastNames.add(identity.getLastName());
+                    fullNames.add(identity.getFullName());
+                    emails.add(identity.getEmail());
+                    languages.add(identity.getLanguage());
+                    countries.add(identity.getCountry());
+                    openIdProviderUrls.add(identity.getOpenIdProvider().getProviderUrl());
                 }
-            }));
-            Set<String> userIdentifiers = copyOf(transform(user.getUserIdentities(), new Function<Identity, String>() {
-                public String apply(Identity identity) {
-                    return identity.getIdentifier();
-                }
-            }));
-            builder.setUserIdentifiers(userIdentifiers);
 
-            // Amalgamate the different identity values for the following attributes, and filter any nulls
-            // Always list the primary identity's value, if any, first
-            List<String> firstNames = newArrayList(user.getPrimaryIdentity().getFirstName());
-            List<String> lastNames = newArrayList(user.getPrimaryIdentity().getLastName());
-            List<String> fullNames = newArrayList(user.getPrimaryIdentity().getFullName());
-            List<String> emails = newArrayList(user.getPrimaryIdentity().getEmail());
-            List<String> languages = newArrayList(user.getPrimaryIdentity().getLanguage());
-            List<String> countries = newArrayList(user.getPrimaryIdentity().getCountry());
-            List<String> openIdProviderUrls = newArrayList(user.getPrimaryIdentity().getOpenIdProvider().getProviderUrl());
-
-            for (Identity identity : nonPrimaryIdentities) {
-                firstNames.add(identity.getFirstName());
-                lastNames.add(identity.getLastName());
-                fullNames.add(identity.getFullName());
-                emails.add(identity.getEmail());
-                languages.add(identity.getLanguage());
-                countries.add(identity.getCountry());
-                openIdProviderUrls.add(identity.getOpenIdProvider().getProviderUrl());
+                builder.setFirstNames(ImmutableList.copyOf(filter(firstNames, notNull())))
+                        .setLastNames(ImmutableList.copyOf(filter(lastNames, notNull())))
+                        .setFullNames(ImmutableList.copyOf(filter(fullNames, notNull())))
+                        .setEmails(ImmutableList.copyOf(filter(fullNames, notNull())))
+                        .setLanguages(ImmutableList.copyOf(filter(languages, notNull())))
+                        .setCountries(ImmutableList.copyOf(filter(countries, notNull())))
+                        .setOpenIdProviderUrls(ImmutableList.copyOf(filter(openIdProviderUrls, notNull())));
             }
-
-            builder.setFirstNames(ImmutableList.copyOf(filter(firstNames, notNull())))
-                    .setLastNames(ImmutableList.copyOf(filter(lastNames, notNull())))
-                    .setFullNames(ImmutableList.copyOf(filter(fullNames, notNull())))
-                    .setEmails(ImmutableList.copyOf(filter(fullNames, notNull())))
-                    .setLanguages(ImmutableList.copyOf(filter(languages, notNull())))
-                    .setCountries(ImmutableList.copyOf(filter(countries, notNull())))
-                    .setOpenIdProviderUrls(ImmutableList.copyOf(filter(openIdProviderUrls, notNull())));
 
             Set<String> userScopes = copyOf(transform(user.getUserScopes(),
                     new Function<Scope, String>() {
@@ -143,7 +144,7 @@ public class UserDao {
                     }));
             builder.setUserScopes(userScopes);
 
-            log.fine("Returning UserInfo for user with primary identifier " + user.getPrimaryIdentity().getIdentifier());
+            log.fine("Returning UserInfo for user " + (user.getPrimaryIdentity() != null ? user.getPrimaryIdentity().getIdentifier() : user.getUsername()));
             return Optional.of(builder.build());
         }
     }
